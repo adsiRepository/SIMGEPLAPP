@@ -38,10 +38,10 @@ public class Monitoreo extends Activity {
     //definicion del Objeto que enlaza al servicio
     private ServiceConnection conexService = new ServiceConnection() {
         @Override
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {//este iBinder es la interfaz recibida una vez se ha conectado al servicio
-            //Enlace enlace = (Enlace)iBinder;
+        public void onServiceConnected(ComponentName componentName, IBinder servicio) {//este servicio es la interfaz recibida una vez se ha conectado al servicio
+            //Enlace enlace = (Enlace)servicio;
             //theService = enlace.getService();
-            mensajero = new Messenger(iBinder);
+            mensajero = new Messenger(servicio);//aqui recibe la interfaz retornada en el metodo onBind del servicio
             if(mensajero != null){
                 try {
                     Thread.sleep(5000);
@@ -72,7 +72,8 @@ public class Monitoreo extends Activity {
         txv_NIV = (TextView) findViewById(R.id.txv_lec_niv);
         btnPrueba = (Button) findViewById(R.id.btn_init);
 
-        //bindService(new Intent(InicioSimgeplapp.this, ServicioMonitoreo.class), conexService, Context.BIND_AUTO_CREATE);
+        //enlace al servicio, metodo no usado. Consulta: servicios enlazados en android
+        //bindService(new Intent(InicioSimgeplapp.this, ServicioMonitoreo.class), conexService, Context.BIND_AUTO_CREATE);//
 
         btnPrueba.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,17 +86,14 @@ public class Monitoreo extends Activity {
 				//bund.putString("datoTransferido", valorEnviado);
 				//msg.setData(bund);
 				try {
-					mensajero.send(msg);//mensajero es el campo que contiene el IBinder recibido del ServiceConnection. Este contiene el manejador (la clase Handler) que se encuentra en el Controlador (su manejador de mensajes)
-										//asi que al pasarle un mensaje (.send(mensaje)) se esta ejecutando el codigo del Handler del Controlador
+					mensajero.send(msg);//mensajero es el campo que contiene el IBinder recibido del ServiceConnection. Este contiene el manejador (la clase Handler) que se encuentra en el servicio (su manejador de mensajes)
+										//asi que al pasarle un mensaje (.send(mensaje)) se esta ejecutando el codigo del Handler del servicio
 				} catch (RemoteException e) {
 					Toast.makeText(getBaseContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
 					e.printStackTrace();
 				}*/
-                //txv_TEMP.setText(theService.getVariablePrueba1());
-                //txv_TEMP.setText(String.valueOf(simgeplapp.Gvalues[0]));
-                //txv_PRES.setText(String.valueOf(simgeplapp.Gvalues[1]));
 
-                startService(new Intent(Monitoreo.this, ServicioMonitoreo.class));
+                startService(new Intent(Monitoreo.this, ServicioMonitoreo.class));//esta linea ejecuta el "onStartCommand" del servicio
 
                 autoAct = new AutoActualizacion();
                 autoAct.execute();
@@ -104,7 +102,6 @@ public class Monitoreo extends Activity {
 
     }
 
-    //onStart => codigo que se ejecuta al iniciarse el activity, este se ejecuta al primer momento de abrir el activity y no se ejecuta mas.
     @Override
     protected void onStart(){
         super.onStart();
@@ -144,7 +141,8 @@ public class Monitoreo extends Activity {
         super.onDestroy();
     }
 
-    //hilo que actualiza los TextView que muestran las variables
+
+    //hilo que actualiza los TextView que muestran las variables. Consulta: AsyncTask
     private class AutoActualizacion extends AsyncTask<Double, Double, Double> {
         private Double[] valores;
         @Override
@@ -157,18 +155,19 @@ public class Monitoreo extends Activity {
             while (true){ // true = hara indefinido este ciclo
                 try {
                     Thread.sleep(1100); // se pausara la ejecucion durante 3 segundos
-                    //el siguiente metodo lo que hace es llamar al onProgressUpdate pasandole los valores con que operara
-                    valores[0] = simgeplapp.TEMP;
-                    valores[1] = simgeplapp.PRES;
+                    valores[0] = simgeplapp.TEMP;//obtengo los valores de las variables globales del monitoreo
+                    valores[1] = simgeplapp.PRES;//que se redefinen en el servicio
                     valores[2] = simgeplapp.NIV;
+                    //el siguiente metodo lo que hace es llamar al onProgressUpdate pasandole los valores con que operara
                     publishProgress(valores);
                 } catch (InterruptedException eh) {
+                    Toast.makeText(getBaseContext(), "error doInBack, hilo monitoreo", Toast.LENGTH_LONG).show();
                     Log.d(null, eh.getLocalizedMessage());
                 }
             }
         }
         @Override
-        protected void onProgressUpdate(Double... values){
+        protected void onProgressUpdate(Double... values){//recibo los valores pasados en el "publishProgress"
             txv_TEMP.setText(String.valueOf(values[0]));
             txv_PRES.setText(String.valueOf(values[1]));
             txv_NIV.setText(String.valueOf(values[2]));
@@ -191,7 +190,7 @@ public class Monitoreo extends Activity {
         }
     }
 
-
+    //MENU
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

@@ -15,7 +15,7 @@ import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
 
 public class InicioSimgeplapp extends Activity {
 
-	SIMGEPLAPP simgeplapp;
+	SIMGEPLAPP simgeplapp;//aqui definimos un objeto de la clase global, lo mismo para cada componente
 
     protected Button btn_entrar;
     protected EditText txt_user;
@@ -27,7 +27,7 @@ public class InicioSimgeplapp extends Activity {
     @Override
     protected void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
-        outState.putString("txt_search", txt_user.getText().toString());
+        outState.putString("txt_search", txt_user.getText().toString());//ejemplo
     }
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState){
@@ -45,7 +45,7 @@ public class InicioSimgeplapp extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(com.adsi38_sena.simgeplapp.R.layout.activity_inicio_simgeplapp);
-        Toast.makeText(getBaseContext(), "onCreate", Toast.LENGTH_LONG).show();
+        Toast.makeText(getBaseContext(), "onCreate", Toast.LENGTH_LONG).show();//toast que me indica el orden del ciclo de vida
 
 		simgeplapp = (SIMGEPLAPP)getApplication();//obtengo la instancia de la aplicacion
 
@@ -57,12 +57,12 @@ public class InicioSimgeplapp extends Activity {
             public void onClick(View v) {
                 if(simgeplapp.sessionAlive == false) {
                     simgeplapp.session = new SIMGEPLAPP.Session();//Inicializo el objeto de session de la aplicacion
-                    simgeplapp.session.user = txt_user.getText().toString();//por ahora obtengo el nombre digitado
+                    simgeplapp.session.user = txt_user.getText().toString();//por ahora obtengo el nombre digitado para observar funcionamiento
                     simgeplapp.sessionAlive = true;
                     startActivity(new Intent(InicioSimgeplapp.this, MenuActivity.class));
                     Toast.makeText(getApplicationContext(), "Session Iniciada", Toast.LENGTH_LONG).show();
                 }
-                else {
+                else {//por si ya ha iniciado session
                     startActivity(new Intent(InicioSimgeplapp.this, Monitoreo.class));
                 }
             }
@@ -70,7 +70,7 @@ public class InicioSimgeplapp extends Activity {
 	}
 
     //*2
-    //onStart => codigo que se ejecuta al iniciarse el activity, este se ejecuta al primer momento de abrir el activity y no se ejecuta mas.
+    //onStart => codigo que se ejecuta al iniciarse el activity, este se ejecuta al primer momento de abrir el activity.
     @Override
     protected void onStart(){
         super.onStart();
@@ -79,7 +79,7 @@ public class InicioSimgeplapp extends Activity {
         Toast.makeText(getBaseContext(), "onStart()", Toast.LENGTH_LONG).show();
     }
 
-    //3
+    //*3
     //onResume => Se llama cuando la actividad va a comenzar a interactuar con el usuario. Es un buen lugar para lanzar las animaciones y la m�sica.
     //ultimo metodo que se ejecuta antes de estar completamente listo.
     @Override

@@ -48,7 +48,7 @@ public class ServicioMonitoreo extends Service {
     //ciclo de vida de un service y conexion a este (bound) -> http://www.androidcurso.com/index.php/tutoriales-android/38-unidad-8-servicios-notificaciones-y-receptores-de-anuncios/289-ciclo-de-vida-de-un-servicio
 	@Override
 	public void onCreate(){
-		Toast.makeText(getBaseContext(), "Servicio Iniciado", Toast.LENGTH_LONG).show();
+		Toast.makeText(getBaseContext(), "Monitoreo Simgeplapp en marcha", Toast.LENGTH_LONG).show();
 		simgeplapp = (SIMGEPLAPP)getApplication();
         simgeplapp.serviceOn = true;
 	}
@@ -62,24 +62,22 @@ public class ServicioMonitoreo extends Service {
 			proceso_delServicio.start();
 		}
 		//this.stopSelf();
-		//return super.onStartCommand(intent, flags, startId);
 		return START_STICKY;
 	}
 	private Thread proceso_delServicio = new Thread(new Runnable() {
 		Random random = new Random();
 		@Override
-		public void run() {
+		public void run() {//por ahora estamos generando las variables con Random. Aqui hay que implementar la comunicacion al servidor
 			while(true) {
 				try {
 					Thread.sleep(1000);
+					//se supone que debe enviar notificacion al obtener lecturas extrañas:
 					/*NotificationManager mngNotif = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 					NotificationCompat.Builder constructorNotificacion = new NotificationCompat.Builder(getBaseContext())
 							.setSmallIcon(R.drawable.img_notif).setContentTitle("Notificacion")
 							.setContentText("El servicio ha terminado correctamente")
 							.setWhen(System.currentTimeMillis());
 					mngNotif.notify(1, constructorNotificacion.build());*/
-					//val1 = random.nextInt();
-					//val2 = random.nextInt();
 					simgeplapp.TEMP = random.nextDouble();
 					simgeplapp.PRES = random.nextDouble();
                     simgeplapp.NIV = random.nextDouble();
@@ -94,10 +92,9 @@ public class ServicioMonitoreo extends Service {
 
 	@Override
 	public void onDestroy() {
-		// TODO Auto-generated method stub
 		super.onDestroy();
         simgeplapp.serviceOn = false;
-		Log.d(TAG, "FirstService destroyed");
+        Toast.makeText(getBaseContext(), "Monitoreo Simgeplapp finalizado", Toast.LENGTH_LONG).show();
 	}
 
 
