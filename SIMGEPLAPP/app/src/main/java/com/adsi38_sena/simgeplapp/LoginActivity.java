@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.Menu;
@@ -16,7 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor;
+import com.adsi38_sena.simgeplapp.Controlador.ComunicadorServidor;
 import com.adsi38_sena.simgeplapp.Modelo.MenuActivity;
 import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
 
@@ -26,6 +25,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -37,10 +37,9 @@ public class LoginActivity extends Activity {
     private Button btn_login;
     private ProgressDialog pDialog;
 
-    ComunicacionServidor loggeo;
-    String IP_Server="192.168.0.14";//IP DE NUESTRO PC
-    String urlServidor ="http://"+IP_Server+"/Servidor_Simgeplapp/login.php";
+    ComunicadorServidor server;
 
+    private String dirIP_server = "192.168.0.14";
 
     //ESTADO
     @Override
@@ -63,7 +62,7 @@ public class LoginActivity extends Activity {
         setContentView(R.layout.activity_login);
 
         simgeplapp = (SIMGEPLAPP)getApplication();
-        loggeo = new ComunicacionServidor();
+        server = new ComunicadorServidor(dirIP_server);//construyo el objeto comunicador con la direccion ip del pc en donde montemos el proyecto php
         txt_user = (EditText)findViewById(R.id.edt_user);
         txt_pass = (EditText)findViewById(R.id.edt_pass);
         btn_login = (Button)findViewById(R.id.btn_login);
@@ -84,105 +83,80 @@ public class LoginActivity extends Activity {
         });
     }
 
-    protected void loggError(){
-        Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        vibrator.vibrate(400);
-    }
-
-
-    public boolean loggearse(String username, String password) {
-        int logstatus = -1;
-        //boolean logged = false;
-
-        ArrayList<NameValuePair> valoresDigitados= new ArrayList<NameValuePair>();
-        valoresDigitados.add(new BasicNameValuePair("user", username));
-        valoresDigitados.add(new BasicNameValuePair("pass", password));
-
-        JSONArray jdata = loggeo.obtenerDatosServidor(valoresDigitados, urlServidor);
-
-        //SystemClock.sleep(950);
-
-        //si lo que obtuvimos no es null
-        if (jdata!=null && jdata.length() > 0){
-            JSONObject json_data; //creamos un objeto JSON
-            try {
-                json_data = jdata.getJSONObject(0); //leemos el primer segmento en nuestro caso el unico
-                logstatus = json_data.getInt("logged");//accedemos al valor
-                //logged = json_data.getBoolean("logged");
-            } catch (JSONException e) {
-                e.printStackTrace();
-                Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
-            }
-            //validamos el valor obtenido
-            if (logstatus == 1){// [{"logstatus":"1"}]
-                return true;
-            }
-            else{// [{"logstatus":"0"}]
-                return false;
-            }
-        }else{	//json obtenido invalido verificar parte WEB.
-            Log.e("JSON  ", "ERROR");
-            return false;
-        }
-    }
-
 /*		CLASE ASYNCTASK
- *
- * usaremos esta para poder mostrar el dialogo de progreso mientras enviamos y obtenemos los datos
- * podria hacerse lo mismo sin usar esto pero si el tiempo de respuesta es demasiado lo que podria ocurrir
- * si la conexion es lenta o el servidor tarda en responder la aplicacion sera inestable.
+ * usaremos esta clase para poder mostrar el dialogo del progreso mientras enviamos y obtenemos los datos.
+ * podria hacerse lo mismo sin usar esto, pero si el tiempo de respuesta es demasiado -lo que podria ocurrir
+ * si la conexion es lenta o el servidor tarda en responder- la aplicacion seria inestable.
  * ademas observariamos el mensaje de que la app no responde.
  */
 
-    protected class AsyncLogg extends AsyncTask<String, String, String> {
+    protected class AsyncLogg extends AsyncTask<String, String, Boolean> {
 
-        String user,pass;
+        String user, pass;
 
+        @Override
         protected void onPreExecute() {
             //para el progress dialog
             pDialog = new ProgressDialog(LoginActivity.this);
-            pDialog.setMessage("Autenticando....");
+            pDialog.setMessage("Comprobando Base de Datos");
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(false);
             pDialog.show();
         }
 
-        protected String doInBackground(String... params) {
-            //obtnemos usr y pass
-            user = params[0];
-            pass = params[1];
-            //enviamos y recibimos y analizamos los datos en segundo plano.
-            if (loggearse(user, pass) == true){
-                return "ok"; //login valido
-            }else{
-                return "err"; //login invalido
+        @Override
+        protected Boolean doInBackground(String... params) {
+            try {//obtenemos user y pass
+                user = params[0];
+                pass = params[1];
+                //enviamos, recibimos y analizamos los datos en segundo plano.
+                switch (server.loggin(user, pass)){//ejecuto el metodo loggin del objeto server este instanciado de la clase "ComunicadorServidor"
+                    case -1:
+                        publishProgress(new String[]{"No se obtuvo respuesta del servidor"});
+                        return false;
+                    case 0:
+                        publishProgress(new String[]{"El usuario no existe en la Base de Datos"});
+                        return false;
+                    case 1:
+                        publishProgress(new String[]{"Autenticado"});
+                        return true;
+                    default:
+                        publishProgress(new String[]{"Error desconocido"});
+                        return true;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                publishProgress("Autenticado");
+                return false;
             }
-
         }
-        /*protected Thread loggeo = new Thread(new Runnable() {
-            @Override
-            public void run() {
 
-            }
-        });*/
+
+        @Override
+        protected void onProgressUpdate(String... values){
+            Toast.makeText(getApplicationContext(), values[0], Toast.LENGTH_SHORT).show();
+        }
 
         /*Una vez terminado doInBackground segun lo que halla ocurrido
         pasamos a la sig. activity
         o mostramos error*/
-        protected void onPostExecute(String result) {
+        @Override
+        protected void onPostExecute(Boolean result) {
             pDialog.dismiss();//ocultamos progess dialog.
-            if (result.equals("ok")){
-                Intent i=new Intent(LoginActivity.this, MenuActivity.class);
+            if (result == true){
+                Intent i = new Intent(LoginActivity.this, MenuActivity.class);
                 i.putExtra("user", user);
                 startActivity(i);
-            }else{
-                Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                vibrator.vibrate(400);
-                Toast.makeText(getApplicationContext(), "no haz podido iniciar sesion", Toast.LENGTH_SHORT).show();
+            } else {
+                loggError();
+                Toast.makeText(getApplicationContext(), "No se pudo iniciar sesion", Toast.LENGTH_SHORT).show();
             }
-
         }
+    }
 
+    protected void loggError(){
+        Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        vibrator.vibrate(600);
     }
 
     //MENU
