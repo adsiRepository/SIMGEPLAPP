@@ -18,21 +18,16 @@ public class InicioSimgeplapp extends Activity {
 	SIMGEPLAPP simgeplapp;//aqui definimos un objeto de la clase global, lo mismo para cada componente
 
     protected Button btn_entrar;
-    protected EditText txt_user;
-
 
     //MANTENER EL ESTADO AL ROTAR LA PANTALLA O AL REGRESAR
-
     //fuentes => https://sekthdroid.wordpress.com/2012/10/04/mantener-los-datos-cuando-rotemos-la-pantalla-en-android/
     @Override
     protected void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
-        outState.putString("txt_search", txt_user.getText().toString());//ejemplo
     }
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState){
         super.onRestoreInstanceState(savedInstanceState);
-        txt_user.setText(""+savedInstanceState.getString("txt_search"));
     }
 
     //----
@@ -49,22 +44,11 @@ public class InicioSimgeplapp extends Activity {
 
 		simgeplapp = (SIMGEPLAPP)getApplication();//obtengo la instancia de la aplicacion
 
-        txt_user = (EditText)findViewById(R.id.etx_user);
-
         btn_entrar = (Button)findViewById(R.id.btn_init);
         btn_entrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(simgeplapp.sessionAlive == false) {
-                    simgeplapp.session = new SIMGEPLAPP.Session();//Inicializo el objeto de session de la aplicacion
-                    simgeplapp.session.user = txt_user.getText().toString();//por ahora obtengo el nombre digitado para observar funcionamiento
-                    simgeplapp.sessionAlive = true;
-                    startActivity(new Intent(InicioSimgeplapp.this, MenuActivity.class));
-                    Toast.makeText(getApplicationContext(), "Session Iniciada", Toast.LENGTH_LONG).show();
-                }
-                else {//por si ya ha iniciado session
-                    startActivity(new Intent(InicioSimgeplapp.this, Monitoreo.class));
-                }
+                startActivity(new Intent(InicioSimgeplapp.this, LoginActivity.class));
             }
         });
 	}

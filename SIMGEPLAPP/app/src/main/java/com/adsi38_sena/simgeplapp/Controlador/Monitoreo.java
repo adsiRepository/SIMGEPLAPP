@@ -193,7 +193,7 @@ public class Monitoreo extends Activity {
     //MENU
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // Inflate the menu; this adds items to the action bar if it stream present.
         getMenuInflater().inflate(com.adsi38_sena.simgeplapp.R.menu.main, menu);
         return true;
     }
