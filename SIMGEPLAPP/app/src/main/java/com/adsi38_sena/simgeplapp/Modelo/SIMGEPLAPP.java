@@ -5,6 +5,12 @@ import android.app.Application;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+//esta clase como ven se extiende de la clase Application. La funcion de esta clase es sostener las variables globales de toda la aplicacion.
+//Al ser extendida de la clase Application se puede instanciar la aplicacion en si como un objeto de esta clase.
+//fuentes hay muchas, la busqueda google seria: variables globales en android.
+//En cada elemento de la aplicacion (activitys, services, etc.) se instanciara un objeto de esta clase:
+//SIMGEPLAPP simgeplapp = (SIMGEPLAPP)getApplication(); lo que obtendra la instancia actual de esta clase. La instancia de esta clase (SIMGEPLAPP)
+//se define y se inicia al ejecutar por primera vez la aplicacion, lo que hacemos en cada componente es recoger esa instancia y obtener asi las variables globales.
 public class SIMGEPLAPP extends Application{
 
     public static Double TEMP, PRES, NIV; // temperatura, presion y nivel.
@@ -32,33 +38,28 @@ public class SIMGEPLAPP extends Application{
             password = parcel.readString();
         }
 
+        //auto implementada
+        public static final Creator<Session> CREATOR = new Creator<Session>() {
+            @Override
+            public Session createFromParcel(Parcel in) {
+                return new Session(in);
+            }
+            @Override
+            public Session[] newArray(int size) {
+                return new Session[size];
+            }
+        };
+
         @Override
         public void writeToParcel(Parcel dest, int flags) {
             dest.writeString(user);
             dest.writeString(password);
         }
 
-        public static final Parcelable.Creator<Session> SESSION_CREATOR = new Parcelable.ClassLoaderCreator<Session>(){
-            @Override
-            public Session createFromParcel(Parcel source) {
-                return null;
-            }
-            @Override
-            public Session[] newArray(int size) {
-                return new Session[0];
-            }
-            @Override
-            public Session createFromParcel(Parcel source, ClassLoader loader) {
-                return null;
-            }
-        };
-
         @Override
         public int describeContents() {
             return 0;
         }
-
-
 
     }
 

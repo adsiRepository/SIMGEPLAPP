@@ -32,16 +32,16 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="Session:"
         android:id="@+id/lbl_session"
-        android:layout_alignParentBottom="true"
-        android:layout_alignLeft="@+id/lbl_msg_bienvenida" />
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:id="@+id/lbl_session_state"
-        android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@+id/lbl_session" />
+        android:layout_alignTop="@+id/lbl_session"
+        android:layout_toLeftOf="@+id/switch_service"/>
 
     <Button
         android:layout_width="wrap_content"
@@ -51,4 +51,13 @@
         android:layout_below="@+id/lbl_user"
         android:layout_alignLeft="@+id/lbl_user"
         android:layout_marginTop="79dp" />
+
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Servicio"
+        android:id="@+id/switch_service"
+        android:checked="false"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"/>
 </RelativeLayout>
