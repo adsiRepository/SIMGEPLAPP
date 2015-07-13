@@ -7,9 +7,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.adsi38_sena.simgeplapp.Controlador.Monitoreo;
+import com.adsi38_sena.simgeplapp.Controlador.ServicioMonitoreo;
 import com.adsi38_sena.simgeplapp.R;
 
 
@@ -19,6 +21,7 @@ public class MenuActivity extends Activity {
 
     private TextView lbl_user, lbl_sessState;
     private Button btn_monitoreo;
+    private Switch swch_service;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +29,14 @@ public class MenuActivity extends Activity {
         setContentView(R.layout.activity_menu_simgeplapp);
 
         simgeplapp = (SIMGEPLAPP)getApplication();
+
+        swch_service = (Switch)findViewById(R.id.switch_service);
+        if(simgeplapp.serviceOn == true){
+            swch_service.setChecked(true);
+        }
+        else {
+            swch_service.setChecked(false);
+        }
 
         lbl_user = (TextView)findViewById(R.id.lbl_user);
         lbl_sessState = (TextView)findViewById(R.id.lbl_session_state);
@@ -39,6 +50,41 @@ public class MenuActivity extends Activity {
                 startActivity(new Intent(MenuActivity.this, Monitoreo.class));
             }
         });
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+        startService(new Intent(MenuActivity.this, ServicioMonitoreo.class));
+    }
+
+    // Se llama cuando la actividad va a comenzar a interactuar con el usuario. Es un buen lugar para lanzar las animaciones y la música.
+    @Override
+    protected void onResume(){
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+    }
+
+    //Cuando la actividad no es visible. El programador debe guardar el estado de la interfaz de usuario, preferencias, etc.
+    @Override
+    protected void onStop(){
+        super.onStop();
+    }
+
+    //Indica que la actividad va a volver a ser representada después de haber pasado por onStop().
+    @Override
+    protected void onRestart(){
+        super.onRestart();
+    }
+
+    //fin del ciclo de vida del activity, Se llama antes de que la actividad sea totalmente destruida. Por ejemplo, cuando el usuario pulsa el botón de volver o cuando se llama al método finish()
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
     }
 
     @Override

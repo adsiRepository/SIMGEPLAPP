@@ -51,4 +51,13 @@
         android:layout_alignRight="@+id/lbl_user"
         android:layout_marginRight="41dp"
         android:layout_marginBottom="36dp" />
+
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Servicio"
+        android:id="@+id/switch_service"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:checked="false"/>
 </RelativeLayout>

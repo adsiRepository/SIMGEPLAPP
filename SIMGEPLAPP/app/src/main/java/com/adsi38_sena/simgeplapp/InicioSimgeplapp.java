@@ -6,11 +6,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
-import com.adsi38_sena.simgeplapp.Controlador.Monitoreo;
-import com.adsi38_sena.simgeplapp.Modelo.MenuActivity;
 import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
 
 public class InicioSimgeplapp extends Activity {
@@ -36,7 +33,8 @@ public class InicioSimgeplapp extends Activity {
 	//CUERPO DEL ACTIVITY
     //*1
     //onCreate => se ejecuta cada vez que accedemos al activity, al girar la pantalla vuelve a ejecutarse porque esto es una transision que requiere volver a crear el activity; o al salir y regresar
-	@Override
+	//el activity no tiene cosntructor convencional, este es el reemplazo
+    @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(com.adsi38_sena.simgeplapp.R.layout.activity_inicio_simgeplapp);

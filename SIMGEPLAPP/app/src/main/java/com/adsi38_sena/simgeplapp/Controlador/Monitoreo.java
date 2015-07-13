@@ -22,11 +22,15 @@ import android.widget.Toast;
 import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
 import com.adsi38_sena.simgeplapp.R;
 
+import java.text.DecimalFormat;
+
 public class Monitoreo extends Activity {
 
     SIMGEPLAPP simgeplapp;
 
     protected AutoActualizacion autoAct;
+
+    private final DecimalFormat decimalFormat = new DecimalFormat("#.##");
 
     //ServicioMonitoreo theService;
 
@@ -35,28 +39,24 @@ public class Monitoreo extends Activity {
 
     private Messenger mensajero;
 
-    //definicion del Objeto que enlaza al servicio
-    private ServiceConnection conexService = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder servicio) {//este servicio es la interfaz recibida una vez se ha conectado al servicio
-            //Enlace enlace = (Enlace)servicio;
-            //theService = enlace.getService();
-            mensajero = new Messenger(servicio);//aqui recibe la interfaz retornada en el metodo onBind del servicio
-            if(mensajero != null){
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                Toast.makeText(getBaseContext(), "Conexion Establecida Correctamente", Toast.LENGTH_LONG).show();
-            }
-        }
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            //theService = null;
-        }
-    };
+    CharSequence[] estado_variables;
 
+    //control de estado de la pantalla
+    @Override
+    protected void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        estado_variables = new CharSequence[]{txv_TEMP.getText(), txv_PRES.getText(), txv_NIV.getText()};
+        outState.putCharSequenceArray("variables", estado_variables);
+    }
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState){
+        super.onRestoreInstanceState(savedInstanceState);
+        estado_variables = savedInstanceState.getCharSequenceArray("variables");
+        txv_TEMP.setText(estado_variables[0]);
+        txv_PRES.setText(estado_variables[1]);
+        txv_NIV.setText(estado_variables[2]);
+    }
+    //-------
 
     //CUERPO DEL ACTIVITY
     //onCreate => se ejecuta cada vez que accedemos al activity, al girar la pantalla vuelve a ejecutarse porque esto es una transision que requiere volver a crear el activity; o al salir y regresar
@@ -66,6 +66,9 @@ public class Monitoreo extends Activity {
         setContentView(com.adsi38_sena.simgeplapp.R.layout.activity_monitoreo);
 
         simgeplapp = (SIMGEPLAPP)getApplication();
+
+        autoAct = new AutoActualizacion();
+        autoAct.execute();
 
         txv_TEMP = (TextView) findViewById(R.id.txv_lec_temp);
         txv_PRES = (TextView) findViewById(R.id.txv_lec_pres);
@@ -92,12 +95,7 @@ public class Monitoreo extends Activity {
 					Toast.makeText(getBaseContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
 					e.printStackTrace();
 				}*/
-
-                startService(new Intent(Monitoreo.this, ServicioMonitoreo.class));//esta linea ejecuta el "onStartCommand" del servicio
-
-                autoAct = new AutoActualizacion();
-                autoAct.execute();
-            }
+}
         });
 
     }
@@ -154,7 +152,7 @@ public class Monitoreo extends Activity {
         protected Double doInBackground(Double... params) {
             while (true){ // true = hara indefinido este ciclo
                 try {
-                    Thread.sleep(1100); // se pausara la ejecucion durante 3 segundos
+                    Thread.sleep(20200); // se pausara la ejecucion durante 3 segundos
                     valores[0] = simgeplapp.TEMP;//obtengo los valores de las variables globales del monitoreo
                     valores[1] = simgeplapp.PRES;//que se redefinen en el servicio
                     valores[2] = simgeplapp.NIV;
@@ -168,16 +166,44 @@ public class Monitoreo extends Activity {
         }
         @Override
         protected void onProgressUpdate(Double... values){//recibo los valores pasados en el "publishProgress"
-            txv_TEMP.setText(String.valueOf(values[0]));
-            txv_PRES.setText(String.valueOf(values[1]));
-            txv_NIV.setText(String.valueOf(values[2]));
+            try {
+                txv_TEMP.setText("" + decimalFormat.format(values[0]));
+                txv_PRES.setText("" + decimalFormat.format(values[1]));
+                txv_NIV.setText("" + decimalFormat.format(values[2]));
+            }catch (Exception eh){
+                Toast.makeText(getBaseContext(), "error publishprog, hilo monitoreo", Toast.LENGTH_LONG).show();
+            }
         }
         @Override
         protected void onCancelled(){
         }
     }
 
-    private class RecibidorRespuestasServicio extends Handler {
+    //////--------      METODOS DE ENLACE AL SERVICE EN SEGUNDO PLANO
+    //metodos para enlazar servicios en segundo plano para intercambiar datos, actualmente no usados debido al uso de variables globales
+    /*private Messenger mensajero;
+    //definicion del Objeto que enlaza al servicio
+    private ServiceConnection conexService = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder servicio) {//este servicio es la interfaz recibida una vez se ha conectado al servicio
+            //Enlace enlace = (Enlace)servicio;
+            //theService = enlace.getService();
+            mensajero = new Messenger(servicio);//aqui recibe la interfaz retornada en el metodo onBind del servicio
+            if(mensajero != null){
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Toast.makeText(getBaseContext(), "Conexion Establecida Correctamente", Toast.LENGTH_LONG).show();
+            }
+        }
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            //theService = null;
+        }
+    };*/
+    /*private class RecibidorRespuestasServicio extends Handler {
         @Override
         public void handleMessage(Message msg){
             int CualMsg = msg.what;
@@ -189,6 +215,9 @@ public class Monitoreo extends Activity {
             }
         }
     }
+    }*/
+    //////--------
+
 
     //MENU
     @Override

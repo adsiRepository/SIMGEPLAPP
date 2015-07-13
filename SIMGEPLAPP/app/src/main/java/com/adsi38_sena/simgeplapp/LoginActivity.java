@@ -122,15 +122,14 @@ public class LoginActivity extends Activity {
                         return true;
                     default:
                         publishProgress(new String[]{"Error desconocido"});
-                        return true;
+                        return false;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                publishProgress("Autenticado");
+                publishProgress(new String[]{e.toString()});
                 return false;
             }
         }
-
 
         @Override
         protected void onProgressUpdate(String... values){
@@ -144,9 +143,13 @@ public class LoginActivity extends Activity {
         protected void onPostExecute(Boolean result) {
             pDialog.dismiss();//ocultamos progess dialog.
             if (result == true){
-                Intent i = new Intent(LoginActivity.this, MenuActivity.class);
-                i.putExtra("user", user);
-                startActivity(i);
+            // if(simgeplapp.sessionAlive == false) {
+                    simgeplapp.session = new SIMGEPLAPP.Session();//Inicializo el objeto de session de la aplicacion
+                    simgeplapp.session.user = user;
+                    simgeplapp.sessionAlive = true;
+                    startActivity(new Intent(LoginActivity.this, MenuActivity.class));
+                    Toast.makeText(getApplicationContext(), "Session Iniciada", Toast.LENGTH_LONG).show();
+               // }
             } else {
                 loggError();
                 Toast.makeText(getApplicationContext(), "No se pudo iniciar sesion", Toast.LENGTH_SHORT).show();
@@ -155,8 +158,15 @@ public class LoginActivity extends Activity {
     }
 
     protected void loggError(){
-        Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        vibrator.vibrate(600);
+        try {
+            Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            vibrator.vibrate(400);
+            Thread.sleep(540);
+            vibrator.vibrate(300);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     //MENU
