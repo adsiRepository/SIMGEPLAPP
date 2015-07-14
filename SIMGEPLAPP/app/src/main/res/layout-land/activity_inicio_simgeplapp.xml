@@ -9,12 +9,12 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Entrar"
+        android:text="LOG"
         android:id="@+id/btn_init"
         android:textSize="25dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="43dp"
         android:layout_below="@+id/lbl_titulo"
-        android:layout_toRightOf="@+id/lbl_titulo" />
+        android:layout_toRightOf="@+id/lbl_titulo"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -22,19 +22,11 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="SIMGEPLAPP"
         android:id="@+id/lbl_titulo"
-        android:layout_marginTop="52dp"
+        android:layout_marginTop="40dp"
         android:textSize="40dp"
         android:textStyle="bold"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="60dp" />
-
-    <EditText
-        android:layout_width="190dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/etx_user"
-        android:layout_alignBaseline="@+id/btn_init"
-        android:layout_alignBottom="@+id/btn_init"
-        android:layout_alignLeft="@+id/lbl_titulo" />
+        android:layout_marginLeft="50dp"/>
 
 </RelativeLayout>

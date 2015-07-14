@@ -9,7 +9,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Entrar"
+        android:text="LOG"
         android:id="@+id/btn_init"
         android:textSize="25dp"
         android:layout_below="@+id/lbl_titulo"
@@ -27,13 +27,5 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:textStyle="bold" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/etx_user"
-        android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"
-        android:layout_toLeftOf="@+id/btn_init" />
 
 </RelativeLayout>

@@ -2,14 +2,13 @@ package com.adsi38_sena.simgeplapp.Controlador;
 
 import android.app.Service;
 import android.content.Intent;
-import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.util.Log;
+import android.os.SystemClock;
 import android.widget.Toast;
 
 import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
@@ -27,30 +26,18 @@ public class ServicioMonitoreo extends Service {
 
 	private SIMGEPLAPP simgeplapp;
 
-	private Messenger contactoActivity = new Messenger(new ServiceHandler());
-	public IBinder binder = new Enlace();
-	@Override
-	public IBinder onBind(Intent i) {
-		// TODO Auto-generated method stub
-		//return null;
-		//return binder;
-		return contactoActivity.getBinder();
-	}
-	public class Enlace extends Binder{
-		public Enlace(){}
-		public ServicioMonitoreo getService(){
-			return ServicioMonitoreo.this;
-		}
-	}
-	public String variablePrueba1 = "Good";
+    protected Notificador notif;
 
 
     //ciclo de vida de un service y conexion a este (bound) -> http://www.androidcurso.com/index.php/tutoriales-android/38-unidad-8-servicios-notificaciones-y-receptores-de-anuncios/289-ciclo-de-vida-de-un-servicio
 	@Override
 	public void onCreate(){
-		Toast.makeText(getBaseContext(), "Servicio Iniciado", Toast.LENGTH_LONG).show();
-		simgeplapp = (SIMGEPLAPP)getApplication();
+        super.onCreate();
+        simgeplapp = (SIMGEPLAPP)getApplication();
+        SystemClock.sleep(1100);
+		Toast.makeText(getBaseContext(), "Monitoreo Simgeplapp en marcha", Toast.LENGTH_LONG).show();
         simgeplapp.serviceOn = true;
+        notif = new Notificador(simgeplapp);
 	}
 
 
@@ -62,45 +49,38 @@ public class ServicioMonitoreo extends Service {
 			proceso_delServicio.start();
 		}
 		//this.stopSelf();
-		//return super.onStartCommand(intent, flags, startId);
 		return START_STICKY;
 	}
 	private Thread proceso_delServicio = new Thread(new Runnable() {
 		Random random = new Random();
 		@Override
-		public void run() {
+		public void run() {//por ahora estamos generando las variables con Random. Aqui hay que implementar la comunicacion al servidor
 			while(true) {
 				try {
-					Thread.sleep(1000);
-					/*NotificationManager mngNotif = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-					NotificationCompat.Builder constructorNotificacion = new NotificationCompat.Builder(getBaseContext())
-							.setSmallIcon(R.drawable.img_notif).setContentTitle("Notificacion")
-							.setContentText("El servicio ha terminado correctamente")
-							.setWhen(System.currentTimeMillis());
-					mngNotif.notify(1, constructorNotificacion.build());*/
-					//val1 = random.nextInt();
-					//val2 = random.nextInt();
-					simgeplapp.TEMP = random.nextDouble();
-					simgeplapp.PRES = random.nextDouble();
-                    simgeplapp.NIV = random.nextDouble();
+                    Thread.sleep(20000);
+                    simgeplapp.TEMP = (random.nextDouble() * (178 - 19)) + 19;
+					simgeplapp.PRES = (random.nextDouble() * (168 - 16)) + 16;
+                    simgeplapp.NIV = (random.nextDouble() * (166 - 18)) + 18;
+                    if(simgeplapp.TEMP > 170 || simgeplapp.PRES > 140 || simgeplapp.NIV > 160){
+                        notif.notificarAlertaPlanta();
+                    }
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 		}
 	});
 
-
-	@Override
+    @Override
 	public void onDestroy() {
-		// TODO Auto-generated method stub
 		super.onDestroy();
         simgeplapp.serviceOn = false;
-		Log.d(TAG, "FirstService destroyed");
+        Toast.makeText(getBaseContext(), "Monitoreo Simgeplapp finalizado", Toast.LENGTH_LONG).show();
 	}
 
 
+
+    //INTERCAMBIO DE DATOS ENTRE ANTIVITYS Y SERVICIOS (metodo messenger)
 	//IPC con Messenger
 	//http://www.survivingwithandroid.com/2014/01/android-bound-service-ipc-with-messenger.html
 	protected class ServiceHandler extends Handler{
@@ -128,13 +108,18 @@ public class ServicioMonitoreo extends Service {
 			}
 		}
 	}
-
-	public String getVariablePrueba1() {
-		return variablePrueba1;
-	}
-
-	public void setVariablePrueba1(String variablePrueba1) {
-		this.variablePrueba1 = variablePrueba1;
-	}
+    private Messenger contactoActivity = new Messenger(new ServiceHandler());
+    //public IBinder binder = new Enlace();
+    @Override
+    public IBinder onBind(Intent i) {
+        //return null;
+        //return binder;
+        return contactoActivity.getBinder();
+    }
+    //public class Enlace extends Binder{
+    //	public ServicioMonitoreo getService(){
+    //		return ServicioMonitoreo.this;
+    //	}
+    //}
 
 }
