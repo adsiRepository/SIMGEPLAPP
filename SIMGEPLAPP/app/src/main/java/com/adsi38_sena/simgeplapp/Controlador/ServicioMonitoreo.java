@@ -43,13 +43,15 @@ public class ServicioMonitoreo extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		super.onStartCommand(intent, flags, startId);
+		//super.onStartCommand(intent, flags, startId);
 
 		if(!proceso_delServicio.isAlive()) {
 			proceso_delServicio.start();
 		}
 		//this.stopSelf();
-		return START_STICKY;
+		//return START_STICKY;
+        return START_NOT_STICKY;
+        //return super.onStartCommand(intent, flags, startId);
 	}
 	private Thread proceso_delServicio = new Thread(new Runnable() {
 		Random random = new Random();

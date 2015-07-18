@@ -7,8 +7,11 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,7 +65,7 @@ public class ComunicadorServidor {
     //metodo que obtiene en un JSonArray el arreglo confeccionado y enviado por el fichero php en el servidor
     protected JSONArray getDatosRespServidor(String url_servidor, ArrayList<NameValuePair> parametros) throws IOException {
         getRespServidor(url_servidor, parametros);//definira la variable "corriente_datos_entrantes"
-        if (corriente_datos_entrantes != null) {//sí obtuvo una respuesta
+        if (corriente_datos_entrantes != null) {//sï¿½ obtuvo una respuesta
             desglosarRespuesta();//basicamente convierte la corriente de informacion entrante en una lista despuesta en un String donde cada reglon es una pareja nombre-valor
             return getJsonArray();//se decodifica esta lista en un objeto arreglo JSon
         } else {
@@ -74,6 +77,10 @@ public class ComunicadorServidor {
     protected void getRespServidor(String url_servidor, ArrayList<NameValuePair> parametros) throws IOException {
         //conecta via http y envia un post.
         HttpClient cliente_web = new DefaultHttpClient();
+        HttpParams params_cliente = cliente_web.getParams();//parametros de la conexion
+        HttpConnectionParams.setConnectionTimeout(params_cliente, 15000);//establesco que el tiempo de espera en la conexion sea de maximo 7 segundos
+        HttpConnectionParams.getSoTimeout(params_cliente);
+
         HttpPost peticion_post = new HttpPost(url_servidor);
         peticion_post.setEntity(new UrlEncodedFormEntity(parametros));//se codifica en forma de form
         //ejecuto peticion enviando datos por POST
