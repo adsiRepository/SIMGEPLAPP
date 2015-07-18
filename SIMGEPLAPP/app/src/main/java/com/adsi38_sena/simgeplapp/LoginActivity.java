@@ -3,10 +3,7 @@ package com.adsi38_sena.simgeplapp;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -20,7 +17,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.adsi38_sena.simgeplapp.Controlador.FragmentoLogin;
-import com.adsi38_sena.simgeplapp.Modelo.MenuActivity;
 import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
 
 
