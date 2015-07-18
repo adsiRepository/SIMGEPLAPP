@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -35,15 +36,27 @@ public class MenuActivity extends Activity {
 
         simgeplapp = (SIMGEPLAPP)getApplication();
 
-        /*if(simgeplapp.sessionAlive == true){
+        if(simgeplapp.sessionAlive == true){
+
+            startService(new Intent(MenuActivity.this, ServicioMonitoreo.class));
 
             swch_service = (Switch)findViewById(R.id.switch_service);
             if(simgeplapp.serviceOn == true){
-                swch_service.setChecked(true);
+                swch_service.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        swch_service.setChecked(true);
+                    }
+                });
             }
             else {
-                swch_service.setChecked(false);
-            }*/
+                swch_service.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        swch_service.setChecked(false);
+                    }
+                });
+            }
 
             lbl_user = (TextView)findViewById(R.id.lbl_user);
             lbl_sessState = (TextView)findViewById(R.id.lbl_session_state);
@@ -58,14 +71,14 @@ public class MenuActivity extends Activity {
                 }
             });
 
-        /*}
+        }
         else {
 
             finish();
             startActivity(new Intent(this, InicioSimgeplapp.class));
             Toast.makeText(getApplicationContext(), "Inicia Sesion", Toast.LENGTH_LONG).show();
 
-        }*/
+        }
 
 
     }
@@ -73,7 +86,6 @@ public class MenuActivity extends Activity {
     @Override
     protected void onStart(){
         super.onStart();
-        startService(new Intent(MenuActivity.this, ServicioMonitoreo.class));
     }
 
     // Se llama cuando la actividad va a comenzar a interactuar con el usuario. Es un buen lugar para lanzar las animaciones y la m�sica.
@@ -138,6 +150,11 @@ public class MenuActivity extends Activity {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                SharedPreferences confUser = getSharedPreferences("mi_usuario", MODE_PRIVATE);
+                                SharedPreferences.Editor editor = confUser.edit();
+                                editor.putString("usuario", null);
+                                editor.putString("onsesion", null);
+                                editor.commit();
                                 finish();
                                 stopService(new Intent(MenuActivity.this, ServicioMonitoreo.class));
                                 startActivity(new Intent(MenuActivity.this, LoginActivity.class));

@@ -7,6 +7,7 @@ import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -138,11 +139,11 @@ public class FragmentoLogin extends Fragment {
                 simgeplapp.session = new SIMGEPLAPP.Session();//Inicializo el objeto de session de la aplicacion
                 simgeplapp.session.user = user_process;
                 //configura los detalles de sesion que se conservaran durante reinicios y demas hasta que el usuario decida abandonar
-                /*SharedPreferences confUser = getSharedPreferences("mi_usuario", MODE_PRIVATE);
+                SharedPreferences confUser = getActivity().getSharedPreferences("mi_usuario", getActivity().MODE_PRIVATE);
                 SharedPreferences.Editor editor = confUser.edit();
-                editor.putString("usuario", pass_digitado);
+                editor.putString("usuario", user_process);
                 editor.putString("onsesion", "ok");//guardo en las preferencias q la sesion esta iniciada para por si se apaga el cel por ejemplo, al volver no deba iniciar de nuevo
-                editor.commit();*/
+                editor.commit();
                 simgeplapp.sessionAlive = true;
                 getActivity().finish();
                 startActivity(new Intent(getActivity().getApplicationContext(), MenuActivity.class));
