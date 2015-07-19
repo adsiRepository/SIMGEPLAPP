@@ -1,0 +1,63 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+                tools:context=".Modelo.MenuActivity"
+    android:background="#ff020800">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/fondo_menu"
+        android:src="@drawable/log_menu"
+        android:layout_centerVertical="true"
+        android:layout_alignLeft="@+id/btn_monitoreo"/>
+
+    <Button
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        android:text="Usuarios"
+        android:id="@+id/btn_usuarios"
+        android:background="#ff5ccd51"
+        android:layout_alignTop="@+id/btn_revision"
+        android:layout_toRightOf="@+id/txv_user_session"/>
+
+    <Button
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        android:text="Revision"
+        android:id="@+id/btn_revision"
+        android:background="#ff5ccd51"
+        android:layout_centerVertical="true"
+        android:layout_alignRight="@+id/switch_monitorear"/>
+
+    <Button
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        android:text="Monitoreo"
+        android:id="@+id/btn_monitoreo"
+        android:background="#ff5ccd51"
+        android:layout_above="@+id/fondo_menu"
+        android:layout_centerHorizontal="true"/>
+
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sincronizar"
+        android:id="@+id/switch_monitorear"
+        android:checked="false"
+        android:textColor="#ffffffff"
+        android:textSize="21dp"
+        android:shadowColor="#ffa7a7a7"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/txv_user_session"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:textColor="#ffffffff"/>
+
+</RelativeLayout>

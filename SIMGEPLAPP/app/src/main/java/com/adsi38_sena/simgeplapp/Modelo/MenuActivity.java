@@ -1,17 +1,23 @@
 package com.adsi38_sena.simgeplapp.Modelo;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.adsi38_sena.simgeplapp.Controlador.Monitoreo;
 import com.adsi38_sena.simgeplapp.Controlador.ServicioMonitoreo;
+import com.adsi38_sena.simgeplapp.InicioSimgeplapp;
+import com.adsi38_sena.simgeplapp.LoginActivity;
 import com.adsi38_sena.simgeplapp.R;
 
 
@@ -19,46 +25,69 @@ public class MenuActivity extends Activity {
 
     SIMGEPLAPP simgeplapp;
 
-    private TextView lbl_user, lbl_sessState;
+    private TextView lbl_user;
     private Button btn_monitoreo;
     private Switch swch_service;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_menu_simgeplapp);
+        setContentView(R.layout.activity_menu);
 
         simgeplapp = (SIMGEPLAPP)getApplication();
 
-        swch_service = (Switch)findViewById(R.id.switch_service);
-        if(simgeplapp.serviceOn == true){
-            swch_service.setChecked(true);
+        if(simgeplapp.sessionAlive == true){
+
+            startService(new Intent(MenuActivity.this, ServicioMonitoreo.class));
+
+            swch_service = (Switch)findViewById(R.id.switch_monitorear);
+            if(simgeplapp.serviceOn == true){
+                swch_service.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        swch_service.setChecked(true);
+                    }
+                });
+            }
+            else {
+                swch_service.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        swch_service.setChecked(false);
+                    }
+                });
+            }
+
+            lbl_user = (TextView)findViewById(R.id.txv_user_session);
+
+            lbl_user.setText(""+simgeplapp.session.user);
+
+            btn_monitoreo = (Button)findViewById(R.id.btn_monitoreo);
+            btn_monitoreo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(MenuActivity.this, Monitoreo.class));
+                }
+            });
+
         }
         else {
-            swch_service.setChecked(false);
+
+            finish();
+            startActivity(new Intent(this, InicioSimgeplapp.class));
+            Toast.makeText(getApplicationContext(), "Inicia Sesion", Toast.LENGTH_LONG).show();
+
         }
 
-        lbl_user = (TextView)findViewById(R.id.lbl_user);
-        lbl_sessState = (TextView)findViewById(R.id.lbl_session_state);
 
-        lbl_user.setText(""+simgeplapp.session.user);
-
-        btn_monitoreo = (Button)findViewById(R.id.btn_monitoreo);
-        btn_monitoreo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MenuActivity.this, Monitoreo.class));
-            }
-        });
     }
 
     @Override
     protected void onStart(){
         super.onStart();
-        startService(new Intent(MenuActivity.this, ServicioMonitoreo.class));
     }
 
-    // Se llama cuando la actividad va a comenzar a interactuar con el usuario. Es un buen lugar para lanzar las animaciones y la música.
+    // Se llama cuando la actividad va a comenzar a interactuar con el usuario. Es un buen lugar para lanzar las animaciones y la mï¿½sica.
     @Override
     protected void onResume(){
         super.onResume();
@@ -75,13 +104,13 @@ public class MenuActivity extends Activity {
         super.onStop();
     }
 
-    //Indica que la actividad va a volver a ser representada después de haber pasado por onStop().
+    //Indica que la actividad va a volver a ser representada despuï¿½s de haber pasado por onStop().
     @Override
     protected void onRestart(){
         super.onRestart();
     }
 
-    //fin del ciclo de vida del activity, Se llama antes de que la actividad sea totalmente destruida. Por ejemplo, cuando el usuario pulsa el botón de volver o cuando se llama al método finish()
+    //fin del ciclo de vida del activity, Se llama antes de que la actividad sea totalmente destruida. Por ejemplo, cuando el usuario pulsa el botï¿½n de volver o cuando se llama al mï¿½todo finish()
     @Override
     protected void onDestroy(){
         super.onDestroy();
@@ -108,4 +137,44 @@ public class MenuActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    //CIERRE DE SESSION ==>
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)  {
+
+        AlertDialog.Builder construct_msg = new AlertDialog.Builder(this);
+        construct_msg.setMessage("Deseas Salir de la Aplicacion?")
+                .setTitle("Simgeplapp")
+                .setPositiveButton("Salir",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                SharedPreferences confUser = getSharedPreferences("mi_usuario", MODE_PRIVATE);
+                                SharedPreferences.Editor editor = confUser.edit();
+                                editor.putString("usuario", null);
+                                editor.putString("onsesion", null);
+                                editor.commit();
+                                finish();
+                                stopService(new Intent(MenuActivity.this, ServicioMonitoreo.class));
+                                startActivity(new Intent(MenuActivity.this, LoginActivity.class));
+                            }
+                        })
+                .setNegativeButton("Cancelar",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+        AlertDialog msg_emerg = construct_msg.create();
+
+        if (keyCode == KeyEvent.KEYCODE_BACK /*&& event.getRepeatCount() > 1*/) {
+
+            msg_emerg.show();
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
+
 }

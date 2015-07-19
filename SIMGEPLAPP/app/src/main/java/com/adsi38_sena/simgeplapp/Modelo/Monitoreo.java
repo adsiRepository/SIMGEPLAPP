@@ -1,4 +1,4 @@
-package com.adsi38_sena.simgeplapp.Controlador;
+package com.adsi38_sena.simgeplapp.Modelo;
 
 import android.app.Activity;
 import android.content.ComponentName;
