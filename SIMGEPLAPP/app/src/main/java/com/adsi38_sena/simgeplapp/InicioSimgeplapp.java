@@ -6,33 +6,33 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.adsi38_sena.simgeplapp.Controlador.Monitoreo;
 import com.adsi38_sena.simgeplapp.Modelo.MenuActivity;
 import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
 
 public class InicioSimgeplapp extends Activity {
 
-	SIMGEPLAPP simgeplapp;
+	SIMGEPLAPP simgeplapp;//aqui definimos un objeto de la clase global, lo mismo para cada componente
 
-    protected Button btn_entrar;
-    protected EditText txt_user;
+    protected ImageButton btn_entrar;
+
+    //constructor
+    public InicioSimgeplapp(){
+
+    }
 
 
     //MANTENER EL ESTADO AL ROTAR LA PANTALLA O AL REGRESAR
-
     //fuentes => https://sekthdroid.wordpress.com/2012/10/04/mantener-los-datos-cuando-rotemos-la-pantalla-en-android/
     @Override
     protected void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
-        outState.putString("txt_search", txt_user.getText().toString());
     }
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState){
         super.onRestoreInstanceState(savedInstanceState);
-        txt_user.setText(""+savedInstanceState.getString("txt_search"));
     }
 
     //----
@@ -41,51 +41,42 @@ public class InicioSimgeplapp extends Activity {
 	//CUERPO DEL ACTIVITY
     //*1
     //onCreate => se ejecuta cada vez que accedemos al activity, al girar la pantalla vuelve a ejecutarse porque esto es una transision que requiere volver a crear el activity; o al salir y regresar
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(com.adsi38_sena.simgeplapp.R.layout.activity_inicio_simgeplapp);
-        Toast.makeText(getBaseContext(), "onCreate", Toast.LENGTH_LONG).show();
+	//el activity no tiene cosntructor convencional, este es el reemplazo
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        //Toast.makeText(getBaseContext(), "onCreate", Toast.LENGTH_LONG).show();//toast que me indica el orden del ciclo de vida
 
-		simgeplapp = (SIMGEPLAPP)getApplication();//obtengo la instancia de la aplicacion
+        simgeplapp = (SIMGEPLAPP) getApplication();//obtengo la instancia de la aplicacion
 
-        txt_user = (EditText)findViewById(R.id.etx_user);
-
-        btn_entrar = (Button)findViewById(R.id.btn_init);
+        btn_entrar = (ImageButton) findViewById(R.id.btnimg_inicio);
         btn_entrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(simgeplapp.sessionAlive == false) {
-                    simgeplapp.session = new SIMGEPLAPP.Session();//Inicializo el objeto de session de la aplicacion
-                    simgeplapp.session.user = txt_user.getText().toString();//por ahora obtengo el nombre digitado
-                    simgeplapp.sessionAlive = true;
-                    startActivity(new Intent(InicioSimgeplapp.this, MenuActivity.class));
-                    Toast.makeText(getApplicationContext(), "Session Iniciada", Toast.LENGTH_LONG).show();
-                }
-                else {
-                    startActivity(new Intent(InicioSimgeplapp.this, Monitoreo.class));
-                }
+                startActivity(new Intent(InicioSimgeplapp.this, LoginActivity.class));
             }
         });
-	}
+
+    }
 
     //*2
-    //onStart => codigo que se ejecuta al iniciarse el activity, este se ejecuta al primer momento de abrir el activity y no se ejecuta mas.
+    //onStart => codigo que se ejecuta al iniciarse el activity, este se ejecuta al primer momento de abrir el activity.
     @Override
     protected void onStart(){
         super.onStart();
         //Intent intentServicio = new Intent(InicioSimgeplapp.this, ServicioMonitoreo.class);
         //startService(intentServicio);
-        Toast.makeText(getBaseContext(), "onStart()", Toast.LENGTH_LONG).show();
+        //Toast.makeText(getBaseContext(), "onStart()", Toast.LENGTH_LONG).show();
     }
 
-    //3
+    //*3
     //onResume => Se llama cuando la actividad va a comenzar a interactuar con el usuario. Es un buen lugar para lanzar las animaciones y la m�sica.
     //ultimo metodo que se ejecuta antes de estar completamente listo.
     @Override
     protected void onResume(){
         super.onResume();
-        Toast.makeText(getBaseContext(), "onResume", Toast.LENGTH_LONG).show();
+        //Toast.makeText(getBaseContext(), "onResume", Toast.LENGTH_LONG).show();
     }
     //*1 -> *2 -> *3 orden ejecutado al entrar al activity, ya sea iniciandolo o regresando. Incluso al girar pantalla este orden vuelve a ejecutarse.
 
@@ -100,28 +91,28 @@ public class InicioSimgeplapp extends Activity {
     @Override
     protected void onPause(){
         super.onPause();
-        Toast.makeText(getBaseContext(), "onPause", Toast.LENGTH_LONG).show();
+        //Toast.makeText(getBaseContext(), "onPause", Toast.LENGTH_LONG).show();
     }
 
     //onStop => se ejecuta cuando la actividad ya no es visible. El programador debe guardar el estado de la interfaz de usuario, preferencias, etc.
     @Override
     protected void onStop(){
         super.onStop();
-        Toast.makeText(getBaseContext(), "onStop()", Toast.LENGTH_LONG).show();
+        //Toast.makeText(getBaseContext(), "onStop()", Toast.LENGTH_LONG).show();
     }
 
     //fin del ciclo de vida del activity, Se llama antes de que la actividad sea totalmente destruida. Por ejemplo, cuando el usuario pulsa el bot�n de volver o cuando se llama al m�todo finish()
     @Override
     protected void onDestroy(){
         super.onDestroy();
-        Toast.makeText(getBaseContext(), "onDestroy", Toast.LENGTH_LONG).show();
+        //Toast.makeText(getBaseContext(), "onDestroy", Toast.LENGTH_LONG).show();
     }
 
     //Indica que la actividad va a volver a ser representada despu�s de haber pasado por onStop().
     @Override
     protected void onRestart(){
         super.onRestart();
-        Toast.makeText(getBaseContext(), "onRestart", Toast.LENGTH_LONG).show();
+        //Toast.makeText(getBaseContext(), "onRestart", Toast.LENGTH_LONG).show();
     }
 
     @Override
