@@ -10,7 +10,6 @@ import android.os.Vibrator;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -63,9 +62,9 @@ public class LoginActivity extends Activity implements FragmentoLogin.Llamados_d
         btn_login = (ImageButton)findViewById(R.id.btn_loggin);
 
         //PERSONALIZAR PROGRESSBAR => http://www.101apps.co.za/articles/android-s-progress-bars.html
-        spinner_logg = (ProgressBar)findViewById(R.id.progressLogin);
+        //spinner_logg = (ProgressBar)findViewById(R.id.progressLogin);
         //spinner_logg.setVisibility(View.INVISIBLE);
-        txv_prog_loggin = (TextView)findViewById(R.id.txv_prog_loggin);
+        //txv_prog_loggin = (TextView)findViewById(R.id.txv_prog_loggin);
 
         fragmento_loggeo = (FragmentoLogin)getFragmentManager().findFragmentByTag(TAG_FRAGMENTO_LOGGEO);
 

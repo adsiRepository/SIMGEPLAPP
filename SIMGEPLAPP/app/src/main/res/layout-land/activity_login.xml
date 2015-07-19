@@ -26,7 +26,6 @@
         android:editable="false"
         android:background="@android:color/white"
         android:textColor="#ff0e060e"
-        android:textAlignment="center"
         android:layout_above="@+id/textView_pass"
         android:layout_alignLeft="@+id/textView_pass"/>
 
@@ -38,7 +37,6 @@
         android:id="@+id/edt_pass"
         android:background="@android:color/white"
         android:textColor="#ff0e060e"
-        android:textAlignment="center"
         android:layout_above="@+id/btn_solic_reg"
         android:layout_toLeftOf="@+id/btn_loggin"
         android:layout_marginRight="37dp"/>
@@ -50,7 +48,6 @@
         android:layout_gravity="center_horizontal"
         android:background="@drawable/ingr"
         android:clickable="false"
-        android:backgroundTintMode="multiply"
         android:baselineAlignBottom="false"
         android:focusable="false"
         android:cropToPadding="false"

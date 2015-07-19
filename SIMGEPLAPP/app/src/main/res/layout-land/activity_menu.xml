@@ -21,8 +21,6 @@
         android:text="Usuarios"
         android:id="@+id/btn_usuarios"
         android:background="#ff5ccd51"
-        android:layout_marginStart="28dp"
-        android:backgroundTint="#ff3fff0b"
         android:layout_alignTop="@+id/btn_revision"
         android:layout_toRightOf="@+id/txv_user_session"/>
 
@@ -32,8 +30,6 @@
         android:text="Revision"
         android:id="@+id/btn_revision"
         android:background="#ff5ccd51"
-        android:backgroundTint="#ff3fff0b"
-        android:layout_marginEnd="28dp"
         android:layout_centerVertical="true"
         android:layout_alignRight="@+id/switch_monitorear"/>
 
@@ -43,7 +39,6 @@
         android:text="Monitoreo"
         android:id="@+id/btn_monitoreo"
         android:background="#ff5ccd51"
-        android:backgroundTint="#ff3fff0b"
         android:layout_above="@+id/fondo_menu"
         android:layout_centerHorizontal="true"/>
 
