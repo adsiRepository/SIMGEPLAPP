@@ -25,14 +25,14 @@ public class MenuActivity extends Activity {
 
     SIMGEPLAPP simgeplapp;
 
-    private TextView lbl_user, lbl_sessState;
+    private TextView lbl_user;
     private Button btn_monitoreo;
     private Switch swch_service;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_menu_simgeplapp);
+        setContentView(R.layout.activity_menu);
 
         simgeplapp = (SIMGEPLAPP)getApplication();
 
@@ -58,8 +58,7 @@ public class MenuActivity extends Activity {
                 });
             }
 
-            lbl_user = (TextView)findViewById(R.id.lbl_user);
-            lbl_sessState = (TextView)findViewById(R.id.lbl_session_state);
+            lbl_user = (TextView)findViewById(R.id.txv_user_session);
 
             lbl_user.setText(""+simgeplapp.session.user);
 

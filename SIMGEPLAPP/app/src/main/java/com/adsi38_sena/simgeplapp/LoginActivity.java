@@ -3,10 +3,7 @@ package com.adsi38_sena.simgeplapp;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -15,12 +12,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.adsi38_sena.simgeplapp.Controlador.FragmentoLogin;
-import com.adsi38_sena.simgeplapp.Modelo.MenuActivity;
 import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
 
 
@@ -29,7 +26,7 @@ public class LoginActivity extends Activity implements FragmentoLogin.Llamados_d
     private SIMGEPLAPP simgeplapp;//INSTANCIA DE LA APLICACION
 
     private EditText txt_user, txt_pass;
-    private Button btn_login;
+    private ImageButton btn_login;
     private TextView txv_prog_loggin;
 
     //private ProgressDialog pDialog;
@@ -63,7 +60,7 @@ public class LoginActivity extends Activity implements FragmentoLogin.Llamados_d
 
         txt_user = (EditText)findViewById(R.id.edt_user);
         txt_pass = (EditText)findViewById(R.id.edt_pass);
-        btn_login = (Button)findViewById(R.id.btn_login);
+        btn_login = (ImageButton)findViewById(R.id.btn_loggin);
 
         //PERSONALIZAR PROGRESSBAR => http://www.101apps.co.za/articles/android-s-progress-bars.html
         spinner_logg = (ProgressBar)findViewById(R.id.progressLogin);
