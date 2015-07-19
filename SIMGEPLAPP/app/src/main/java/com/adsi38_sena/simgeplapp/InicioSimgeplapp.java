@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.adsi38_sena.simgeplapp.Modelo.MenuActivity;
@@ -15,7 +16,7 @@ public class InicioSimgeplapp extends Activity {
 
 	SIMGEPLAPP simgeplapp;//aqui definimos un objeto de la clase global, lo mismo para cada componente
 
-    protected Button btn_entrar;
+    protected ImageButton btn_entrar;
 
     //constructor
     public InicioSimgeplapp(){
@@ -44,12 +45,12 @@ public class InicioSimgeplapp extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(com.adsi38_sena.simgeplapp.R.layout.activity_inicio_simgeplapp);
+        setContentView(R.layout.activity_main);
         //Toast.makeText(getBaseContext(), "onCreate", Toast.LENGTH_LONG).show();//toast que me indica el orden del ciclo de vida
 
         simgeplapp = (SIMGEPLAPP) getApplication();//obtengo la instancia de la aplicacion
 
-        btn_entrar = (Button) findViewById(R.id.btn_init);
+        btn_entrar = (ImageButton) findViewById(R.id.btnimg_inicio);
         btn_entrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

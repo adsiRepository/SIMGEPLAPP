@@ -10,29 +10,28 @@ import android.os.Vibrator;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.adsi38_sena.simgeplapp.Controlador.FragmentoLogin;
+import com.adsi38_sena.simgeplapp.Controlador.fragmentoLogin;
 import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
 
 
-public class LoginActivity extends Activity implements FragmentoLogin.Llamados_deActivity{
+public class LoginActivity extends Activity implements fragmentoLogin.Llamados_deActivity{
 
     private SIMGEPLAPP simgeplapp;//INSTANCIA DE LA APLICACION
 
     private EditText txt_user, txt_pass;
-    private Button btn_login;
-    private TextView txv_prog_loggin;
+    private ImageButton btn_login;
 
     //private ProgressDialog pDialog;
 
     public ProgressBar spinner_logg;
 
-    FragmentoLogin fragmento_loggeo;
+    fragmentoLogin fragmento_loggeo;
     String TAG_FRAGMENTO_LOGGEO = "Fragmento_Loggeo";
 
     //ESTADO
@@ -59,21 +58,21 @@ public class LoginActivity extends Activity implements FragmentoLogin.Llamados_d
 
         txt_user = (EditText)findViewById(R.id.edt_user);
         txt_pass = (EditText)findViewById(R.id.edt_pass);
-        btn_login = (Button)findViewById(R.id.btn_login);
+        btn_login = (ImageButton)findViewById(R.id.btn_loggin);
 
         //PERSONALIZAR PROGRESSBAR => http://www.101apps.co.za/articles/android-s-progress-bars.html
-        spinner_logg = (ProgressBar)findViewById(R.id.progressLogin);
-        //spinner_logg.setVisibility(View.INVISIBLE);
-        txv_prog_loggin = (TextView)findViewById(R.id.txv_prog_loggin);
+        spinner_logg = (ProgressBar)findViewById(R.id.prog_login);
 
-        fragmento_loggeo = (FragmentoLogin)getFragmentManager().findFragmentByTag(TAG_FRAGMENTO_LOGGEO);
+        fragmento_loggeo = (fragmentoLogin)getFragmentManager().findFragmentByTag(TAG_FRAGMENTO_LOGGEO);
 
         if(fragmento_loggeo != null){
             if(fragmento_loggeo.logging.getStatus() == AsyncTask.Status.RUNNING){
                 spinner_logg.setVisibility(View.VISIBLE);
-                txv_prog_loggin.setVisibility(View.VISIBLE);
                 btn_login.setEnabled(false);
             }
+        }
+        else {
+            spinner_logg.setVisibility(View.INVISIBLE);
         }
 
 
@@ -89,7 +88,7 @@ public class LoginActivity extends Activity implements FragmentoLogin.Llamados_d
                     //  new AsyncLogg().execute(user, pass);
 
                     FragmentManager manager_de_fragmentos = getFragmentManager();
-                    fragmento_loggeo = new FragmentoLogin();
+                    fragmento_loggeo = new fragmentoLogin();
                     Bundle bund = new Bundle();
                     bund.putString("usuario_digitado", user);
                     bund.putString("passw_digitado", pass);
@@ -145,7 +144,6 @@ public class LoginActivity extends Activity implements FragmentoLogin.Llamados_d
         //para el progress dialog
         //pDialog = new ProgressDialog(LoginActivity.this);
         //pDialog.setMessage("Comprobando Base de Datos");
-        txv_prog_loggin.setVisibility(View.VISIBLE);
         spinner_logg.setIndeterminate(true);
         //spinner_logg.setCancelable(false);
         spinner_logg.setVisibility(View.VISIBLE);
@@ -161,7 +159,6 @@ public class LoginActivity extends Activity implements FragmentoLogin.Llamados_d
     public void onPostExecute() {
         //pDialog.dismiss();//ocultamos progess dialog.
         spinner_logg.setVisibility(View.INVISIBLE);
-        txv_prog_loggin.setVisibility(View.INVISIBLE);
         btn_login.setEnabled(true);
         /*if (result == true){
             finish();
@@ -177,7 +174,6 @@ public class LoginActivity extends Activity implements FragmentoLogin.Llamados_d
     @Override
     public void onCancelled() {
         spinner_logg.setVisibility(View.INVISIBLE);
-        txv_prog_loggin.setVisibility(View.INVISIBLE);
         btn_login.setEnabled(true);
         loggError();
         Toast.makeText(getApplicationContext(), "Tiempo de Espera Excedido", Toast.LENGTH_SHORT).show();

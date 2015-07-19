@@ -49,11 +49,11 @@ public class SIMGEPLAPP extends Application{
     @Override
     public void onCreate(){
         super.onCreate();
-        /*
+
         SharedPreferences preferencias = getSharedPreferences("mi_usuario", MODE_PRIVATE);
         String estado_sesion = preferencias.getString("onsesion", null);
 
-        if(estado_sesion == "ok"){
+        if(estado_sesion != null){
             sessionAlive = true;
             session = new Session();
             session.user = preferencias.getString("usuario", null);
@@ -74,12 +74,12 @@ public class SIMGEPLAPP extends Application{
             Toast.makeText(this, "tu madre simgeplapp", Toast.LENGTH_SHORT).show();
             //Intent primer_ejecucion = new Intent();
             //primer_ejecucion.setAction("com.adsi38_sena.simgeplapp.Modelo.MENU");
-            //startActivity(primer_ejecucion);
+            //startActivity(primer_ejecucion);*/
         }
         else {
             sessionAlive = false;
         }
-        */
+
     }
 
     @Override

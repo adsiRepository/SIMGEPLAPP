@@ -49,8 +49,8 @@ public class ServicioMonitoreo extends Service {
 			proceso_delServicio.start();
 		}
 		//this.stopSelf();
-		//return START_STICKY;
-        return START_NOT_STICKY;
+		return START_STICKY;
+        //return START_NOT_STICKY;
         //return super.onStartCommand(intent, flags, startId);
 	}
 	private Thread proceso_delServicio = new Thread(new Runnable() {
