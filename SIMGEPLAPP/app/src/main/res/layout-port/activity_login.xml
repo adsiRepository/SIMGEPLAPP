@@ -24,7 +24,7 @@
         android:editable="false"
         android:background="@android:color/white"
         android:textColor="#ff0e060e"
-        android:layout_below="@+id/textView_pass"
+        android:layout_above="@+id/textView_pass"
         android:layout_centerHorizontal="true"/>
 
     <EditText
@@ -35,8 +35,9 @@
         android:id="@+id/edt_pass"
         android:background="@android:color/white"
         android:textColor="#ff0e060e"
-        android:layout_below="@+id/textView_user"
-        android:layout_centerHorizontal="true"/>
+        android:layout_above="@+id/prog_login"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="25dp"/>
 
     <ImageButton
         android:layout_width="wrap_content"
@@ -72,9 +73,8 @@
         android:id="@+id/textView_user"
         android:background="#06ffffff"
         android:textColor="#fffbfffb"
-        android:layout_marginTop="122dp"
-        android:layout_alignTop="@+id/fondo"
-        android:layout_centerHorizontal="true"/>
+        android:layout_above="@+id/edt_user"
+        android:layout_alignLeft="@+id/edt_user"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -84,7 +84,17 @@
         android:id="@+id/textView_pass"
         android:background="#06ffffff"
         android:textColor="#fffbfffb"
-        android:layout_below="@+id/edt_pass"
-        android:layout_centerHorizontal="true"/>
+        android:layout_above="@+id/edt_pass"
+        android:layout_alignLeft="@+id/edt_user"/>
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/prog_login"
+        android:indeterminate="true"
+        android:layout_above="@+id/btn_solic_reg"
+        android:layout_alignRight="@+id/textView_pass"
+        android:layout_marginBottom="15dp"/>
 
 </RelativeLayout>

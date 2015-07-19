@@ -24,7 +24,7 @@ import java.util.concurrent.TimeoutException;
 
 //DIALOGOS => http://developer.android.com/guide/topics/ui/dialogs.html
 
-public class FragmentoLogin extends Fragment {
+public class fragmentoLogin extends Fragment {
 
     public interface Llamados_deActivity {
         void onPreExecute();
@@ -43,7 +43,7 @@ public class FragmentoLogin extends Fragment {
 
     private Llamados_deActivity llamados;
 
-    public FragmentoLogin(){}
+    public fragmentoLogin(){}
 
     @Override
     public void onAttach(Activity activity){

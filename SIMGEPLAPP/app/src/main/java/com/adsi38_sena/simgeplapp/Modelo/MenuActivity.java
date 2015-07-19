@@ -40,7 +40,7 @@ public class MenuActivity extends Activity {
 
             startService(new Intent(MenuActivity.this, ServicioMonitoreo.class));
 
-            swch_service = (Switch)findViewById(R.id.switch_service);
+            swch_service = (Switch)findViewById(R.id.switch_monitorear);
             if(simgeplapp.serviceOn == true){
                 swch_service.post(new Runnable() {
                     @Override
