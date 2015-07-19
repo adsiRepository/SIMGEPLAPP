@@ -11,11 +11,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/fondo"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
+        android:background="@drawable/inter"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:background="@drawable/inter"/>
+        android:layout_alignParentLeft="true"/>
 
     <EditText
         android:layout_width="wrap_content"
@@ -26,10 +24,8 @@
         android:editable="false"
         android:background="@android:color/white"
         android:textColor="#ff0e060e"
-        android:textAlignment="center"
-        android:layout_above="@+id/edt_pass"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="44dp"/>
+        android:layout_below="@+id/textView_pass"
+        android:layout_centerHorizontal="true"/>
 
     <EditText
         android:layout_width="wrap_content"
@@ -39,10 +35,8 @@
         android:id="@+id/edt_pass"
         android:background="@android:color/white"
         android:textColor="#ff0e060e"
-        android:textAlignment="center"
-        android:layout_above="@+id/btn_loggin"
-        android:layout_alignLeft="@+id/edt_user"
-        android:layout_marginBottom="20dp"/>
+        android:layout_below="@+id/textView_user"
+        android:layout_centerHorizontal="true"/>
 
     <ImageButton
         android:layout_width="wrap_content"
@@ -51,7 +45,6 @@
         android:layout_gravity="center_horizontal"
         android:background="@drawable/ingr"
         android:clickable="false"
-        android:backgroundTintMode="multiply"
         android:baselineAlignBottom="false"
         android:focusable="false"
         android:cropToPadding="false"
@@ -59,8 +52,7 @@
         android:longClickable="false"
         android:visibility="visible"
         android:layout_above="@+id/btn_solic_reg"
-        android:layout_toRightOf="@+id/btn_solic_reg"
-        android:layout_marginBottom="15dp"/>
+        android:layout_toRightOf="@+id/btn_solic_reg"/>
 
     <ImageButton
         android:layout_width="wrap_content"
@@ -69,7 +61,7 @@
         android:background="@drawable/registrar"
         android:onClick="interfaz4"
         android:clickable="true"
-        android:layout_alignParentBottom="true"
+        android:layout_alignBottom="@+id/fondo"
         android:layout_alignParentLeft="true"/>
 
     <TextView
@@ -80,9 +72,9 @@
         android:id="@+id/textView_user"
         android:background="#06ffffff"
         android:textColor="#fffbfffb"
-        android:layout_above="@+id/edt_user"
-        android:layout_alignLeft="@+id/edt_user"
-        />
+        android:layout_marginTop="122dp"
+        android:layout_alignTop="@+id/fondo"
+        android:layout_centerHorizontal="true"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -92,7 +84,7 @@
         android:id="@+id/textView_pass"
         android:background="#06ffffff"
         android:textColor="#fffbfffb"
-        android:layout_above="@+id/edt_pass"
-        android:layout_alignLeft="@+id/edt_pass"/>
+        android:layout_below="@+id/edt_pass"
+        android:layout_centerHorizontal="true"/>
 
 </RelativeLayout>
