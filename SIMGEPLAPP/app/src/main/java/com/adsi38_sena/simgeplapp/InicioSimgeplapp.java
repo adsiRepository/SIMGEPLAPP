@@ -5,11 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
-import com.adsi38_sena.simgeplapp.Modelo.MenuActivity;
 import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
 
 public class InicioSimgeplapp extends Activity {

@@ -1,4 +1,4 @@
-package com.adsi38_sena.simgeplapp.Controlador;
+package com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor;
 
 
 import org.apache.http.HttpEntity;

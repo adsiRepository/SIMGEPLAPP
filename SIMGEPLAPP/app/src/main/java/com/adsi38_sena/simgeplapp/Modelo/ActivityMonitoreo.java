@@ -24,7 +24,7 @@ import com.adsi38_sena.simgeplapp.R;
 
 import java.text.DecimalFormat;
 
-public class Monitoreo extends Activity {
+public class ActivityMonitoreo extends Activity {
 
     SIMGEPLAPP simgeplapp;
 
