@@ -1,4 +1,4 @@
-package com.adsi38_sena.simgeplapp.Controlador;
+package com.adsi38_sena.simgeplapp.Vistas;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -22,11 +22,15 @@ import android.widget.Toast;
 import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
 import com.adsi38_sena.simgeplapp.R;
 
-public class Monitoreo extends Activity {
+import java.text.DecimalFormat;
+
+public class ActivityMonitoreo extends Activity {
 
     SIMGEPLAPP simgeplapp;
 
     protected AutoActualizacion autoAct;
+
+    private final DecimalFormat decimalFormat = new DecimalFormat("#.##");
 
     //ServicioMonitoreo theService;
 
@@ -35,28 +39,24 @@ public class Monitoreo extends Activity {
 
     private Messenger mensajero;
 
-    //definicion del Objeto que enlaza al servicio
-    private ServiceConnection conexService = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {//este iBinder es la interfaz recibida una vez se ha conectado al servicio
-            //Enlace enlace = (Enlace)iBinder;
-            //theService = enlace.getService();
-            mensajero = new Messenger(iBinder);
-            if(mensajero != null){
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                Toast.makeText(getBaseContext(), "Conexion Establecida Correctamente", Toast.LENGTH_LONG).show();
-            }
-        }
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            //theService = null;
-        }
-    };
+    CharSequence[] estado_variables;
 
+    //control de estado de la pantalla
+    @Override
+    protected void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        estado_variables = new CharSequence[]{txv_TEMP.getText(), txv_PRES.getText(), txv_NIV.getText()};
+        outState.putCharSequenceArray("variables", estado_variables);
+    }
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState){
+        super.onRestoreInstanceState(savedInstanceState);
+        estado_variables = savedInstanceState.getCharSequenceArray("variables");
+        txv_TEMP.setText(estado_variables[0]);
+        txv_PRES.setText(estado_variables[1]);
+        txv_NIV.setText(estado_variables[2]);
+    }
+    //-------
 
     //CUERPO DEL ACTIVITY
     //onCreate => se ejecuta cada vez que accedemos al activity, al girar la pantalla vuelve a ejecutarse porque esto es una transision que requiere volver a crear el activity; o al salir y regresar
@@ -67,12 +67,16 @@ public class Monitoreo extends Activity {
 
         simgeplapp = (SIMGEPLAPP)getApplication();
 
+        autoAct = new AutoActualizacion();
+        autoAct.execute();
+
         txv_TEMP = (TextView) findViewById(R.id.txv_lec_temp);
         txv_PRES = (TextView) findViewById(R.id.txv_lec_pres);
         txv_NIV = (TextView) findViewById(R.id.txv_lec_niv);
         btnPrueba = (Button) findViewById(R.id.btn_init);
 
-        //bindService(new Intent(InicioSimgeplapp.this, ServicioMonitoreo.class), conexService, Context.BIND_AUTO_CREATE);
+        //enlace al servicio, metodo no usado. Consulta: servicios enlazados en android
+        //bindService(new Intent(InicioSimgeplapp.this, ServicioMonitoreo.class), conexService, Context.BIND_AUTO_CREATE);//
 
         btnPrueba.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,26 +89,17 @@ public class Monitoreo extends Activity {
 				//bund.putString("datoTransferido", valorEnviado);
 				//msg.setData(bund);
 				try {
-					mensajero.send(msg);//mensajero es el campo que contiene el IBinder recibido del ServiceConnection. Este contiene el manejador (la clase Handler) que se encuentra en el Controlador (su manejador de mensajes)
-										//asi que al pasarle un mensaje (.send(mensaje)) se esta ejecutando el codigo del Handler del Controlador
+					mensajero.send(msg);//mensajero es el campo que contiene el IBinder recibido del ServiceConnection. Este contiene el manejador (la clase Handler) que se encuentra en el servicio (su manejador de mensajes)
+										//asi que al pasarle un mensaje (.send(mensaje)) se esta ejecutando el codigo del Handler del servicio
 				} catch (RemoteException e) {
 					Toast.makeText(getBaseContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
 					e.printStackTrace();
 				}*/
-                //txv_TEMP.setText(theService.getVariablePrueba1());
-                //txv_TEMP.setText(String.valueOf(simgeplapp.Gvalues[0]));
-                //txv_PRES.setText(String.valueOf(simgeplapp.Gvalues[1]));
-
-                startService(new Intent(Monitoreo.this, ServicioMonitoreo.class));
-
-                autoAct = new AutoActualizacion();
-                autoAct.execute();
-            }
+}
         });
 
     }
 
-    //onStart => codigo que se ejecuta al iniciarse el activity, este se ejecuta al primer momento de abrir el activity y no se ejecuta mas.
     @Override
     protected void onStart(){
         super.onStart();
@@ -144,7 +139,8 @@ public class Monitoreo extends Activity {
         super.onDestroy();
     }
 
-    //hilo que actualiza los TextView que muestran las variables
+
+    //hilo que actualiza los TextView que muestran las variables. Consulta: AsyncTask
     private class AutoActualizacion extends AsyncTask<Double, Double, Double> {
         private Double[] valores;
         @Override
@@ -156,29 +152,58 @@ public class Monitoreo extends Activity {
         protected Double doInBackground(Double... params) {
             while (true){ // true = hara indefinido este ciclo
                 try {
-                    Thread.sleep(1100); // se pausara la ejecucion durante 3 segundos
-                    //el siguiente metodo lo que hace es llamar al onProgressUpdate pasandole los valores con que operara
-                    valores[0] = simgeplapp.TEMP;
-                    valores[1] = simgeplapp.PRES;
+                    Thread.sleep(20200); // se pausara la ejecucion durante 3 segundos
+                    valores[0] = simgeplapp.TEMP;//obtengo los valores de las variables globales del monitoreo
+                    valores[1] = simgeplapp.PRES;//que se redefinen en el servicio
                     valores[2] = simgeplapp.NIV;
+                    //el siguiente metodo lo que hace es llamar al onProgressUpdate pasandole los valores con que operara
                     publishProgress(valores);
                 } catch (InterruptedException eh) {
+                    Toast.makeText(getBaseContext(), "error doInBack, hilo monitoreo", Toast.LENGTH_LONG).show();
                     Log.d(null, eh.getLocalizedMessage());
                 }
             }
         }
         @Override
-        protected void onProgressUpdate(Double... values){
-            txv_TEMP.setText(String.valueOf(values[0]));
-            txv_PRES.setText(String.valueOf(values[1]));
-            txv_NIV.setText(String.valueOf(values[2]));
+        protected void onProgressUpdate(Double... values){//recibo los valores pasados en el "publishProgress"
+            try {
+                txv_TEMP.setText("" + decimalFormat.format(values[0]));
+                txv_PRES.setText("" + decimalFormat.format(values[1]));
+                txv_NIV.setText("" + decimalFormat.format(values[2]));
+            }catch (Exception eh){
+                Toast.makeText(getBaseContext(), "error publishprog, hilo monitoreo", Toast.LENGTH_LONG).show();
+            }
         }
         @Override
         protected void onCancelled(){
         }
     }
 
-    private class RecibidorRespuestasServicio extends Handler {
+    //////--------      METODOS DE ENLACE AL SERVICE EN SEGUNDO PLANO
+    //metodos para enlazar servicios en segundo plano para intercambiar datos, actualmente no usados debido al uso de variables globales
+    /*private Messenger mensajero;
+    //definicion del Objeto que enlaza al servicio
+    private ServiceConnection conexService = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder servicio) {//este servicio es la interfaz recibida una vez se ha conectado al servicio
+            //Enlace enlace = (Enlace)servicio;
+            //theService = enlace.getService();
+            mensajero = new Messenger(servicio);//aqui recibe la interfaz retornada en el metodo onBind del servicio
+            if(mensajero != null){
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Toast.makeText(getBaseContext(), "Conexion Establecida Correctamente", Toast.LENGTH_LONG).show();
+            }
+        }
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            //theService = null;
+        }
+    };*/
+    /*private class RecibidorRespuestasServicio extends Handler {
         @Override
         public void handleMessage(Message msg){
             int CualMsg = msg.what;
@@ -190,11 +215,14 @@ public class Monitoreo extends Activity {
             }
         }
     }
+    }*/
+    //////--------
 
 
+    //MENU
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // Inflate the menu; this adds items to the action bar if it stream present.
         getMenuInflater().inflate(com.adsi38_sena.simgeplapp.R.menu.main, menu);
         return true;
     }

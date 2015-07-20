@@ -6,5 +6,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_monitoreo">Monitoreo</string>
     <string name="title_activity_menu__simgeplapp">Menu_Simgeplapp</string>
+    <string name="title_activity_login">Login Simgeplapp</string>
+    <string name="title_activity_gestion_usuarios">usuarios simgeplapp</string>
 
 </resources>
