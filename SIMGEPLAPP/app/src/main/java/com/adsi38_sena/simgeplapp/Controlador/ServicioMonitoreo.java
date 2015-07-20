@@ -35,7 +35,7 @@ public class ServicioMonitoreo extends Service {
         super.onCreate();
         simgeplapp = (SIMGEPLAPP)getApplication();
         SystemClock.sleep(1100);
-		Toast.makeText(getBaseContext(), "Monitoreo Simgeplapp en marcha", Toast.LENGTH_LONG).show();
+		Toast.makeText(getBaseContext(), "ActivityMonitoreo Simgeplapp en marcha", Toast.LENGTH_LONG).show();
         simgeplapp.serviceOn = true;
         notif = new Notificador(simgeplapp);
 	}
@@ -49,8 +49,8 @@ public class ServicioMonitoreo extends Service {
 			proceso_delServicio.start();
 		}
 		//this.stopSelf();
-		return START_STICKY;
-        //return START_NOT_STICKY;
+		//return START_STICKY;
+        return START_NOT_STICKY;
         //return super.onStartCommand(intent, flags, startId);
 	}
 	private Thread proceso_delServicio = new Thread(new Runnable() {
@@ -77,7 +77,7 @@ public class ServicioMonitoreo extends Service {
 	public void onDestroy() {
 		super.onDestroy();
         simgeplapp.serviceOn = false;
-        Toast.makeText(getBaseContext(), "Monitoreo Simgeplapp finalizado", Toast.LENGTH_LONG).show();
+        Toast.makeText(getBaseContext(), "ActivityMonitoreo Simgeplapp finalizado", Toast.LENGTH_LONG).show();
 	}
 
 
