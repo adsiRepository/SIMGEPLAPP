@@ -1,8 +1,10 @@
 package com.adsi38_sena.simgeplapp;
 
 import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.view.Menu;
@@ -11,20 +13,26 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor.AsyncLoggin;
-import com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor.GestionCargas;
-import com.adsi38_sena.simgeplapp.Modelo.ActivityMenu;
+import com.adsi38_sena.simgeplapp.Controlador.fragmentoLogin;
 import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
 
 
-public class LoginActivity extends Activity /*implements AsyncLoggin.Llamados_deActivity*/{
+public class LoginActivity extends Activity implements fragmentoLogin.Llamados_deActivity{
 
     private SIMGEPLAPP simgeplapp;//INSTANCIA DE LA APLICACION
 
     private EditText txt_user, txt_pass;
     private ImageButton btn_login;
+
+    //private ProgressDialog pDialog;
+
+    public ProgressBar spinner_logg;
+
+    fragmentoLogin fragmento_loggeo;
+    String TAG_FRAGMENTO_LOGGEO = "Fragmento_Loggeo";
 
     //ESTADO
     @Override
@@ -53,8 +61,20 @@ public class LoginActivity extends Activity /*implements AsyncLoggin.Llamados_de
         btn_login = (ImageButton)findViewById(R.id.btn_loggin);
 
         //PERSONALIZAR PROGRESSBAR => http://www.101apps.co.za/articles/android-s-progress-bars.html
+        spinner_logg = (ProgressBar)findViewById(R.id.prog_login);
 
-        GestionCargas.obtenerInstancia().adjuntarProcesoLoggin(simgeplapp.LLAVE_PROCESO_LOGIN, this);
+        fragmento_loggeo = (fragmentoLogin)getFragmentManager().findFragmentByTag(TAG_FRAGMENTO_LOGGEO);
+
+        if(fragmento_loggeo != null){
+            if(fragmento_loggeo.logging.getStatus() == AsyncTask.Status.RUNNING){
+                spinner_logg.setVisibility(View.VISIBLE);
+                btn_login.setEnabled(false);
+            }
+        }
+        else {
+            spinner_logg.setVisibility(View.INVISIBLE);
+        }
+
 
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,11 +83,19 @@ public class LoginActivity extends Activity /*implements AsyncLoggin.Llamados_de
                 String user = txt_user.getText().toString();
                 String pass = txt_pass.getText().toString();
 
-                if ((user.length() * pass.length()) > 0) {
+                if ((user.length() * pass.length()) > 0) {//verificamos si estan en blanco
+                    //si pasamos esa validacion ejecutamos el asynctask pasando el usuario y clave como parametros
+                    //  new AsyncLogg().execute(user, pass);
 
-                    AsyncLoggin loggin = new AsyncLoggin();
-                    GestionCargas.obtenerInstancia().ejecutarLoggeo(simgeplapp.LLAVE_PROCESO_LOGIN, loggin, LoginActivity.this);
-                    loggin.execute(user, pass);
+                    FragmentManager manager_de_fragmentos = getFragmentManager();
+                    fragmento_loggeo = new fragmentoLogin();
+                    Bundle bund = new Bundle();
+                    bund.putString("usuario_digitado", user);
+                    bund.putString("passw_digitado", pass);
+                    fragmento_loggeo.setArguments(bund);
+                    FragmentTransaction transaccion = manager_de_fragmentos.beginTransaction();
+                    transaccion.add(fragmento_loggeo, TAG_FRAGMENTO_LOGGEO);
+                    transaccion.commit();
 
                 } else {
                     loggError();
@@ -75,12 +103,6 @@ public class LoginActivity extends Activity /*implements AsyncLoggin.Llamados_de
                 }
             }
         });
-    }
-
-    public void onLogged(){
-        finish();
-        startActivity(new Intent(getApplicationContext(), ActivityMenu.class));
-        Toast.makeText(getApplicationContext(), "Session Iniciada", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -99,12 +121,62 @@ public class LoginActivity extends Activity /*implements AsyncLoggin.Llamados_de
     @Override
     protected void onDestroy(){
         super.onDestroy();
-        GestionCargas.obtenerInstancia().desAdjuntarProcesoLoggin(simgeplapp.LLAVE_PROCESO_LOGIN);
+
     }
     @Override
     protected void onRestart(){
         super.onRestart();
 
+    }
+
+    /*@Override
+    public void onConfigurationChanged(Configuration newConf){
+        super.onConfigurationChanged(newConf);
+        setContentView(R.layout.activity_login);
+    }*/
+
+    //implementamos los metodos accedidos mediante el interface del fragmento (...implements Frag..gin.Llamados..vity,
+    // esto nos permite acceder directamente a esos metodos(ejecutados en el fragmento).
+    //es lo que hace el interface: me permite ejecutar esos metodos desde acá, es hacer el proceso aya y recibir resultados aca
+    // (como una superposicion)
+    @Override
+    public void onPreExecute() {
+        //para el progress dialog
+        //pDialog = new ProgressDialog(LoginActivity.this);
+        //pDialog.setMessage("Comprobando Base de Datos");
+        spinner_logg.setIndeterminate(true);
+        //spinner_logg.setCancelable(false);
+        spinner_logg.setVisibility(View.VISIBLE);
+        btn_login.setEnabled(false);
+    }
+
+    @Override
+    public void onProgressUpdate(String... values) {
+        Toast.makeText(getApplicationContext(), values[0], Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onPostExecute() {
+        //pDialog.dismiss();//ocultamos progess dialog.
+        spinner_logg.setVisibility(View.INVISIBLE);
+        btn_login.setEnabled(true);
+        /*if (result == true){
+            finish();
+            startActivity(new Intent(LoginActivity.this, MenuActivity.class));
+            Toast.makeText(getApplicationContext(), "Session Iniciada", Toast.LENGTH_LONG).show();
+            // }
+        } else {
+            loggError();
+            Toast.makeText(getApplicationContext(), "No se pudo iniciar sesion", Toast.LENGTH_SHORT).show();
+        }*/
+    }
+
+    @Override
+    public void onCancelled() {
+        spinner_logg.setVisibility(View.INVISIBLE);
+        btn_login.setEnabled(true);
+        loggError();
+        Toast.makeText(getApplicationContext(), "Tiempo de Espera Excedido", Toast.LENGTH_SHORT).show();
     }
 
     protected void loggError(){

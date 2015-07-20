@@ -35,10 +35,6 @@ public class SIMGEPLAPP extends Application{
 
     public static boolean sessionAlive;
 
-    public static final String TAG_FRAG_LOGGIN = "fragmento_loggin";
-
-    public static final String LLAVE_PROCESO_LOGIN = "loggeo_en_proceso";
-
     //--fin declaracion de atributos--
 
     //METODOS DE LA APLICACION
@@ -69,7 +65,7 @@ public class SIMGEPLAPP extends Application{
             for (ResolveInfo r : list_activitys){
                 String pkgName = r.activityInfo.packageName;
                 String className = r.activityInfo.name;
-                if(className == "com.adsi38_sena.simgeplapp.Modelo.ActivityMenu"){
+                if(className == "com.adsi38_sena.simgeplapp.Modelo.MenuActivity"){
                     Intent primer_ejecucion = new Intent();
                     primer_ejecucion.setClassName(pkgName, className);
                     startActivity(primer_ejecucion);
