@@ -2,18 +2,10 @@ package com.adsi38_sena.simgeplapp.Modelo;
 
 
 import android.app.Application;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.widget.Toast;
-
-import com.adsi38_sena.simgeplapp.InicioSimgeplapp;
-
-import java.util.List;
 
 //esta clase como ven se extiende de la clase Application. La funcion de esta clase es sostener las variables globales de toda la aplicacion.
 //Al ser extendida de la clase Application se puede instanciar la aplicacion en si como un objeto de esta clase.
@@ -69,7 +61,7 @@ public class SIMGEPLAPP extends Application{
             for (ResolveInfo r : list_activitys){
                 String pkgName = r.activityInfo.packageName;
                 String className = r.activityInfo.name;
-                if(className == "com.adsi38_sena.simgeplapp.Modelo.ActivityMenu"){
+                if(className == "com.adsi38_sena.simgeplapp.Vistas.ActivityMenu"){
                     Intent primer_ejecucion = new Intent();
                     primer_ejecucion.setClassName(pkgName, className);
                     startActivity(primer_ejecucion);

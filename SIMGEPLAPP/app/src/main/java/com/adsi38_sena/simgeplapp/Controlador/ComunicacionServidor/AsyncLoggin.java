@@ -7,7 +7,7 @@ import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.widget.Toast;
 
-import com.adsi38_sena.simgeplapp.LoginActivity;
+import com.adsi38_sena.simgeplapp.Vistas.ActivityLogin;
 import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
 
 
@@ -17,7 +17,7 @@ public class AsyncLoggin extends AsyncTask<String, String, Boolean> {
     private String dirIP_server = "192.168.0.14";
 
     private FragmentoCargaServidor dialogo_carga;
-    private LoginActivity myActy;
+    private ActivityLogin myActy;
 
     ComunicadorServidor server;
 
@@ -96,7 +96,7 @@ public class AsyncLoggin extends AsyncTask<String, String, Boolean> {
     }
 
     public void setMyActy(Activity myActy) {
-        this.myActy = (LoginActivity) myActy;
+        this.myActy = (ActivityLogin) myActy;
     }
 
     public void desAdjuntar() {

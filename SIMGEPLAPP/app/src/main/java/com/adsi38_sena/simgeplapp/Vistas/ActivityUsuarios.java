@@ -1,4 +1,4 @@
-package com.adsi38_sena.simgeplapp.Modelo;
+package com.adsi38_sena.simgeplapp.Vistas;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -38,7 +38,7 @@ public class ActivityUsuarios extends Activity {
         select_tipo_id.setAdapter(adp);
 
         rol_admin  = (RadioButton)findViewById(R.id.radio_admin);
-        rol_apz  = (RadioButton)findViewById(R.id.radio_apz);
+        rol_apz  = (RadioButton)findViewById(R.id.radio_aprendiz);
     }
 
 

@@ -1,4 +1,4 @@
-package com.adsi38_sena.simgeplapp.Modelo;
+package com.adsi38_sena.simgeplapp.Vistas;
 
 import android.app.Activity;
 import android.content.ComponentName;

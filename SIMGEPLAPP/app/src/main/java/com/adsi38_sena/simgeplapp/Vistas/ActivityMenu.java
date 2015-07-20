@@ -1,4 +1,4 @@
-package com.adsi38_sena.simgeplapp.Modelo;
+package com.adsi38_sena.simgeplapp.Vistas;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -17,8 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.adsi38_sena.simgeplapp.Controlador.ServicioMonitoreo;
-import com.adsi38_sena.simgeplapp.InicioSimgeplapp;
-import com.adsi38_sena.simgeplapp.LoginActivity;
+import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
 import com.adsi38_sena.simgeplapp.R;
 
 
@@ -177,7 +176,7 @@ public class ActivityMenu extends Activity {
                                     editor.commit();
                                     finish();
                                     stopService(new Intent(ActivityMenu.this, ServicioMonitoreo.class));
-                                    startActivity(new Intent(ActivityMenu.this, LoginActivity.class));
+                                    startActivity(new Intent(ActivityMenu.this, ActivityLogin.class));
                                 }
                             })
                     .setNegativeButton("Cancelar",

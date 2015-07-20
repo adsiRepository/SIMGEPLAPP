@@ -1,4 +1,4 @@
-package com.adsi38_sena.simgeplapp;
+package com.adsi38_sena.simgeplapp.Vistas;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,16 +10,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor.AsyncLoggin;
 import com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor.GestionCargas;
-import com.adsi38_sena.simgeplapp.Modelo.ActivityMenu;
+import com.adsi38_sena.simgeplapp.R;
 import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
 
 
-public class LoginActivity extends Activity /*implements AsyncLoggin.Llamados_deActivity*/{
+public class ActivityLogin extends Activity /*implements AsyncLoggin.Llamados_deActivity*/{
 
     private SIMGEPLAPP simgeplapp;//INSTANCIA DE LA APLICACION
 
@@ -49,7 +48,7 @@ public class LoginActivity extends Activity /*implements AsyncLoggin.Llamados_de
         simgeplapp = (SIMGEPLAPP)getApplication();
 
         txt_user = (EditText)findViewById(R.id.edt_user);
-        txt_pass = (EditText)findViewById(R.id.edt_pass);
+        txt_pass = (EditText)findViewById(R.id.edt_contrasena);
         btn_login = (ImageButton)findViewById(R.id.btn_loggin);
 
         //PERSONALIZAR PROGRESSBAR => http://www.101apps.co.za/articles/android-s-progress-bars.html
@@ -66,7 +65,7 @@ public class LoginActivity extends Activity /*implements AsyncLoggin.Llamados_de
                 if ((user.length() * pass.length()) > 0) {
 
                     AsyncLoggin loggin = new AsyncLoggin();
-                    GestionCargas.obtenerInstancia().ejecutarLoggeo(simgeplapp.LLAVE_PROCESO_LOGIN, loggin, LoginActivity.this);
+                    GestionCargas.obtenerInstancia().ejecutarLoggeo(simgeplapp.LLAVE_PROCESO_LOGIN, loggin, ActivityLogin.this);
                     loggin.execute(user, pass);
 
                 } else {
