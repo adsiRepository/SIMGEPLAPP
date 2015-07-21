@@ -49,6 +49,10 @@ public class SIMGEPLAPP extends Application{
         public static final String LLAVE_PROCESO_CARGA_USERS = "cargando_usuario";
     }
 
+    public static class NOTIFICACIONES{
+        public static final int ID_NOTIFICACION_ALERTA = 5;
+    }
+
     //--fin declaracion de atributos--
 
     //METODOS DE LA APLICACION

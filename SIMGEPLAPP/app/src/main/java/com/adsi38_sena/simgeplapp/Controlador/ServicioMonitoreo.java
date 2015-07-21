@@ -35,9 +35,9 @@ public class ServicioMonitoreo extends Service {
         super.onCreate();
         simgeplapp = (SIMGEPLAPP)getApplication();
         SystemClock.sleep(1100);
-		Toast.makeText(getBaseContext(), "ActivityMonitoreo Simgeplapp en marcha", Toast.LENGTH_LONG).show();
+		Toast.makeText(getBaseContext(), "Monitoreo Simgeplapp en marcha", Toast.LENGTH_LONG).show();
         simgeplapp.serviceOn = true;
-        notif = new Notificador(simgeplapp);
+        notif = new Notificador(/*simgeplapp*/);
 	}
 
 
@@ -49,22 +49,22 @@ public class ServicioMonitoreo extends Service {
 			proceso_delServicio.start();
 		}
 		//this.stopSelf();
-		//return START_STICKY;
-        return START_NOT_STICKY;
+		return START_STICKY;
+        //return START_NOT_STICKY;
         //return super.onStartCommand(intent, flags, startId);
 	}
 	private Thread proceso_delServicio = new Thread(new Runnable() {
 		Random random = new Random();
 		@Override
 		public void run() {//por ahora estamos generando las variables con Random. Aqui hay que implementar la comunicacion al servidor
-			while(true) {
+			while(simgeplapp.serviceOn) {
 				try {
-                    Thread.sleep(20000);
+                    Thread.sleep(2000);
                     simgeplapp.TEMP = (random.nextDouble() * (178 - 19)) + 19;
 					simgeplapp.PRES = (random.nextDouble() * (168 - 16)) + 16;
                     simgeplapp.NIV = (random.nextDouble() * (166 - 18)) + 18;
                     if(simgeplapp.TEMP > 170 || simgeplapp.PRES > 140 || simgeplapp.NIV > 160){
-                        notif.notificarAlertaPlanta();
+                        notif.notificarAlertaPlanta(ServicioMonitoreo.this);
                     }
 				} catch (InterruptedException e) {
 					e.printStackTrace();
@@ -76,8 +76,13 @@ public class ServicioMonitoreo extends Service {
     @Override
 	public void onDestroy() {
 		super.onDestroy();
-        simgeplapp.serviceOn = false;
-        Toast.makeText(getBaseContext(), "ActivityMonitoreo Simgeplapp finalizado", Toast.LENGTH_LONG).show();
+        try {
+            simgeplapp.serviceOn = false;
+            //proceso_delServicio.interrupt();
+            Toast.makeText(getBaseContext(), "Monitoreo Simgeplapp finalizado", Toast.LENGTH_LONG).show();
+        }catch (Exception eh){
+            Toast.makeText(getBaseContext(), eh.toString(), Toast.LENGTH_LONG).show();
+        }
 	}
 
 
