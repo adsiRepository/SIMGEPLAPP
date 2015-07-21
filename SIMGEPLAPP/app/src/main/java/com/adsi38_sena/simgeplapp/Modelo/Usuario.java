@@ -8,29 +8,45 @@ import java.util.Collection;
 
 public class Usuario {
 
-    public String nom, ape, ide, tipo_ide, tel, email, pass, rol;
+    public String nom;
+    public String ape;
+    public String ide;
+    public String tipo_ide;
+    public String tel;
+    public String email;
+    public String nick;
+    public String pass;
+    public String rol;
 
-    protected ArrayList<NameValuePair> atributos_deUsuario;
+    public ArrayList<NameValuePair> atributos_deUsuario;
 
     public Usuario(){
-        this.atributos_deUsuario = new ArrayList<NameValuePair>(8);
+        this.atributos_deUsuario = new ArrayList<NameValuePair>(9);
     }
 
     public ArrayList<NameValuePair> obtenerPaquete_Atributos() {
         if(atributos_deUsuario.isEmpty()){
 
-            /*for (int i = 0; i < atributos_deUsuario.size(); i++){
-                atributos_deUsuario.remove(i);
-            }*/
-
-            atributos_deUsuario.add(new BasicNameValuePair("nombre", nom));
-            atributos_deUsuario.add(new BasicNameValuePair("apellido", ape));
+            atributos_deUsuario.add(new BasicNameValuePair("nom", nom));
+            atributos_deUsuario.add(new BasicNameValuePair("ape", ape));
             atributos_deUsuario.add(new BasicNameValuePair("id", ide));
             atributos_deUsuario.add(new BasicNameValuePair("tipo_id", tipo_ide));
-            atributos_deUsuario.add(new BasicNameValuePair("telefono", tel));
+            atributos_deUsuario.add(new BasicNameValuePair("tel", tel));
             atributos_deUsuario.add(new BasicNameValuePair("email", email));
+            atributos_deUsuario.add(new BasicNameValuePair("nick", nick));
             atributos_deUsuario.add(new BasicNameValuePair("pass", pass));
             atributos_deUsuario.add(new BasicNameValuePair("rol", rol));
+        }
+        else {
+            atributos_deUsuario.set(0, new BasicNameValuePair("nom", nom));
+            atributos_deUsuario.set(1, new BasicNameValuePair("ape", ape));
+            atributos_deUsuario.set(2, new BasicNameValuePair("id", ide));
+            atributos_deUsuario.set(3, new BasicNameValuePair("tipo_id", tipo_ide));
+            atributos_deUsuario.set(4, new BasicNameValuePair("tel", tel));
+            atributos_deUsuario.set(5, new BasicNameValuePair("email", email));
+            atributos_deUsuario.set(6, new BasicNameValuePair("nick", nick));
+            atributos_deUsuario.set(7, new BasicNameValuePair("pass", pass));
+            atributos_deUsuario.set(8, new BasicNameValuePair("rol", rol));
         }
         return atributos_deUsuario;
     }
@@ -99,6 +115,14 @@ public class Usuario {
 
     public void setRol(String rol) {
         this.rol = rol;
+    }
+
+    public String getNick() {
+        return nick;
+    }
+
+    public void setNick(String nick) {
+        this.nick = nick;
     }
 
 }

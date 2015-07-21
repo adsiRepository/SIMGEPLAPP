@@ -3,17 +3,14 @@ package com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor;
 
 import android.app.Activity;
 import android.os.AsyncTask;
+import android.os.SystemClock;
 import android.widget.Toast;
 
 import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
 import com.adsi38_sena.simgeplapp.Modelo.Usuario;
 
-import org.apache.http.NameValuePair;
 
-import java.util.ArrayList;
-
-
-public class AsyncUsers extends AsyncTask<Usuario, String, Boolean>{
+public class AsyncUsers extends AsyncTask<Usuario, String, String>{
 
     SIMGEPLAPP simgeplapp;
 
@@ -24,7 +21,7 @@ public class AsyncUsers extends AsyncTask<Usuario, String, Boolean>{
     ComunicadorServidor server;
 
     Usuario usuario_en_proceso = null;
-    ArrayList<NameValuePair> atributos_usuario = null;
+    //ArrayList<NameValuePair> atributos_usuario = null;
 
     @Override
     protected void onPreExecute(){
@@ -40,25 +37,49 @@ public class AsyncUsers extends AsyncTask<Usuario, String, Boolean>{
     }
 
     @Override
-    protected Boolean doInBackground(Usuario... params) {
+    protected String doInBackground(Usuario... params) {
         try {
             usuario_en_proceso = params[0];
-            if(usuario_en_proceso == null){
-                throw new Exception("recuperacion obj user nulo");
+            String paso = null;
+            //atributos_usuario = usuario_en_proceso.obtenerPaquete_Atributos();
+
+            String[] datos_transaccion = server.registrarNuevoUsuario(usuario_en_proceso);
+
+            if (datos_transaccion != null) {
+
+                if (datos_transaccion[0] == "added") {
+                    //publishProgress("Usuario Añadido");
+                    if (datos_transaccion[1] != null && datos_transaccion[1].length() > 0) {
+                        publishProgress(datos_transaccion[1]);
+                        SystemClock.sleep(300);
+                        publishProgress(datos_transaccion[2]);
+                    }
+                    paso = "ok";
+                }
+                if (datos_transaccion[0] == "no_added") {
+                    publishProgress("Usuario No Añadido");
+                    paso = "no";
+                }
+                if (datos_transaccion[0] == "failed_conex") {
+                    publishProgress("Error de Conexion");
+                    paso = "no";
+                }
             }
-            atributos_usuario = usuario_en_proceso.obtenerPaquete_Atributos();
-            if(atributos_usuario == null){
-                throw new Exception("recuperacion attr nula");
+            else {
+                throw new Exception("No se pudo recibir el objeto");
             }
-            for(int i = 0; i < atributos_usuario.size(); i++){
-                Thread.sleep(2000);
-                publishProgress(atributos_usuario.get(i).getValue());
-            }
-            return true;
+
+            //for(int i = 0; i < atributos_usuario.size(); i++){
+                //Thread.sleep(6000);
+              //  publishProgress(atributos_usuario.get(i).getValue());
+            //}
+            //return true;
+            return paso;
+
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(activity_raiz.getApplicationContext(), "dobackg AsyUsrs: "+e.toString(), Toast.LENGTH_LONG).show();
-            return false;
+            //Toast.makeText(activity_raiz.getApplicationContext(), "dobackg AsyUsrs: "+e.toString(), Toast.LENGTH_LONG).show();
+            return "dobackg AsyUsrs: "+e.toString();
         }
     }
 
@@ -67,7 +88,7 @@ public class AsyncUsers extends AsyncTask<Usuario, String, Boolean>{
     protected void onProgressUpdate(String... values){
         try {
             if(values[0] != null) {
-                Toast.makeText(simgeplapp.getApplicationContext(), values[0], Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity_raiz.getApplicationContext(), values[0], Toast.LENGTH_LONG).show();
             }
             else {
                 throw new Exception("publishProg = null");
@@ -79,24 +100,27 @@ public class AsyncUsers extends AsyncTask<Usuario, String, Boolean>{
     //##
 
     @Override
-    protected void onPostExecute(Boolean result){
-        if(activity_raiz != null) {
-            try {
-                if (result == true) {
-                    Toast.makeText(activity_raiz.getApplicationContext(), "fin, se ha conseguido!", Toast.LENGTH_LONG).show();
-                } else {
+    protected void onPostExecute(String result){
+        try {
+            if (activity_raiz != null) {
+                if (result == "ok") {
+                    Toast.makeText(activity_raiz.getApplicationContext(), "Usuario Registrado con Exito", Toast.LENGTH_LONG).show();
+                }else{
                     SIMGEPLAPP.vibrateError(activity_raiz);
+                    Toast.makeText(activity_raiz.getApplicationContext(), result, Toast.LENGTH_LONG).show();
                 }
+
                 frag_progress_usuarios.cerrarCarga(activity_raiz.getFragmentManager());
 
                 GestionCargas.obtenerInstancia().removerProcesoUsuario(SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_CARGA_USERS);
+
+            } else {
+                SIMGEPLAPP.vibrateError(activity_raiz.getApplicationContext());
+                Toast.makeText(activity_raiz.getApplicationContext(), "AsyUsrs pstExe: Actividad perdida", Toast.LENGTH_LONG).show();
             }
-            catch(Exception eh){
-                Toast.makeText(activity_raiz.getApplicationContext(), eh.toString(), Toast.LENGTH_LONG).show();
-            }
-        }
-        else {
-            SIMGEPLAPP.vibrateError(simgeplapp.getApplicationContext());
+
+        }catch(Exception eh){
+            Toast.makeText(activity_raiz.getApplicationContext(), "pstExe"+eh.toString(), Toast.LENGTH_LONG).show();
         }
     }
 

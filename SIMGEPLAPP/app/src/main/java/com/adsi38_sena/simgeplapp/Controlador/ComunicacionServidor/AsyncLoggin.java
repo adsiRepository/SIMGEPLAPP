@@ -36,7 +36,7 @@ public class AsyncLoggin extends AsyncTask<String, String, Boolean> {
         try {//obtenemos user_process y pass_onprocess
             user_process = params[0];
             pass_onprocess = params[1];
-            SystemClock.sleep(4000);
+            //SystemClock.sleep(4000);
             //enviamos, recibimos y analizamos los datos en segundo plano.
             switch (server.intentoLoggeo(user_process, pass_onprocess)) {//ejecuto el metodo intentoLoggeo del objeto server este instanciado de la clase "ComunicadorServidor"
                 case -1:
@@ -61,7 +61,7 @@ public class AsyncLoggin extends AsyncTask<String, String, Boolean> {
 
     @Override
     protected void onProgressUpdate(String... values) {
-        //Toast.makeText(getActivity().getApplicationContext(), values[0], Toast.LENGTH_LONG).show();
+        Toast.makeText(simgeplapp.getApplicationContext(), values[0], Toast.LENGTH_LONG).show();
     }
 
     @Override

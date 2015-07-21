@@ -24,7 +24,7 @@ import java.util.ArrayList;
 
 public class ActivityUsuarios extends Activity implements View.OnClickListener {
 
-    EditText txt_nombre, txt_apes, txt_id, txt_tel, txt_mail, txt_pass;
+    EditText txt_nombre, txt_apes, txt_id, txt_tel, txt_mail, txt_nick, txt_pass;
     Spinner select_tipo_id;
     RadioGroup opcs_rol;
     //RadioButton rol_admin, rol_apz;//de aprendiz
@@ -43,6 +43,7 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
         txt_id = (EditText) findViewById(R.id.edt_id);
         txt_tel = (EditText) findViewById(R.id.edt_tel);
         txt_mail = (EditText) findViewById(R.id.edt_mail);
+        txt_nick = (EditText) findViewById(R.id.edt_nick);
         txt_pass = (EditText) findViewById(R.id.edt_contrasena);
 
         select_tipo_id = (Spinner) findViewById(R.id.spin_tipo_id);
@@ -78,7 +79,6 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
         btn_eliminar = (Button) findViewById(R.id.btn_users_eliminar);
         btn_eliminar.setOnClickListener(this);
 
-
         //linea que me permite recapturar el hilo donde se despliega el dialogo emergente; aqui se sostiene el hilo y se adjunta cosntantemente al nuevo activity al cambiar configuaciones
         GestionCargas.obtenerInstancia().adjuntarProcesoUsuario(SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_CARGA_USERS, this);
         //--
@@ -93,8 +93,8 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
             try {
                 //Toast.makeText(getApplicationContext(), "Estas Registrando un User", Toast.LENGTH_LONG).show();
 
-                if ((txt_nombre.getText().toString().length() > 0) /*&& (txt_apes.getText().toString().length() > 0) &&
-                        (txt_id.getText().toString().length() > 0)*/) {
+                if ((txt_nombre.getText().toString().length() > 0) && (txt_apes.getText().toString().length() > 0) &&
+                        (txt_id.getText().toString().length() > 0)) {
                     Usuario nuevo_usuario = new Usuario();
                     nuevo_usuario.setNom(txt_nombre.getText().toString());
                     nuevo_usuario.setApe(txt_apes.getText().toString());
@@ -102,6 +102,7 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
                     nuevo_usuario.setTipo_ide(select_tipo_id.getSelectedItem().toString());
                     nuevo_usuario.setTel(txt_tel.getText().toString());
                     nuevo_usuario.setEmail(txt_mail.getText().toString());
+                    nuevo_usuario.setNick(txt_nick.getText().toString());
                     nuevo_usuario.setPass(txt_pass.getText().toString());
                     nuevo_usuario.setRol(opc_rol_elegida);
 
@@ -118,6 +119,7 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
 
                 } else {
                     SIMGEPLAPP.vibrateError(ActivityUsuarios.this);
+                    Toast.makeText(getApplicationContext(), "nombre, apellido e Id requeridos", Toast.LENGTH_LONG).show();
                 }
             }catch (Exception eh){
                 Toast.makeText(getApplicationContext(), "btn_reg: "+eh.toString(), Toast.LENGTH_LONG).show();
