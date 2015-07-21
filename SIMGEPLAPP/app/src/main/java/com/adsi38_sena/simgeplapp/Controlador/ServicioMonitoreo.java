@@ -59,7 +59,7 @@ public class ServicioMonitoreo extends Service {
 		public void run() {//por ahora estamos generando las variables con Random. Aqui hay que implementar la comunicacion al servidor
 			while(simgeplapp.serviceOn) {
 				try {
-                    Thread.sleep(2000);
+                    Thread.sleep(180000);//cada tres minutos cambia
                     simgeplapp.TEMP = (random.nextDouble() * (178 - 19)) + 19;
 					simgeplapp.PRES = (random.nextDouble() * (168 - 16)) + 16;
                     simgeplapp.NIV = (random.nextDouble() * (166 - 18)) + 18;

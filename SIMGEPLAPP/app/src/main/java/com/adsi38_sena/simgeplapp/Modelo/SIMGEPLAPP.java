@@ -24,7 +24,7 @@ public class SIMGEPLAPP extends Application{
     //ATRIBUTOS DE LA APLICACION
     //variables globales accesibles a todos los elementos pertenecientes a la aplicacion: activities, services, clases, etc.
 
-    public static Double TEMP, PRES, NIV; // temperatura, presion y nivel.
+    public static Double TEMP = 0.0, PRES = 0.0, NIV = 0.0; // temperatura, presion y nivel.
                                             //variables de la aplicacion
     public static Session session;
 

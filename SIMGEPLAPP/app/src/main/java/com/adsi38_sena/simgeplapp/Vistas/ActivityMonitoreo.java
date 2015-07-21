@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,10 +20,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor.GestionCargas;
 import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
 import com.adsi38_sena.simgeplapp.R;
 
 import java.text.DecimalFormat;
+import java.util.Random;
 
 public class ActivityMonitoreo extends Activity {
 
@@ -30,7 +33,7 @@ public class ActivityMonitoreo extends Activity {
 
     protected AutoActualizacion autoAct;
 
-    private final DecimalFormat decimalFormat = new DecimalFormat("#.##");
+    private final DecimalFormat decimalFormat = new DecimalFormat("#.#");
 
     //ServicioMonitoreo theService;
 
@@ -141,39 +144,85 @@ public class ActivityMonitoreo extends Activity {
 
 
     //hilo que actualiza los TextView que muestran las variables. Consulta: AsyncTask
-    private class AutoActualizacion extends AsyncTask<Double, Double, Double> {
+    private class AutoActualizacion extends AsyncTask<Double, Double, String> {
+
         private Double[] valores;
+        private Double temporal = simgeplapp.TEMP;
+        private Random random = new Random();
+        /*valores_temporales[0] = simgeplapp.TEMP;
+            valores_temporales[1] = simgeplapp.PRES;
+            valores_temporales[2] = simgeplapp.NIV;*/
+        private TextView[] txvs = {txv_TEMP, txv_PRES, txv_NIV};
+        int aux;
+
         @Override
         protected void onPreExecute(){
             valores = new Double[3];
         }
 
         @Override
-        protected Double doInBackground(Double... params) {
-            while (true){ // true = hara indefinido este ciclo
+        protected String doInBackground(Double... params) {
+            while (true){ // true = hara indefinido este ciclo simgeplapp.serviceOn
                 try {
-                    Thread.sleep(20200); // se pausara la ejecucion durante 3 segundos
-                    valores[0] = simgeplapp.TEMP;//obtengo los valores de las variables globales del monitoreo
-                    valores[1] = simgeplapp.PRES;//que se redefinen en el servicio
-                    valores[2] = simgeplapp.NIV;
+                    Thread.sleep(3000); // se pausara la ejecucion durante 3 segundos
+
+                    if(temporal == simgeplapp.TEMP/* || valores_temporales[1] == simgeplapp.PRES ||
+                            valores_temporales[2] == simgeplapp.NIV*/){
+
+                        valores[0] = (random.nextDouble() * (178 - 19)) + 19;
+                        valores[1] = (random.nextDouble() * (168 - 16)) + 16;
+                        valores[2] = (random.nextDouble() * (166 - 18)) + 18;
+                    }
+                    else {
+                        valores[0] = simgeplapp.TEMP;//obtengo los valores de las variables globales del monitoreo
+                        valores[1] = simgeplapp.PRES;//que se redefinen en el servicio
+                        valores[2] = simgeplapp.NIV;
+                        temporal = valores[0];
+                    }
+
                     //el siguiente metodo lo que hace es llamar al onProgressUpdate pasandole los valores con que operara
                     publishProgress(valores);
-                } catch (InterruptedException eh) {
-                    Toast.makeText(getBaseContext(), "error doInBack, hilo monitoreo", Toast.LENGTH_LONG).show();
-                    Log.d(null, eh.getLocalizedMessage());
+
+                } catch (Exception eh) {
+                    return eh.toString();
                 }
             }
         }
+
         @Override
         protected void onProgressUpdate(Double... values){//recibo los valores pasados en el "publishProgress"
             try {
-                txv_TEMP.setText("" + decimalFormat.format(values[0]));
+                aux = random.nextInt(3);
+                //txvs[2].setText("" + decimalFormat.format(values[2]));
+                switch (aux){
+                    case 0:
+                        txv_TEMP.setText("" + decimalFormat.format(values[0]));
+                        break;
+                    case 1:
+                        txv_PRES.setText("" + decimalFormat.format(values[1]));
+                        break;
+                    case 2:
+                        txv_NIV.setText("" + decimalFormat.format(values[2]));
+                        break;
+                }
+                /*txv_TEMP.setText("" + decimalFormat.format(values[0]));
                 txv_PRES.setText("" + decimalFormat.format(values[1]));
-                txv_NIV.setText("" + decimalFormat.format(values[2]));
+                txv_NIV.setText("" + decimalFormat.format(values[2]));*/
             }catch (Exception eh){
-                Toast.makeText(getBaseContext(), "error publishprog, hilo monitoreo", Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(), "monitoreo pubprog: "+eh.toString(), Toast.LENGTH_LONG).show();
             }
         }
+
+        @Override
+        protected void onPostExecute(String result) {
+            //super.onPostExecute(result);
+            try {
+                Toast.makeText(getBaseContext(), result, Toast.LENGTH_LONG).show();
+            }catch (Exception eh){
+                Toast.makeText(getBaseContext(), "hilo monitoreo postEx: "+eh.toString(), Toast.LENGTH_LONG).show();
+            }
+        }
+
         @Override
         protected void onCancelled(){
         }
