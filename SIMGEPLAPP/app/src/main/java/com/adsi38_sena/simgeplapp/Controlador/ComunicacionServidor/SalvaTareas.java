@@ -3,10 +3,13 @@ package com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor;
 
 import android.app.Activity;
 
+import com.adsi38_sena.simgeplapp.Controlador.FragmentoMonitoreo;
+import com.adsi38_sena.simgeplapp.Modelo.MisParametros;
+
 import java.lang.ref.WeakReference;
 import java.util.WeakHashMap;
 
-public class GestionCargas {
+public class SalvaTareas {
 
     private WeakHashMap<String, WeakReference<AsyncUsers>> proceso_usuario =
             new WeakHashMap<String, WeakReference<AsyncUsers>>();
@@ -15,16 +18,16 @@ public class GestionCargas {
             new WeakHashMap<String, WeakReference<AsyncLoggin>>();
 
 
-    private static GestionCargas cargas;
+    private static SalvaTareas cargas;
 
-    public static GestionCargas obtenerInstancia(){
+    public static SalvaTareas obtenerInstancia(){
         if (cargas == null)
         {
-            synchronized (GestionCargas.class)
+            synchronized (SalvaTareas.class)
             {
             	if (cargas == null)
             	{
-                    cargas = new GestionCargas();
+                    cargas = new SalvaTareas();
             	}
             }
         }
@@ -86,7 +89,6 @@ public class GestionCargas {
             adjuntarProcesoUsuario(llave_proceso, activity);
         }
     }
-
     public AsyncUsers obtenerProcsUsers(String llave_proceso){
         if(proceso_usuario.get(llave_proceso) == null){
             return null;
@@ -112,6 +114,20 @@ public class GestionCargas {
     }
     public void removerProcesoUsuario(String llave_proceso){
         proceso_usuario.remove(llave_proceso);
+    }
+
+    WeakHashMap<String, WeakReference<FragmentoMonitoreo>> sostenFragmento =
+            new WeakHashMap<String, WeakReference<FragmentoMonitoreo>>();
+
+    public void guardarFragmento(FragmentoMonitoreo fragmentoMonitor){
+        sostenFragmento.put(MisParametros.fragmentos.TAG_FRAGMENTO_MONITOR, new WeakReference<FragmentoMonitoreo>(fragmentoMonitor));
+    }
+
+    public void recuperarFragmento(Activity acty){
+        FragmentoMonitoreo frag = sostenFragmento.get(MisParametros.fragmentos.TAG_FRAGMENTO_MONITOR).get();
+        if(frag != null){
+            frag.redefinirActivity(acty);
+        }
     }
 
 }
