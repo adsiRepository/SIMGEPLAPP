@@ -1,4 +1,4 @@
-package com.adsi38_sena.simgeplapp.Modelo;
+package com.adsi38_sena.simgeplapp.Vistas;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -11,22 +11,22 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.adsi38_sena.simgeplapp.Controlador.ServicioMonitoreo;
-import com.adsi38_sena.simgeplapp.InicioSimgeplapp;
-import com.adsi38_sena.simgeplapp.LoginActivity;
+import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
 import com.adsi38_sena.simgeplapp.R;
 
 
-public class MenuActivity extends Activity {
+public class ActivityMenu extends Activity {
 
     SIMGEPLAPP simgeplapp;
 
     private TextView lbl_user;
-    private Button btn_monitoreo;
+    private Button btn_monitoreo, btn_gestion_usuarios;
     private Switch swch_service;
 
     @Override
@@ -36,9 +36,10 @@ public class MenuActivity extends Activity {
 
         simgeplapp = (SIMGEPLAPP)getApplication();
 
-        if(simgeplapp.sessionAlive == true){
+        btn_monitoreo = (Button)findViewById(R.id.btn_monitoreo);
+        btn_gestion_usuarios = (Button)findViewById(R.id.btn_usuarios);
 
-            startService(new Intent(MenuActivity.this, ServicioMonitoreo.class));
+        if(simgeplapp.sessionAlive == true){
 
             swch_service = (Switch)findViewById(R.id.switch_monitorear);
             if(simgeplapp.serviceOn == true){
@@ -62,11 +63,28 @@ public class MenuActivity extends Activity {
 
             lbl_user.setText(""+simgeplapp.session.user);
 
-            btn_monitoreo = (Button)findViewById(R.id.btn_monitoreo);
             btn_monitoreo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startActivity(new Intent(MenuActivity.this, Monitoreo.class));
+                    startActivity(new Intent(ActivityMenu.this, ActivityMonitoreo.class));
+                }
+            });
+            btn_gestion_usuarios.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(ActivityMenu.this, ActivityUsuarios.class));
+                }
+            });
+
+            swch_service.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked){
+                        startService(new Intent(ActivityMenu.this, ServicioMonitoreo.class));
+                    }
+                    else {
+                        stopService(new Intent(ActivityMenu.this, ServicioMonitoreo.class));
+                    }
                 }
             });
 
@@ -142,33 +160,33 @@ public class MenuActivity extends Activity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event)  {
 
-        AlertDialog.Builder construct_msg = new AlertDialog.Builder(this);
-        construct_msg.setMessage("Deseas Salir de la Aplicacion?")
-                .setTitle("Simgeplapp")
-                .setPositiveButton("Salir",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                SharedPreferences confUser = getSharedPreferences("mi_usuario", MODE_PRIVATE);
-                                SharedPreferences.Editor editor = confUser.edit();
-                                editor.putString("usuario", null);
-                                editor.putString("onsesion", null);
-                                editor.commit();
-                                finish();
-                                stopService(new Intent(MenuActivity.this, ServicioMonitoreo.class));
-                                startActivity(new Intent(MenuActivity.this, LoginActivity.class));
-                            }
-                        })
-                .setNegativeButton("Cancelar",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        });
-        AlertDialog msg_emerg = construct_msg.create();
-
         if (keyCode == KeyEvent.KEYCODE_BACK /*&& event.getRepeatCount() > 1*/) {
+
+            AlertDialog.Builder construct_msg = new AlertDialog.Builder(this);
+            construct_msg.setMessage("Deseas Salir de la Aplicacion?")
+                    .setTitle("Simgeplapp")
+                    .setPositiveButton("Salir",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    SharedPreferences confUser = getSharedPreferences("mi_usuario", MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = confUser.edit();
+                                    editor.putString("usuario", null);
+                                    editor.putString("onsesion", null);
+                                    editor.commit();
+                                    finish();
+                                    stopService(new Intent(ActivityMenu.this, ServicioMonitoreo.class));
+                                    startActivity(new Intent(ActivityMenu.this, ActivityLogin.class));
+                                }
+                            })
+                    .setNegativeButton("Cancelar",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            });
+            AlertDialog msg_emerg = construct_msg.create();
 
             msg_emerg.show();
             return true;

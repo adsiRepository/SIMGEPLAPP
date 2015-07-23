@@ -1,16 +1,14 @@
-package com.adsi38_sena.simgeplapp;
+package com.adsi38_sena.simgeplapp.Vistas;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
-import com.adsi38_sena.simgeplapp.Modelo.MenuActivity;
 import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
+import com.adsi38_sena.simgeplapp.R;
 
 public class InicioSimgeplapp extends Activity {
 
@@ -54,7 +52,7 @@ public class InicioSimgeplapp extends Activity {
         btn_entrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(InicioSimgeplapp.this, LoginActivity.class));
+                startActivity(new Intent(InicioSimgeplapp.this, ActivityLogin.class));
             }
         });
 
