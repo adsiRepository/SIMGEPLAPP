@@ -11,7 +11,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor.AsyncLoggin;
-import com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor.SalvaTareas;
+import com.adsi38_sena.simgeplapp.Controlador.SalvaTareas;
 import com.adsi38_sena.simgeplapp.R;
 import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
 

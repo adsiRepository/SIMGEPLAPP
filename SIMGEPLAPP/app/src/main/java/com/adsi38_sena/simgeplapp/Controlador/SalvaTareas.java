@@ -1,9 +1,10 @@
-package com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor;
+package com.adsi38_sena.simgeplapp.Controlador;
 
 
 import android.app.Activity;
 
-import com.adsi38_sena.simgeplapp.Controlador.AsyncMonitor;
+import com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor.AsyncLoggin;
+import com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor.AsyncUsers;
 
 import java.lang.ref.WeakReference;
 import java.util.WeakHashMap;

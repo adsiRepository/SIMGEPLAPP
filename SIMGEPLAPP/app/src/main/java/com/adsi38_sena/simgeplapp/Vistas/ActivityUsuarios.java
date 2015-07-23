@@ -13,7 +13,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor.AsyncUsers;
-import com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor.SalvaTareas;
+import com.adsi38_sena.simgeplapp.Controlador.SalvaTareas;
 import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
 import com.adsi38_sena.simgeplapp.Modelo.Usuario;
 import com.adsi38_sena.simgeplapp.R;

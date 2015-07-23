@@ -2,14 +2,10 @@ package com.adsi38_sena.simgeplapp.Controlador;
 
 import android.app.Activity;
 import android.os.AsyncTask;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor.SalvaTareas;
 import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
 import com.adsi38_sena.simgeplapp.Vistas.ActivityMonitoreo;
-
-import java.util.Random;
 
 //hilo que actualiza los TextView que muestran las variables. Consulta: AsyncTask
 public class AsyncMonitor extends AsyncTask<Double, Double, String> {

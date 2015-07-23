@@ -1,27 +1,16 @@
 package com.adsi38_sena.simgeplapp.Vistas;
 
 import android.app.Activity;
-import android.content.ComponentName;
-import android.content.Intent;
-import android.content.ServiceConnection;
-import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
-import android.os.Messenger;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.adsi38_sena.simgeplapp.Controlador.AsyncMonitor;
-import com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor.SalvaTareas;
+import com.adsi38_sena.simgeplapp.Controlador.SalvaTareas;
 import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
 import com.adsi38_sena.simgeplapp.R;
 
@@ -70,8 +59,6 @@ public class ActivityMonitoreo extends Activity {
 
         simgeplapp = (SIMGEPLAPP)getApplication();
 
-        SalvaTareas.obtenerInstancia().atraparHilo(SIMGEPLAPP.LLAVE_PROCESO_MONITOREO, this);
-
         txv_TEMP = (TextView) findViewById(R.id.txv_lec_temp);
         txv_PRES = (TextView) findViewById(R.id.txv_lec_pres);
         txv_NIV = (TextView) findViewById(R.id.txv_lec_niv);
@@ -110,13 +97,15 @@ public class ActivityMonitoreo extends Activity {
     }
 
     @Override
-    protected void onPause(){
-        super.onPause();
+    protected void onResume(){
+        super.onResume();
+        SalvaTareas.obtenerInstancia().atraparHilo(SIMGEPLAPP.LLAVE_PROCESO_MONITOREO, this);
     }
 
     @Override
-    protected void onResume(){
-        super.onResume();
+    protected void onPause(){
+        super.onPause();
+        SalvaTareas.obtenerInstancia().soltarHilo(SIMGEPLAPP.LLAVE_PROCESO_MONITOREO);
     }
 
     @Override
@@ -132,7 +121,7 @@ public class ActivityMonitoreo extends Activity {
     @Override
     protected void onDestroy(){
         super.onDestroy();
-        SalvaTareas.obtenerInstancia().soltarHilo(SIMGEPLAPP.LLAVE_PROCESO_MONITOREO);
+
     }
 
     public void publicarLectura(){
