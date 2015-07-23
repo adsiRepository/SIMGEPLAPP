@@ -4,7 +4,6 @@ package com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.os.SystemClock;
 import android.widget.Toast;
 
 import com.adsi38_sena.simgeplapp.Vistas.ActivityLogin;
@@ -86,7 +85,7 @@ public class AsyncLoggin extends AsyncTask<String, String, Boolean> {
             dialogo_carga.cerrarCarga(myActy.getFragmentManager());
         }
 
-            GestionCargas.obtenerInstancia().removerProcesoLoggin(SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_LOGIN);
+            SalvaTareas.obtenerInstancia().removerProcesoLoggin(SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_LOGIN);
     }
 
     @Override

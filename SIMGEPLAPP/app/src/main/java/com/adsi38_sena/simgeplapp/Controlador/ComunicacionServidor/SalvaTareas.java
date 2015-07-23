@@ -3,8 +3,7 @@ package com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor;
 
 import android.app.Activity;
 
-import com.adsi38_sena.simgeplapp.Controlador.FragmentoMonitoreo;
-import com.adsi38_sena.simgeplapp.Modelo.MisParametros;
+import com.adsi38_sena.simgeplapp.Controlador.AsyncMonitor;
 
 import java.lang.ref.WeakReference;
 import java.util.WeakHashMap;
@@ -116,18 +115,42 @@ public class SalvaTareas {
         proceso_usuario.remove(llave_proceso);
     }
 
-    WeakHashMap<String, WeakReference<FragmentoMonitoreo>> sostenFragmento =
-            new WeakHashMap<String, WeakReference<FragmentoMonitoreo>>();
 
-    public void guardarFragmento(FragmentoMonitoreo fragmentoMonitor){
-        sostenFragmento.put(MisParametros.fragmentos.TAG_FRAGMENTO_MONITOR, new WeakReference<FragmentoMonitoreo>(fragmentoMonitor));
-    }
+//MONITOREO
+    WeakHashMap<String, WeakReference<AsyncMonitor>> sostenMonitor = new WeakHashMap<String, WeakReference<AsyncMonitor>>();
 
-    public void recuperarFragmento(Activity acty){
-        FragmentoMonitoreo frag = sostenFragmento.get(MisParametros.fragmentos.TAG_FRAGMENTO_MONITOR).get();
-        if(frag != null){
-            frag.redefinirActivity(acty);
+    public void iniciarMonitoreo(String llave_proceso, AsyncMonitor monitor, Activity activity){
+        soltarHilo(llave_proceso);
+        sostenMonitor.put(llave_proceso, new WeakReference<AsyncMonitor>(monitor));
+        if(activity != null){
+            atraparHilo(llave_proceso, activity);
         }
+    }
+    public AsyncMonitor obtenerInstHilo(String llave_proceso){
+        if(sostenMonitor.get(llave_proceso) == null){
+            return null;
+        }
+        else {
+            return sostenMonitor.get(llave_proceso).get();
+        }
+    }
+    public void atraparHilo(String llave_proceso, Activity activity){
+
+        AsyncMonitor ub_monitor = obtenerInstHilo(llave_proceso);
+        if (ub_monitor != null){
+            ub_monitor.setMyActy(activity);
+        }
+    }
+    public void soltarHilo(String llave_proceso){
+        if (sostenMonitor.containsKey(llave_proceso)
+                && sostenMonitor.get(llave_proceso) != null
+                && sostenMonitor.get(llave_proceso).get() != null)
+        {
+            sostenMonitor.get(llave_proceso).get().soltarActivity();
+        }
+    }
+    public void removerHilo(String llave_proceso){
+        proceso_usuario.remove(llave_proceso);
     }
 
 }

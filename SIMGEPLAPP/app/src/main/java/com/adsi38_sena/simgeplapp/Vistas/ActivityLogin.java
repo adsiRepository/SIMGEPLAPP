@@ -11,7 +11,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor.AsyncLoggin;
-import com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor.GestionCargas;
+import com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor.SalvaTareas;
 import com.adsi38_sena.simgeplapp.R;
 import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
 
@@ -51,7 +51,7 @@ public class ActivityLogin extends Activity /*implements AsyncLoggin.Llamados_de
 
         //PERSONALIZAR PROGRESSBAR => http://www.101apps.co.za/articles/android-s-progress-bars.html
 
-        GestionCargas.obtenerInstancia().adjuntarProcesoLoggin(SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_LOGIN, this);
+        SalvaTareas.obtenerInstancia().adjuntarProcesoLoggin(SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_LOGIN, this);
 
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,7 +63,7 @@ public class ActivityLogin extends Activity /*implements AsyncLoggin.Llamados_de
                 if ((user.length() * pass.length()) > 0) {
 
                     AsyncLoggin loggin = new AsyncLoggin();
-                    GestionCargas.obtenerInstancia().ejecutarLoggeo(SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_LOGIN, loggin, ActivityLogin.this);
+                    SalvaTareas.obtenerInstancia().ejecutarLoggeo(SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_LOGIN, loggin, ActivityLogin.this);
                     loggin.execute(user, pass);
 
                 } else {
@@ -96,7 +96,7 @@ public class ActivityLogin extends Activity /*implements AsyncLoggin.Llamados_de
     @Override
     protected void onDestroy(){
         super.onDestroy();
-        GestionCargas.obtenerInstancia().desAdjuntarProcesoLoggin(SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_LOGIN);
+        SalvaTareas.obtenerInstancia().desAdjuntarProcesoLoggin(SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_LOGIN);
     }
     @Override
     protected void onRestart(){

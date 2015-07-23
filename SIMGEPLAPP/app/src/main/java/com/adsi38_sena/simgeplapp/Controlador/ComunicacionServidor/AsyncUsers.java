@@ -112,7 +112,7 @@ public class AsyncUsers extends AsyncTask<Usuario, String, String>{
 
                 frag_progress_usuarios.cerrarCarga(activity_raiz.getFragmentManager());
 
-                GestionCargas.obtenerInstancia().removerProcesoUsuario(SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_CARGA_USERS);
+                SalvaTareas.obtenerInstancia().removerProcesoUsuario(SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_CARGA_USERS);
 
             } else {
                 SIMGEPLAPP.vibrateError(activity_raiz.getApplicationContext());

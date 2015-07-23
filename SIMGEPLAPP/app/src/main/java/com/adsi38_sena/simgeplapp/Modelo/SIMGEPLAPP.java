@@ -53,6 +53,8 @@ public class SIMGEPLAPP extends Application{
         public static final int ID_NOTIFICACION_ALERTA = 5;
     }
 
+    public static final String LLAVE_PROCESO_MONITOREO = "monitoreando";
+
     //--fin declaracion de atributos--
 
     //METODOS DE LA APLICACION

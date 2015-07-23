@@ -20,7 +20,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor.GestionCargas;
+import com.adsi38_sena.simgeplapp.Controlador.AsyncMonitor;
+import com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor.SalvaTareas;
 import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
 import com.adsi38_sena.simgeplapp.R;
 
@@ -30,18 +31,17 @@ import java.util.Random;
 public class ActivityMonitoreo extends Activity {
 
     SIMGEPLAPP simgeplapp;
-
-    protected AutoActualizacion autoAct;
-
     private final DecimalFormat decimalFormat = new DecimalFormat("#.#");
+    private Double temporal;
+    private Double[] valores;
+    private Random random = new Random();
+    int aux;
 
     //ServicioMonitoreo theService;
+    //private Messenger mensajero;
 
     protected TextView txv_TEMP, txv_PRES, txv_NIV;
     protected Button btnPrueba;
-
-    private Messenger mensajero;
-
     CharSequence[] estado_variables;
 
     //control de estado de la pantalla
@@ -70,21 +70,18 @@ public class ActivityMonitoreo extends Activity {
 
         simgeplapp = (SIMGEPLAPP)getApplication();
 
-        autoAct = new AutoActualizacion();
-        autoAct.execute();
+        SalvaTareas.obtenerInstancia().atraparHilo(SIMGEPLAPP.LLAVE_PROCESO_MONITOREO, this);
 
         txv_TEMP = (TextView) findViewById(R.id.txv_lec_temp);
         txv_PRES = (TextView) findViewById(R.id.txv_lec_pres);
         txv_NIV = (TextView) findViewById(R.id.txv_lec_niv);
         btnPrueba = (Button) findViewById(R.id.btn_init);
 
-        //enlace al servicio, metodo no usado. Consulta: servicios enlazados en android
-        //bindService(new Intent(InicioSimgeplapp.this, ServicioMonitoreo.class), conexService, Context.BIND_AUTO_CREATE);//
+        temporal = simgeplapp.TEMP;
 
         btnPrueba.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 //String valorEnviado = txt_valorEnviado.getText().toString();
 				/*Message msg = Message.obtain(null, new ServicioMonitoreo().ID_PETICION_SERVICIO);//este metodo obtain es para identificar el mensaje dentro del canal de estos.
 				msg.replyTo = new Messenger(new RecibidorRespuestasServicio());//este metodo se ejecutara en el servicio (msg.replyTo), aqui le damos una instancia de RecibidorRespuestasServicio, por ende ejecutara el codigo alli escrito
@@ -98,7 +95,11 @@ public class ActivityMonitoreo extends Activity {
 					Toast.makeText(getBaseContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
 					e.printStackTrace();
 				}*/
-}
+
+                AsyncMonitor monitor = new AsyncMonitor();
+                SalvaTareas.obtenerInstancia().iniciarMonitoreo(SIMGEPLAPP.LLAVE_PROCESO_MONITOREO, monitor, ActivityMonitoreo.this);
+                monitor.execute();
+            }
         });
 
     }
@@ -106,129 +107,89 @@ public class ActivityMonitoreo extends Activity {
     @Override
     protected void onStart(){
         super.onStart();
-        //Intent intentServicio = new Intent(InicioSimgeplapp.this, ServicioMonitoreo.class);
-        //startService(intentServicio);
     }
 
-    //esta parte se ejecuta cuando el activity es opacado por otra aplicacion pero este aun no desaparece de la interfaz actual o
-    //está a punto de ser lanzada a segundo plano, es el primer metodo que se ejecuta al abandonar el activity (ya sea con la flecha atras o abriendo otro activity)
-    //Es el lugar adecuado para detener animaciones, música o almacenar los datos que estaban en edición.
     @Override
     protected void onPause(){
         super.onPause();
     }
 
-    // Se llama cuando la actividad va a comenzar a interactuar con el usuario. Es un buen lugar para lanzar las animaciones y la música.
     @Override
     protected void onResume(){
         super.onResume();
     }
 
-    //Cuando la actividad no es visible. El programador debe guardar el estado de la interfaz de usuario, preferencias, etc.
     @Override
     protected void onStop(){
         super.onStop();
     }
 
-    //Indica que la actividad va a volver a ser representada después de haber pasado por onStop().
     @Override
     protected void onRestart(){
         super.onRestart();
     }
 
-    //fin del ciclo de vida del activity, Se llama antes de que la actividad sea totalmente destruida. Por ejemplo, cuando el usuario pulsa el botón de volver o cuando se llama al método finish()
     @Override
     protected void onDestroy(){
         super.onDestroy();
+        SalvaTareas.obtenerInstancia().soltarHilo(SIMGEPLAPP.LLAVE_PROCESO_MONITOREO);
     }
 
+    public void publicarLectura(){
 
-    //hilo que actualiza los TextView que muestran las variables. Consulta: AsyncTask
-    private class AutoActualizacion extends AsyncTask<Double, Double, String> {
-
-        private Double[] valores;
-        private Double temporal = simgeplapp.TEMP;
-        private Random random = new Random();
-        /*valores_temporales[0] = simgeplapp.TEMP;
-            valores_temporales[1] = simgeplapp.PRES;
-            valores_temporales[2] = simgeplapp.NIV;*/
-        private TextView[] txvs = {txv_TEMP, txv_PRES, txv_NIV};
-        int aux;
-
-        @Override
-        protected void onPreExecute(){
-            valores = new Double[3];
-        }
-
-        @Override
-        protected String doInBackground(Double... params) {
-            while (true){ // true = hara indefinido este ciclo simgeplapp.serviceOn
-                try {
-                    Thread.sleep(3000); // se pausara la ejecucion durante 3 segundos
-
-                    if(temporal == simgeplapp.TEMP/* || valores_temporales[1] == simgeplapp.PRES ||
-                            valores_temporales[2] == simgeplapp.NIV*/){
-
-                        valores[0] = (random.nextDouble() * (178 - 19)) + 19;
-                        valores[1] = (random.nextDouble() * (168 - 16)) + 16;
-                        valores[2] = (random.nextDouble() * (166 - 18)) + 18;
-                    }
-                    else {
-                        valores[0] = simgeplapp.TEMP;//obtengo los valores de las variables globales del monitoreo
-                        valores[1] = simgeplapp.PRES;//que se redefinen en el servicio
-                        valores[2] = simgeplapp.NIV;
-                        temporal = valores[0];
-                    }
-
-                    //el siguiente metodo lo que hace es llamar al onProgressUpdate pasandole los valores con que operara
-                    publishProgress(valores);
-
-                } catch (Exception eh) {
-                    return eh.toString();
-                }
+        try {
+            /*if(temporal == simgeplapp.TEMP){
+                valores[0] = (random.nextDouble() * (178 - 19)) + 19;
+                valores[1] = (random.nextDouble() * (168 - 16)) + 16;
+                valores[2] = (random.nextDouble() * (166 - 18)) + 18;
             }
-        }
+            else {
+                valores[0] = simgeplapp.TEMP;//obtengo los valores de las variables globales del monitoreo
+                valores[1] = simgeplapp.PRES;//que se redefinen en el servicio
+                valores[2] = simgeplapp.NIV;
+                temporal = valores[0];
+            }*/
 
-        @Override
-        protected void onProgressUpdate(Double... values){//recibo los valores pasados en el "publishProgress"
-            try {
-                aux = random.nextInt(3);
-                //txvs[2].setText("" + decimalFormat.format(values[2]));
-                switch (aux){
-                    case 0:
-                        txv_TEMP.setText("" + decimalFormat.format(values[0]));
-                        break;
-                    case 1:
-                        txv_PRES.setText("" + decimalFormat.format(values[1]));
-                        break;
-                    case 2:
-                        txv_NIV.setText("" + decimalFormat.format(values[2]));
-                        break;
-                }
-                /*txv_TEMP.setText("" + decimalFormat.format(values[0]));
-                txv_PRES.setText("" + decimalFormat.format(values[1]));
-                txv_NIV.setText("" + decimalFormat.format(values[2]));*/
-            }catch (Exception eh){
-                Toast.makeText(getBaseContext(), "monitoreo pubprog: "+eh.toString(), Toast.LENGTH_LONG).show();
+            aux = random.nextInt(3);
+            switch (aux){
+                case 0:
+                    txv_TEMP.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            //txv_TEMP.setText("" + decimalFormat.format(valores[0]));
+                            txv_TEMP.setText("" + decimalFormat.format((random.nextDouble() * (178 - 19)) + 19));
+                        }
+                    });
+                    break;
+                case 1:
+                    txv_PRES.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            //txv_PRES.setText("" + decimalFormat.format(valores[1]));
+                            txv_PRES.setText("" + decimalFormat.format((random.nextDouble() * (168 - 16)) + 16));
+                        }
+                    });
+                    break;
+                case 2:
+                    txv_NIV.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            //txv_NIV.setText("" + decimalFormat.format(valores[2]));
+                            txv_NIV.setText("" + decimalFormat.format((random.nextDouble() * (166 - 18)) + 18));
+                        }
+                    });
+                    break;
             }
-        }
 
-        @Override
-        protected void onPostExecute(String result) {
-            //super.onPostExecute(result);
-            try {
-                Toast.makeText(getBaseContext(), result, Toast.LENGTH_LONG).show();
-            }catch (Exception eh){
-                Toast.makeText(getBaseContext(), "hilo monitoreo postEx: "+eh.toString(), Toast.LENGTH_LONG).show();
-            }
-        }
-
-        @Override
-        protected void onCancelled(){
+        } catch (Exception eh) {
+            Toast.makeText(this, "ActyMon-pubLec: "+eh.getLocalizedMessage(), Toast.LENGTH_LONG).show();
         }
     }
+
 
     //////--------      METODOS DE ENLACE AL SERVICE EN SEGUNDO PLANO
+    //enlace al servicio, metodo no usado. Consulta: servicios enlazados en android
+    //bindService(new Intent(InicioSimgeplapp.this, ServicioMonitoreo.class), conexService, Context.BIND_AUTO_CREATE);//
     //metodos para enlazar servicios en segundo plano para intercambiar datos, actualmente no usados debido al uso de variables globales
     /*private Messenger mensajero;
     //definicion del Objeto que enlaza al servicio
