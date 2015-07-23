@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.widget.Toast;
 
+import com.adsi38_sena.simgeplapp.Controlador.SalvaTareas;
 import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
 import com.adsi38_sena.simgeplapp.Modelo.Usuario;
 
@@ -112,7 +113,7 @@ public class AsyncUsers extends AsyncTask<Usuario, String, String>{
 
                 frag_progress_usuarios.cerrarCarga(activity_raiz.getFragmentManager());
 
-                GestionCargas.obtenerInstancia().removerProcesoUsuario(SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_CARGA_USERS);
+                SalvaTareas.obtenerInstancia().removerProcesoUsuario(SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_CARGA_USERS);
 
             } else {
                 SIMGEPLAPP.vibrateError(activity_raiz.getApplicationContext());

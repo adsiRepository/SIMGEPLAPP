@@ -1,12 +1,15 @@
-package com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor;
+package com.adsi38_sena.simgeplapp.Controlador;
 
 
 import android.app.Activity;
 
+import com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor.AsyncLoggin;
+import com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor.AsyncUsers;
+
 import java.lang.ref.WeakReference;
 import java.util.WeakHashMap;
 
-public class GestionCargas {
+public class SalvaTareas {
 
     private WeakHashMap<String, WeakReference<AsyncUsers>> proceso_usuario =
             new WeakHashMap<String, WeakReference<AsyncUsers>>();
@@ -15,16 +18,16 @@ public class GestionCargas {
             new WeakHashMap<String, WeakReference<AsyncLoggin>>();
 
 
-    private static GestionCargas cargas;
+    private static SalvaTareas cargas;
 
-    public static GestionCargas obtenerInstancia(){
+    public static SalvaTareas obtenerInstancia(){
         if (cargas == null)
         {
-            synchronized (GestionCargas.class)
+            synchronized (SalvaTareas.class)
             {
             	if (cargas == null)
             	{
-                    cargas = new GestionCargas();
+                    cargas = new SalvaTareas();
             	}
             }
         }
@@ -86,7 +89,6 @@ public class GestionCargas {
             adjuntarProcesoUsuario(llave_proceso, activity);
         }
     }
-
     public AsyncUsers obtenerProcsUsers(String llave_proceso){
         if(proceso_usuario.get(llave_proceso) == null){
             return null;
@@ -111,6 +113,44 @@ public class GestionCargas {
         }
     }
     public void removerProcesoUsuario(String llave_proceso){
+        proceso_usuario.remove(llave_proceso);
+    }
+
+
+//MONITOREO
+    WeakHashMap<String, WeakReference<AsyncMonitor>> sostenMonitor = new WeakHashMap<String, WeakReference<AsyncMonitor>>();
+
+    public void iniciarMonitoreo(String llave_proceso, AsyncMonitor monitor, Activity activity){
+        soltarHilo(llave_proceso);
+        sostenMonitor.put(llave_proceso, new WeakReference<AsyncMonitor>(monitor));
+        if(activity != null){
+            atraparHilo(llave_proceso, activity);
+        }
+    }
+    public AsyncMonitor obtenerInstHilo(String llave_proceso){
+        if(sostenMonitor.get(llave_proceso) == null){
+            return null;
+        }
+        else {
+            return sostenMonitor.get(llave_proceso).get();
+        }
+    }
+    public void atraparHilo(String llave_proceso, Activity activity){
+
+        AsyncMonitor ub_monitor = obtenerInstHilo(llave_proceso);
+        if (ub_monitor != null){
+            ub_monitor.setMyActy(activity);
+        }
+    }
+    public void soltarHilo(String llave_proceso){
+        if (sostenMonitor.containsKey(llave_proceso)
+                && sostenMonitor.get(llave_proceso) != null
+                && sostenMonitor.get(llave_proceso).get() != null)
+        {
+            sostenMonitor.get(llave_proceso).get().soltarActivity();
+        }
+    }
+    public void removerHilo(String llave_proceso){
         proceso_usuario.remove(llave_proceso);
     }
 

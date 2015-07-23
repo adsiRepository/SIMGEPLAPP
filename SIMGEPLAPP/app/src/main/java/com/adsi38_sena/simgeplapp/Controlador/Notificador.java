@@ -25,19 +25,19 @@ public class Notificador {
       //  this.simgeplapp = app;
     }
 
-    public void notificarAlertaPlanta(Service source) {
+    public void notificarAlertaPlanta(Service service) {
         //fuentes => http://androcode.es/2012/09/notificaciones-metodo-tradicional-notification-builder-y-jelly-bean/
         try {
             //se supone que debe enviar notificacion al obtener lecturas extrañas:
-            Bitmap icon = BitmapFactory.decodeResource(source.getResources(), R.drawable.img_notif);
+            Bitmap icon = BitmapFactory.decodeResource(service.getResources(), R.drawable.img_notif);
             Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);//sonido
 
-            PendingIntent acty_pendiente = PendingIntent.getActivity(source, /*codigoPeticion*/0,
-                    /*intent*/new Intent(source, ActivityMonitoreo.class), /*flags*/ 0);
+            PendingIntent acty_pendiente = PendingIntent.getActivity(service, /*codigoPeticion*/0,
+                    /*intent*/new Intent(service, ActivityMonitoreo.class), /*flags*/ 0);
 
-            NotificationManager mngNotif = (NotificationManager) source.getSystemService(source.NOTIFICATION_SERVICE);
+            NotificationManager mngNotif = (NotificationManager) service.getSystemService(service.NOTIFICATION_SERVICE);
 
-            NotificationCompat.Builder constructorNotificacion = new NotificationCompat.Builder(source)
+            NotificationCompat.Builder constructorNotificacion = new NotificationCompat.Builder(service)
                     .setContentIntent(acty_pendiente)
                     .setTicker("Alerta Simgeplap")
                     .setSmallIcon(R.drawable.icon_notif)
@@ -52,7 +52,7 @@ public class Notificador {
             mngNotif.notify(SIMGEPLAPP.NOTIFICACIONES.ID_NOTIFICACION_ALERTA, constructorNotificacion.build());
 
         } catch (Exception eh) {
-            Toast.makeText(source.getApplicationContext(), eh.toString(), Toast.LENGTH_LONG).show();
+            Toast.makeText(service.getApplicationContext(), eh.toString(), Toast.LENGTH_LONG).show();
         }
     }
 }

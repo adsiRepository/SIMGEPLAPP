@@ -13,14 +13,10 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor.AsyncUsers;
-import com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor.GestionCargas;
+import com.adsi38_sena.simgeplapp.Controlador.SalvaTareas;
 import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
 import com.adsi38_sena.simgeplapp.Modelo.Usuario;
 import com.adsi38_sena.simgeplapp.R;
-
-import org.apache.http.NameValuePair;
-
-import java.util.ArrayList;
 
 public class ActivityUsuarios extends Activity implements View.OnClickListener {
 
@@ -80,7 +76,7 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
         btn_eliminar.setOnClickListener(this);
 
         //linea que me permite recapturar el hilo donde se despliega el dialogo emergente; aqui se sostiene el hilo y se adjunta cosntantemente al nuevo activity al cambiar configuaciones
-        GestionCargas.obtenerInstancia().adjuntarProcesoUsuario(SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_CARGA_USERS, this);
+        SalvaTareas.obtenerInstancia().adjuntarProcesoUsuario(SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_CARGA_USERS, this);
         //--
 
     }
@@ -111,7 +107,7 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
                     //Toast.makeText(getApplicationContext(), SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_CARGA_USERS, Toast.LENGTH_LONG).show();
 
                     AsyncUsers registro = new AsyncUsers();
-                    GestionCargas.obtenerInstancia().procesarUsuario(SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_CARGA_USERS,
+                    SalvaTareas.obtenerInstancia().procesarUsuario(SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_CARGA_USERS,
                             registro, ActivityUsuarios.this);
                     registro.execute(nuevo_usuario);
 
@@ -130,7 +126,7 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
     @Override
     protected void onDestroy(){
         super.onDestroy();
-        GestionCargas.obtenerInstancia().desAdjuntarProcesoUsuario(SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_CARGA_USERS);
+        SalvaTareas.obtenerInstancia().desAdjuntarProcesoUsuario(SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_CARGA_USERS);
     }
 
     @Override

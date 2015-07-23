@@ -12,8 +12,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-
-    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:name=".Modelo.SIMGEPLAPP"
@@ -47,7 +46,9 @@
 
         <activity
             android:name=".Vistas.ActivityMonitoreo"
-            android:label="@string/title_activity_monitoreo" >
+            android:label="@string/title_activity_monitoreo"
+            android:launchMode="singleInstance"><!--android:alwaysRetainTaskState="true" -> retendra el ultimo estado de la tarea
+            fuentes => http://developer.android.com/guide/topics/manifest/activity-element.html-->
         </activity>
         <activity
             android:name=".Vistas.ActivityLogin"
