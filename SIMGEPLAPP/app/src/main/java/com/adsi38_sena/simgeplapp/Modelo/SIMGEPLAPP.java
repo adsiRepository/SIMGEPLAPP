@@ -34,7 +34,7 @@ public class SIMGEPLAPP extends Application{
 
 
     public static class Comunicaciones{
-        public static String dirIP_server = "192.168.0.14";
+        public static String dirIP_server = "192.168.43.75";
         public static String URL_SERVER = "http://" + dirIP_server + "/Servidor_Simgeplapp/";
     }
 
