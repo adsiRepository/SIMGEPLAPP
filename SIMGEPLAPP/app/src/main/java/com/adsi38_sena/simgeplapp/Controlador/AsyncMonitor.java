@@ -50,7 +50,7 @@ public class AsyncMonitor extends AsyncTask<Double, Double, String> {
     protected void onProgressUpdate(Double... values){//recibo los valores pasados en el "publishProgress"
         try {
             if(myActy != null){
-                myActy.publicarLectura();
+                //myActy.publicarLectura();
             }
         }catch (Exception eh){
             Toast.makeText(myActy.getApplicationContext(), "monitoreo pubprog: " + eh.toString(), Toast.LENGTH_LONG).show();

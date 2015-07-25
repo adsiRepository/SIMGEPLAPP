@@ -83,9 +83,9 @@ public class ActivityMonitoreo extends Activity {
 					e.printStackTrace();
 				}*/
 
-                AsyncMonitor monitor = new AsyncMonitor();
+                /*AsyncMonitor monitor = new AsyncMonitor();
                 SalvaTareas.obtenerInstancia().iniciarMonitoreo(SIMGEPLAPP.LLAVE_PROCESO_MONITOREO, monitor, ActivityMonitoreo.this);
-                monitor.execute();
+                monitor.execute();*/
             }
         });
 
@@ -94,18 +94,23 @@ public class ActivityMonitoreo extends Activity {
     @Override
     protected void onStart(){
         super.onStart();
+        if(simgeplapp.serviceOn == true) {
+            if (!MotorMonitor.isAlive()) {
+                MotorMonitor.start();
+            }
+        }
     }
 
     @Override
     protected void onResume(){
         super.onResume();
-        SalvaTareas.obtenerInstancia().atraparHilo(SIMGEPLAPP.LLAVE_PROCESO_MONITOREO, this);
+        //SalvaTareas.obtenerInstancia().atraparHilo(SIMGEPLAPP.LLAVE_PROCESO_MONITOREO, this);
     }
 
     @Override
     protected void onPause(){
         super.onPause();
-        SalvaTareas.obtenerInstancia().soltarHilo(SIMGEPLAPP.LLAVE_PROCESO_MONITOREO);
+        //SalvaTareas.obtenerInstancia().soltarHilo(SIMGEPLAPP.LLAVE_PROCESO_MONITOREO);
     }
 
     @Override
@@ -124,56 +129,50 @@ public class ActivityMonitoreo extends Activity {
 
     }
 
-    public void publicarLectura(){
-
-        try {
-            /*if(temporal == simgeplapp.TEMP){
-                valores[0] = (random.nextDouble() * (178 - 19)) + 19;
-                valores[1] = (random.nextDouble() * (168 - 16)) + 16;
-                valores[2] = (random.nextDouble() * (166 - 18)) + 18;
+    private Thread MotorMonitor = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            while (simgeplapp.serviceOn == true) {
+                try {
+                    aux = random.nextInt(3);//intervalo desde 0 hasta 3 sin tomarlo, es decir realmente hasta 2.
+                    switch (aux) {
+                        case 0:
+                            txv_TEMP.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    //txv_TEMP.setText("" + decimalFormat.format(valores[0]));
+                                    txv_TEMP.setText("" + decimalFormat.format((random.nextDouble() * (178 - 19)) + 19));
+                                }
+                            });
+                            break;
+                        case 1:
+                            txv_PRES.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    //txv_PRES.setText("" + decimalFormat.format(valores[1]));
+                                    txv_PRES.setText("" + decimalFormat.format((random.nextDouble() * (168 - 16)) + 16));
+                                }
+                            });
+                            break;
+                        case 2:
+                            txv_NIV.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    //txv_NIV.setText("" + decimalFormat.format(valores[2]));
+                                    txv_NIV.setText("" + decimalFormat.format((random.nextDouble() * (166 - 18)) + 18));
+                                }
+                            });
+                            break;
+                    }
+                    Thread.sleep(900);
+                } catch (Exception eh) {
+                    Toast.makeText(ActivityMonitoreo.this, "ActyMon-pubLec: " + eh.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                }
             }
-            else {
-                valores[0] = simgeplapp.TEMP;//obtengo los valores de las variables globales del monitoreo
-                valores[1] = simgeplapp.PRES;//que se redefinen en el servicio
-                valores[2] = simgeplapp.NIV;
-                temporal = valores[0];
-            }*/
-
-            aux = random.nextInt(3);
-            switch (aux){
-                case 0:
-                    txv_TEMP.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            //txv_TEMP.setText("" + decimalFormat.format(valores[0]));
-                            txv_TEMP.setText("" + decimalFormat.format((random.nextDouble() * (178 - 19)) + 19));
-                        }
-                    });
-                    break;
-                case 1:
-                    txv_PRES.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            //txv_PRES.setText("" + decimalFormat.format(valores[1]));
-                            txv_PRES.setText("" + decimalFormat.format((random.nextDouble() * (168 - 16)) + 16));
-                        }
-                    });
-                    break;
-                case 2:
-                    txv_NIV.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            //txv_NIV.setText("" + decimalFormat.format(valores[2]));
-                            txv_NIV.setText("" + decimalFormat.format((random.nextDouble() * (166 - 18)) + 18));
-                        }
-                    });
-                    break;
-            }
-
-        } catch (Exception eh) {
-            Toast.makeText(this, "ActyMon-pubLec: "+eh.getLocalizedMessage(), Toast.LENGTH_LONG).show();
         }
-    }
+    });
+
+
 
 
     //////--------      METODOS DE ENLACE AL SERVICE EN SEGUNDO PLANO
