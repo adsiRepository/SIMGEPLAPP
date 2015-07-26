@@ -34,8 +34,11 @@ public class SIMGEPLAPP extends Application{
 
 
     public static class Comunicaciones{
-        public static String dirIP_server = "192.168.0.14";
-        public static String URL_SERVER = "http://" + dirIP_server + "/Servidor_Simgeplapp/";
+        //SERVIDOR LOCAL (mi pc)
+        //public static String dirIP_server = "192.168.0.14";
+        //public static String URL_SERVER = "http://" + dirIP_server + "/Servidor_Simgeplapp/";
+        //SERVIDOR REMOTO (hostinger)
+        public static String URL_SERVER = "http://adsi38.esy.es/Servidor_Simgeplapp/";
     }
 
     public static class CargaSegura {
