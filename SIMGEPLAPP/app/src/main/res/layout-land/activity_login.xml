@@ -7,14 +7,14 @@
     tools:context=".LoginActivity"
     android:background="#ff010201">
 
+
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:id="@+id/fondo"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentBottom="true"
-        android:background="@drawable/inter"
+        android:background="@drawable/loginnnn"
         android:layout_alignParentRight="true"/>
 
     <EditText
@@ -27,8 +27,7 @@
         android:background="@android:color/white"
         android:textColor="#ff0e060e"
         android:layout_above="@+id/textView_pass"
-        android:layout_alignLeft="@+id/textView_pass"
-        android:layout_alignRight="@+id/edt_contrasena"/>
+        android:layout_alignLeft="@+id/textView_pass" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -38,14 +37,13 @@
         android:id="@+id/edt_contrasena"
         android:background="@android:color/white"
         android:textColor="#ff0e060e"
-        android:layout_above="@+id/btn_solic_reg"
-        android:layout_toLeftOf="@+id/btn_loggin"
-        android:layout_marginBottom="20dp"
-        android:layout_marginRight="70dp"/>
+        android:layout_marginRight="31dp"
+        android:layout_centerVertical="true"
+        android:layout_alignRight="@+id/btn_loggin" />
 
     <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="120dp"
+        android:layout_height="40dp"
         android:id="@+id/btn_loggin"
         android:layout_gravity="center_horizontal"
         android:background="@drawable/ingr"
@@ -57,17 +55,16 @@
         android:longClickable="false"
         android:visibility="visible"
         android:layout_above="@+id/btn_solic_reg"
-        android:layout_alignRight="@+id/fondo"/>
+        android:layout_alignParentRight="true"/>
 
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/btn_solic_reg"
         android:background="@drawable/registrar"
-        android:onClick="interfaz4"
         android:clickable="true"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"/>
+        android:layout_centerHorizontal="true"/>
 
     <TextView
         android:layout_width="wrap_content"

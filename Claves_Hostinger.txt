@@ -1,0 +1,6 @@
+sub-dominio = adsi38.esy.es	
+contraseña = simgeplapp
+
+base de datos = u812060061_simge
+clave bd = simgeplapp
+user = u812060061_ads38
