@@ -29,8 +29,7 @@ public class ComunicadorServidor {
     //Atributos
     //private String IPv4;//se consigue la direccion mediante el comando "ipconfig" en cmd, el IPv4 de la conexion LAN
 
-    private InputStream corriente_datos_entrantes = null;
-    private String result = "";
+
 
     //Metodos
 
@@ -51,11 +50,13 @@ public class ComunicadorServidor {
         valoresEnviados.add(new BasicNameValuePair("user", user));
         valoresEnviados.add(new BasicNameValuePair("pass", pass));
 
-        JSONArray jarray = capturarRespuestaServidor(url, valoresEnviados);//metodo que obtiene la respuesta del servidor
-        if (jarray != null && jarray.length() > 0) {
-            JSONObject jobj = jarray.getJSONObject(0);//viene con un array codificado en json que contiene en este caso un solo indice (un solo valor)
-            isInDB = jobj.getInt("logged");//el json viene desde el php con un entero entre 0 y 1
-            if (isInDB == 1) {//por convencion 1 es verdadero, si existe en bd me envia 1
+        //JSONObject jarray = //metodo que obtiene la respuesta del servidor
+        JSONObject jobj = obtenerRespuestaServidor(url, valoresEnviados);
+        if (jobj != null) {
+            //viene con un array codificado en json que contiene en este caso un solo indice (un solo valor)
+            //isInDB = jobj.getInt("logged");//el json viene desde el php con un entero entre 0 y 1
+            boolean log = jobj.getBoolean("logged");
+            if (log == true) {//por convencion 1 es verdadero, si existe en bd me envia 1
                 return 1;
             } else {
                 return 0;//0 es que no existe en la base de datos
@@ -134,7 +135,10 @@ public class ComunicadorServidor {
 
 //FUENTE DE LA COMUNICACION CON EL SERVIDOR (metodos generales encargados de tal cosa)
     //peticion HTTP
-    private void pedirRespuestaServidor(String url_servidor, ArrayList<NameValuePair> parametros) throws IOException {
+    private JSONObject obtenerRespuestaServidor(String url_servidor, ArrayList<NameValuePair> parametros) throws IOException, JSONException {
+
+        InputStream corriente_datos_entrantes = null;
+        String result = "";
 
         //instanciamos un objeto que se comportara como cliente para el servidor (el navegador chrome es un cliente por ejemplo)
         HttpClient cliente_web = new DefaultHttpClient();
@@ -148,32 +152,9 @@ public class ComunicadorServidor {
         //envio el objeto codificado en post
         HttpResponse respuesta_servidor = cliente_web.execute(peticion_post);
         HttpEntity entidad_respuesta = respuesta_servidor.getEntity();
+        
         corriente_datos_entrantes = entidad_respuesta.getContent();
-    }
 
-
-    //metodo que obtiene en un JSonArray el arreglo confeccionado y enviado por el fichero php en el servidor
-    private JSONArray capturarRespuestaServidor(String url_servidor, ArrayList<NameValuePair> parametros) throws IOException {
-        pedirRespuestaServidor(url_servidor, parametros);//definira la variable "corriente_datos_entrantes"
-        if (corriente_datos_entrantes != null) {//s� obtuvo una respuesta
-            desglosarRespuesta();//basicamente convierte la corriente de informacion entrante en una lista despuesta en un String donde cada reglon es una pareja nombre-valor
-            return obtenerArrayJSON();//se decodifica esta lista en un objeto arreglo JSon
-        } else {
-            return null;
-        }
-    }
-
-    private JSONArray obtenerArrayJSON() {
-        //parse json data
-        try {
-            JSONArray jArray = new JSONArray(result);
-            return jArray;
-        } catch (JSONException e) {
-            return null;
-        }
-    }
-
-    private void desglosarRespuesta() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(corriente_datos_entrantes, "iso-8859-1"), 8);
         StringBuilder sb = new StringBuilder();
         String line;
@@ -182,9 +163,12 @@ public class ComunicadorServidor {
         }
         corriente_datos_entrantes.close();
         result = sb.toString();
-    }
 
-//FIN MOTOR DE CONEXION AL SERVIDOR
+        JSONObject jsonObj = new JSONObject(result);
+
+        return jsonObj;
+    }
+    //FIN MOTOR DE CONEXION AL SERVIDOR
 
 
 }
