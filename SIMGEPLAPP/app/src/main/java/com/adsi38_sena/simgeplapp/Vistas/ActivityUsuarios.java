@@ -123,6 +123,17 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
         }
     }
 
+    public void limpiarPantalla(){
+        txt_nombre.setText("");
+        txt_apes.setText("");
+        txt_id.setText("");
+        txt_tel.setText("");
+        txt_mail.setText("");
+        txt_nick.setText("");
+        txt_pass.setText("");
+        SIMGEPLAPP.vibrateExit(this);
+    }
+
     @Override
     protected void onDestroy(){
         super.onDestroy();

@@ -106,8 +106,6 @@ public class ComunicadorServidor {
 
             JSONObject jsonObj = new JSONObject(traduccion);
 
-            //JSONArray jarray = new JSONArray(traduccion);
-
             if (jsonObj != null && jsonObj.length() > 0) {
                 boolean added = jsonObj.getBoolean("added");
                 //int added = jsonObj.getInt("added");

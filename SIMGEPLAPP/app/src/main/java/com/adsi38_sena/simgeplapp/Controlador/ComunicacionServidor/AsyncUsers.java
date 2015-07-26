@@ -9,13 +9,14 @@ import android.widget.Toast;
 import com.adsi38_sena.simgeplapp.Controlador.SalvaTareas;
 import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
 import com.adsi38_sena.simgeplapp.Modelo.Usuario;
+import com.adsi38_sena.simgeplapp.Vistas.ActivityUsuarios;
 
 
 public class AsyncUsers extends AsyncTask<Usuario, String, String>{
 
     SIMGEPLAPP simgeplapp;
 
-    Activity activity_raiz;
+    ActivityUsuarios activity_raiz;
 
     FragmentoCargaServidor frag_progress_usuarios;
 
@@ -49,10 +50,10 @@ public class AsyncUsers extends AsyncTask<Usuario, String, String>{
             if (datos_transaccion != null) {
 
                 if (datos_transaccion[0] == "added") {
-                    //publishProgress("Usuario Añadido");
+                    publishProgress("Usuario Añadido");
                     if (datos_transaccion[1] != null && datos_transaccion[1].length() > 0) {
                         publishProgress(datos_transaccion[1]);
-                        SystemClock.sleep(300);
+                        SystemClock.sleep(100);
                         publishProgress(datos_transaccion[2]);
                     }
                     paso = "ok";
@@ -70,16 +71,10 @@ public class AsyncUsers extends AsyncTask<Usuario, String, String>{
                 throw new Exception("No se pudo recibir el objeto");
             }
 
-            //for(int i = 0; i < atributos_usuario.size(); i++){
-                //Thread.sleep(6000);
-              //  publishProgress(atributos_usuario.get(i).getValue());
-            //}
-            //return true;
             return paso;
 
         } catch (Exception e) {
             e.printStackTrace();
-            //Toast.makeText(activity_raiz.getApplicationContext(), "dobackg AsyUsrs: "+e.toString(), Toast.LENGTH_LONG).show();
             return "dobackg AsyUsrs: "+e.toString();
         }
     }
@@ -105,6 +100,7 @@ public class AsyncUsers extends AsyncTask<Usuario, String, String>{
         try {
             if (activity_raiz != null) {
                 if (result == "ok") {
+                    activity_raiz.limpiarPantalla();
                     Toast.makeText(activity_raiz.getApplicationContext(), "Usuario Registrado con Exito", Toast.LENGTH_LONG).show();
                 }else{
                     SIMGEPLAPP.vibrateError(activity_raiz);
@@ -126,7 +122,7 @@ public class AsyncUsers extends AsyncTask<Usuario, String, String>{
     }
 
     public void setActivity_raiz(Activity activity_raiz) {
-        this.activity_raiz = activity_raiz;
+        this.activity_raiz = (ActivityUsuarios)activity_raiz;
     }
 
     public void desAdjuntar() {
