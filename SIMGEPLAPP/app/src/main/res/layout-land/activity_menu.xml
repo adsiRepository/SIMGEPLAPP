@@ -5,39 +5,42 @@
     android:background="#ff020800">
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:id="@+id/fondo_menu"
-        android:src="@drawable/log_menu"
         android:layout_centerVertical="true"
-        android:layout_alignLeft="@+id/btn_monitoreo"/>
+        android:layout_toRightOf="@+id/txv_user_session"
+        android:background="@drawable/meutt" />
 
     <Button
-        android:layout_width="110dp"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:text="Usuarios"
         android:id="@+id/btn_usuarios"
-        android:background="#ff5ccd51"
-        android:layout_alignTop="@+id/btn_revision"
-        android:layout_toRightOf="@+id/txv_user_session"/>
+        android:background="#ff21cd14"
+        android:layout_centerVertical="true"
+        android:layout_alignLeft="@+id/btn_monitoreo" />
 
     <Button
-        android:layout_width="110dp"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:text="Revision"
         android:id="@+id/btn_revision"
-        android:background="#ff5ccd51"
-        android:layout_centerVertical="true"
-        android:layout_alignRight="@+id/switch_monitorear"/>
+        android:background="#ff21cd14"
+        android:layout_marginTop="25dp"
+        android:layout_below="@+id/btn_usuarios"
+        android:layout_alignLeft="@+id/btn_usuarios" />
 
     <Button
-        android:layout_width="110dp"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:text="Monitoreo"
         android:id="@+id/btn_monitoreo"
-        android:background="#ff5ccd51"
-        android:layout_above="@+id/fondo_menu"
-        android:layout_centerHorizontal="true"/>
+        android:background="#ff21cd14"
+        android:layout_marginRight="75dp"
+        android:layout_below="@+id/txv_user_session"
+        android:layout_toLeftOf="@+id/switch_monitorear"
+        android:layout_marginTop="41dp" />
 
     <Switch
         android:layout_width="wrap_content"

@@ -13,12 +13,12 @@
         android:background="@drawable/mains" />
 
     <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="215dp"
+        android:layout_height="205dp"
         android:id="@+id/btnimg_inicio"
-        android:background="@drawable/log"
+        android:background="@drawable/log_menu"
         android:onClick="interfaz2"
         android:layout_alignTop="@+id/imageView"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="81dp" />
+        android:layout_marginTop="112dp" />
 </RelativeLayout>
