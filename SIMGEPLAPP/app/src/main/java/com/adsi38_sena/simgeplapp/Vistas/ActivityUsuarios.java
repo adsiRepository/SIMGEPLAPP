@@ -18,6 +18,8 @@ import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
 import com.adsi38_sena.simgeplapp.Modelo.Usuario;
 import com.adsi38_sena.simgeplapp.R;
 
+import java.util.ArrayList;
+
 public class ActivityUsuarios extends Activity implements View.OnClickListener {
 
     EditText txt_nombre, txt_apes, txt_id, txt_tel, txt_mail, txt_nick, txt_pass;
@@ -102,14 +104,15 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
                     nuevo_usuario.setPass(txt_pass.getText().toString());
                     nuevo_usuario.setRol(opc_rol_elegida);
 
-                    //ArrayList<NameValuePair> h = nuevo_usuario.obtenerPaquete_Atributos();
+                    ArrayList<Object> ordenes = new ArrayList<Object>();
 
-                    //Toast.makeText(getApplicationContext(), SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_CARGA_USERS, Toast.LENGTH_LONG).show();
+                    ordenes.add(0, 1);//uno = codigo que indica q la orden es guardar nuevo usuario
+                    ordenes.add(1, nuevo_usuario);
 
                     AsyncUsers registro = new AsyncUsers();
                     SalvaTareas.obtenerInstancia().procesarUsuario(SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_CARGA_USERS,
                             registro, ActivityUsuarios.this);
-                    registro.execute(nuevo_usuario);
+                    registro.execute(ordenes);
 
                     //throw new Exception("instancia no nula");
 
@@ -120,6 +123,37 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
             }catch (Exception eh){
                 Toast.makeText(getApplicationContext(), "btn_reg: "+eh.toString(), Toast.LENGTH_LONG).show();
             }
+                break;
+            case R.id.btn_users_buscar:
+                try {
+                    //Toast.makeText(getApplicationContext(), "", Toast.LENGTH_LONG).show();
+
+                    if ((txt_id.getText().toString().length() > 0)) {
+
+                        ArrayList<Object> ordenes = new ArrayList<Object>();
+                        String id_busc = txt_id.getText().toString();
+
+                        ordenes.add(0, 2);//dos sera el codigo de la orden de busqueda
+                        ordenes.add(1, id_busc);
+
+                        //ArrayList<NameValuePair> h = nuevo_usuario.obtenerPaquete_Atributos();
+
+                        //Toast.makeText(getApplicationContext(), SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_CARGA_USERS, Toast.LENGTH_LONG).show();
+
+                        AsyncUsers busqueda = new AsyncUsers();
+                        SalvaTareas.obtenerInstancia().procesarUsuario(SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_CARGA_USERS,
+                                busqueda, ActivityUsuarios.this);
+                        busqueda.execute(ordenes);
+
+                        //throw new Exception("instancia no nula");
+
+                    } else {
+                        SIMGEPLAPP.vibrateError(ActivityUsuarios.this);
+                        Toast.makeText(getApplicationContext(), "nombre, apellido e Id requeridos", Toast.LENGTH_LONG).show();
+                    }
+                }catch (Exception eh){
+                    Toast.makeText(getApplicationContext(), "btn_reg: "+eh.toString(), Toast.LENGTH_LONG).show();
+                }
         }
     }
 
@@ -131,7 +165,7 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
         txt_mail.setText("");
         txt_nick.setText("");
         txt_pass.setText("");
-        SIMGEPLAPP.vibrateExit(this);
+        SIMGEPLAPP.vibrateExito(this);
     }
 
     @Override

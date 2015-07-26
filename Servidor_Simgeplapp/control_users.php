@@ -7,7 +7,8 @@ class ControlUsuario {
     public $error;
 
     function __construct() {
-        $this->conex = new mysqli("localhost", "root", "", "simgeplapp");
+        $this->conex = new mysqli("localhost", "root", "", "simgeplapp"); //local
+        //$this->conex = new mysqli("localhost", "u855993248_ads38", "simgeplap", "u855993248_simge"); //hostinger
         if ($this->conex->connect_errno) {
             $error = $this->conex->error;
         } else {
@@ -20,7 +21,19 @@ class ControlUsuario {
         return $this->conex;
     }
 
-    public function registrarUsuario($id, $name, $ape, $tipo_id, $tel, $email, $pass, $rol, $nick) {
+    public function loggin($nick, $pass){
+        //loggeo
+        $consulta = "select * from usuarios where nick='$nick' and pass='$pass'";
+        $result = $this->conex->query($consulta);
+        if ($result->num_rows > 0) {
+            return TRUE;
+        }
+        else {
+            return FALSE;
+        }
+    }
+
+        public function registrarUsuario($id, $name, $ape, $tipo_id, $tel, $email, $pass, $rol, $nick) {
 
         $consulta = "insert into usuarios values ('$id','$name','$ape','$tipo_id','$tel','$email',"
                 . "'$pass','$rol','$nick')";

@@ -35,10 +35,10 @@ public class SIMGEPLAPP extends Application{
 
     public static class Comunicaciones{
         //SERVIDOR LOCAL (mi pc)
-        //public static String dirIP_server = "192.168.0.14";
-        //public static String URL_SERVER = "http://" + dirIP_server + "/Servidor_Simgeplapp/";
+        public static String dirIP_server = "192.168.0.14";
+        public static String URL_SERVER = "http://" + dirIP_server + "/Servidor_Simgeplapp/";
         //SERVIDOR REMOTO (hostinger)
-        public static String URL_SERVER = "http://adsi38.esy.es/Servidor_Simgeplapp/";
+        //public static String URL_SERVER = "http://adsi38.esy.es/Servidor_Simgeplapp/";
     }
 
     public static class CargaSegura {
@@ -131,7 +131,7 @@ public class SIMGEPLAPP extends Application{
         SystemClock.sleep(300);
         vibrator.vibrate(300);
     }
-    public static void vibrateExit(Context context) {
+    public static void vibrateExito(Context context) {
         //long[] patron de vibracion -> retraso inicial, vibra, duerme, vibra, duerme, vibra, duerme, ....
         long[] patron = {0, 500, 200, 500, 200, 1500};
         Vibrator vibrate = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);

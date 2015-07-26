@@ -1,32 +1,27 @@
 <?php
-//include_once 'db_config.php';
+include 'control_users.php';
 
-//obtenemos las variables enviadas por post desde la aplicacion con el objeto HttpClient
 if (isset($_REQUEST["user"]) && isset($_REQUEST["pass"])) {
+    
     $user = $_REQUEST["user"];
     $pass = $_REQUEST["pass"];
 
-    $db = new mysqli("localhost", "root", "", "simgeplapp"); 
-//loggeo
+    $control_usuarios = new ControlUsuario();
+    
+    $r = $control_usuarios->loggin($user, $pass);
+    
+    $json_resp = array();
 
-    $consulta = "select * from usuarios where nombre='$user' and pass='$pass'";
-
-    $result = $db->query($consulta);
-
-    if ($result->num_rows > 0) {
-        //echo "<p id='display'>Usuario Existe</p>";
-        $respuesta[] = array("logged" => "1");
+    if ($r == TRUE) {
+        $json_resp["logged"] = TRUE;
     } else {
-        //echo "<p id='display'>Usuario No Existe</p>";
-        $respuesta[] = array("logged" => "0");
+        $json_resp["logged"] = FALSE;
     }
 
-    echo json_encode($respuesta); //envio de respuesta a la app
+    echo json_encode($json_resp);
 }
-
 ?>
-<!-->
-<!DOCTYPE html>
+<!--<!DOCTYPE html>
 <html>
     <head></head>
     <body>
@@ -39,4 +34,3 @@ if (isset($_REQUEST["user"]) && isset($_REQUEST["pass"])) {
         </form>
     </body>
 </html>-->
-

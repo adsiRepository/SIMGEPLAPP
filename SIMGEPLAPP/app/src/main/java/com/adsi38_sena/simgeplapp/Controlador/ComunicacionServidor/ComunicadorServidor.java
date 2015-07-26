@@ -14,7 +14,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -26,23 +25,11 @@ import java.util.ArrayList;
 
 public class ComunicadorServidor {
 
-    //Atributos
-    //private String IPv4;//se consigue la direccion mediante el comando "ipconfig" en cmd, el IPv4 de la conexion LAN
-
-
-
-    //Metodos
-
-    //Construtor
-    /*public ComunicadorServidor(String dirIP) {//constructor de la clase comunicacion al servidor
-        this.IPv4 = dirIP;//supongo que es buen punto para definir la ip //esta se cambia cuando el servidor cambia de terminal
-    }*/
-
 
 //METODO DE LOGGEO
     public int intentoLoggeo(String user, String pass) throws JSONException, IOException {
 
-        String url = SIMGEPLAPP.Comunicaciones.URL_SERVER + "login.php";
+        String url = SIMGEPLAPP.Comunicaciones.URL_SERVER + "usuarios/login.php";
 
         int isInDB;//se puede loggear?, existe en base de datos?
 
@@ -51,7 +38,7 @@ public class ComunicadorServidor {
         valoresEnviados.add(new BasicNameValuePair("pass", pass));
 
         //JSONObject jarray = //metodo que obtiene la respuesta del servidor
-        JSONObject jobj = obtenerRespuestaServidor(url, valoresEnviados);
+        JSONObject jobj = obtenerObjetoJSON(url, valoresEnviados);
         if (jobj != null) {
             //viene con un array codificado en json que contiene en este caso un solo indice (un solo valor)
             //isInDB = jobj.getInt("logged");//el json viene desde el php con un entero entre 0 y 1
@@ -64,7 +51,6 @@ public class ComunicadorServidor {
         } else {
             return -1;//-1 significa que no obtuvo respuesta del servidor
         }
-
     }
 
 
@@ -74,7 +60,7 @@ public class ComunicadorServidor {
 
     public String[] registrarNuevoUsuario(Usuario nuevoUsuario) throws Exception/*IOException, JSONException*/ {
 
-        String url = SIMGEPLAPP.Comunicaciones.URL_SERVER + "add_user.php";
+        String url = SIMGEPLAPP.Comunicaciones.URL_SERVER + "usuarios/add_user.php";
         String[] results = new String[3];
         ArrayList<NameValuePair> datos_a_registrar = nuevoUsuario.obtenerPaquete_Atributos();
 
@@ -83,28 +69,7 @@ public class ComunicadorServidor {
         }
         else {
 
-            DefaultHttpClient cliente_web = new DefaultHttpClient();//HttpClient
-            HttpParams params_cliente = cliente_web.getParams();
-            HttpConnectionParams.setConnectionTimeout(params_cliente, 15000);
-            HttpConnectionParams.getSoTimeout(params_cliente);
-            HttpPost peticion_post = new HttpPost(url);
-            peticion_post.setEntity(new UrlEncodedFormEntity(datos_a_registrar));//se codifica en forma de form
-            HttpResponse respuesta_servidor = cliente_web.execute(peticion_post);
-            HttpEntity entidad_respuesta = respuesta_servidor.getEntity();
-
-            InputStream input = entidad_respuesta.getContent();
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(input, "iso-8859-1"), 8);
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line + "\n");
-            }
-
-            input.close();
-            String traduccion = sb.toString();
-
-            JSONObject jsonObj = new JSONObject(traduccion);
+            JSONObject jsonObj = obtenerObjetoJSON(url, datos_a_registrar);
 
             if (jsonObj != null && jsonObj.length() > 0) {
                 boolean added = jsonObj.getBoolean("added");
@@ -129,11 +94,46 @@ public class ComunicadorServidor {
         }
     }
 
+    /*public String[] modificarUsuario(Usuario nuevosDatos) throws Exception {
+
+        String url = SIMGEPLAPP.Comunicaciones.URL_SERVER + "usuarios/modif_user.php";
+        String[] results = new String[3];
+        ArrayList<NameValuePair> datos_a_registrar = nuevoUsuario.obtenerPaquete_Atributos();
+
+        if(datos_a_registrar == null){
+            throw new Exception("traduccion name-values Usuario.class");
+        }
+        else {
+
+            JSONObject jsonObj = obtenerObjetoJSON(url, datos_a_registrar);
+
+            if (jsonObj != null && jsonObj.length() > 0) {
+                boolean added = jsonObj.getBoolean("added");
+                //int added = jsonObj.getInt("added");
+                if (added ==  true) {
+                    results[0] = "added";
+                    JSONObject extras = jsonObj.getJSONObject("extras");
+                    if (extras != null && extras.length() > 0) {
+                        results[1] = extras.getString("r_pass");
+                        results[2] = extras.getString("r_nick");
+                    }
+                    return results;
+                } else {
+                    results[0] = "no_added";
+                    return results;
+                }
+            } else {
+                results[0] = "failed_conex";
+                return results;
+            }
+
+        }
+    }*/
 
 
 //FUENTE DE LA COMUNICACION CON EL SERVIDOR (metodos generales encargados de tal cosa)
     //peticion HTTP
-    private JSONObject obtenerRespuestaServidor(String url_servidor, ArrayList<NameValuePair> parametros) throws IOException, JSONException {
+    private JSONObject obtenerObjetoJSON(String url_servidor, ArrayList<NameValuePair> parametros) throws IOException, JSONException {
 
         InputStream corriente_datos_entrantes = null;
         String result = "";
