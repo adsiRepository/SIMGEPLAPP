@@ -58,10 +58,33 @@ public class ActivityMenu extends Activity {
                     }
                 });
             }
+            swch_service.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked){
+                        startService(new Intent(ActivityMenu.this, ServicioMonitoreo.class));
+                        swch_service.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                swch_service.setText("Monitoreando");
+                            }
+                        });
+                    }
+                    else {
+                        stopService(new Intent(ActivityMenu.this, ServicioMonitoreo.class));
+                        swch_service.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                swch_service.setText("Monitorear");
+                            }
+                        });
+                    }
+                }
+            });
 
             lbl_user = (TextView)findViewById(R.id.txv_user_session);
 
-            lbl_user.setText(""+simgeplapp.session.user);
+            lbl_user.setText("" + simgeplapp.session.user);
 
             btn_monitoreo.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -73,18 +96,6 @@ public class ActivityMenu extends Activity {
                 @Override
                 public void onClick(View v) {
                     startActivity(new Intent(ActivityMenu.this, ActivityUsuarios.class));
-                }
-            });
-
-            swch_service.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if(isChecked){
-                        startService(new Intent(ActivityMenu.this, ServicioMonitoreo.class));
-                    }
-                    else {
-                        stopService(new Intent(ActivityMenu.this, ServicioMonitoreo.class));
-                    }
                 }
             });
 
