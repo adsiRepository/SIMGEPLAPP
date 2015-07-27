@@ -77,8 +77,18 @@ public class Usuario {
         this.ide = ide;
     }
 
-    public String getTipo_ide() {
-        return tipo_ide;
+    public int getTipo_ide() {
+        int t = 1;
+        if(tipo_ide == "Tarjeta de Identidad") {
+            t = 0;
+        }
+        if(tipo_ide == "Cedula de Ciudadania"){
+            t = 1;
+        }
+        if(tipo_ide == "Pasaporte"){
+            t = 2;
+        }
+        return t;
     }
 
     public void setTipo_ide(String tipo_ide) {
