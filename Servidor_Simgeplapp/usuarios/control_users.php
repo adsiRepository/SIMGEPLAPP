@@ -1,25 +1,27 @@
 <?php
 
+include '../db_config.php';
+
 class ControlUsuario {
 
-    public $conex;
-    public $conected = FALSE;
-    public $error;
+    private $conex;
 
     function __construct() {
-        $this->conex = new mysqli("localhost", "root", "", "simgeplapp"); //local
+        $mng = new DB();
+        $this->conex = $mng->getConnex();
+        //$this->conex = new mysqli("localhost", "root", "", "simgeplapp"); //local
         //$this->conex = new mysqli("localhost", "u855993248_ads38", "simgeplap", "u855993248_simge"); //hostinger
-        if ($this->conex->connect_errno) {
-            $error = $this->conex->error;
+        /*if ($this->conex->connect_errno) {
+            
         } else {
-            $conected = TRUE;
-        }
+            
+        }*/
     }
 
     //funcion publica que devuelve el objeto instanciado de la conexion a la base de datos (creado)
-    public function getConnect() {
+    /*public function getConnect() {
         return $this->conex;
-    }
+    }*/
 
     public function loggin($nick, $pass){
         //loggeo
@@ -31,6 +33,7 @@ class ControlUsuario {
         else {
             return FALSE;
         }
+        desconectarDB();
     }
 
         public function registrarUsuario($id, $name, $ape, $tipo_id, $tel, $email, $pass, $rol, $nick) {
@@ -45,9 +48,11 @@ class ControlUsuario {
             return FALSE;
         }
         //return $consulta;
+        desconectarDB();
     }
 
-    public function comprobarExistencia($query) {
+    public function comprobarExistencia($id) {
+        $query = "select * from usuarios where id='$id'";
         $results = $this->cnxDB->query($query);
         if ($results->num_rows > 0) {
             return TRUE;
@@ -55,20 +60,29 @@ class ControlUsuario {
             return FALSE;
         }
     }
+    
+    public function devolverInformacion($id_s) {
+        $datos[] = NULL;
+        $query = "select * from usuarios where id='$id_s'";
+        $result = $this->conex->query($query);
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_array()) {
+                $datos[0] = "$row[0]";
+                $datos[1] = "$row[1]";
+                $datos[2] = "$row[2]";
+                $datos[3] = "$row[3]";
+                $datos[4] = "$row[4]";
+                $datos[5] = "$row[5]";
+                $datos[6] = "$row[6]";
+                $datos[7] = "$row[7]";
+                $datos[8] = "$row[8]";
+            }
+        }
+        return $datos;
+    }
 
     public function desconectarDB() {
         $this->conex->close();
     }
-
 }
-/*
-function getConexDB() {
-    $con = new mysqli(HOST, USER, PASS, DATABASE);
-    if ($con->connect_errno) {
-        echo $con->error;
-        return NULL;
-    } else {
-        return $con;
-    }
-}
-*/
+?>

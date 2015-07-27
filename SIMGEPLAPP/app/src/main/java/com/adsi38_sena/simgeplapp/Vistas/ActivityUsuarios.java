@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -25,7 +26,7 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
     EditText txt_nombre, txt_apes, txt_id, txt_tel, txt_mail, txt_nick, txt_pass;
     Spinner select_tipo_id;
     RadioGroup opcs_rol;
-    //RadioButton rol_admin, rol_apz;//de aprendiz
+    RadioButton radio_admin, radio_apz;//de aprendiz
     Button btn_guardar, btn_modificar, btn_buscar, btn_eliminar;
 
     final String[] tipos_id = {"Tarjeta de Identidad", "Cedula de Ciudadania", "Pasaporte"};
@@ -48,6 +49,8 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
         ArrayAdapter<String> adp = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, tipos_id);
         select_tipo_id.setAdapter(adp);
 
+        radio_admin = (RadioButton)findViewById(R.id.radio_admin);
+        radio_apz = (RadioButton)findViewById(R.id.radio_aprendiz);
         opcs_rol = (RadioGroup) findViewById(R.id.opcs_users_rol);
         opcs_rol.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -65,8 +68,8 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
             }
         });
 
-        /*rol_admin  = (RadioButton)findViewById(R.id.radio_admin);
-        rol_apz  = (RadioButton)findViewById(R.id.radio_aprendiz);*/
+        /*radio_admin  = (RadioButton)findViewById(R.id.radio_admin);
+        radio_apz  = (RadioButton)findViewById(R.id.radio_aprendiz);*/
 
         btn_guardar = (Button) findViewById(R.id.btn_users_registrar);
         btn_guardar.setOnClickListener(this);//esto es para que respondan al metodo onClick de mas abajo
@@ -93,6 +96,7 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
 
                 if ((txt_nombre.getText().toString().length() > 0) && (txt_apes.getText().toString().length() > 0) &&
                         (txt_id.getText().toString().length() > 0)) {
+
                     Usuario nuevo_usuario = new Usuario();
                     nuevo_usuario.setNom(txt_nombre.getText().toString());
                     nuevo_usuario.setApe(txt_apes.getText().toString());
@@ -166,6 +170,25 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
         txt_nick.setText("");
         txt_pass.setText("");
         SIMGEPLAPP.vibrateExito(this);
+    }
+
+    public void plasmarDatosEncotrados(Usuario datosUser){
+        txt_nombre.setText(datosUser.getNom());
+        txt_apes.setText(datosUser.getApe());
+        txt_id.setText(datosUser.getIde());
+        txt_tel.setText(datosUser.getTel());
+        txt_mail.setText(datosUser.getEmail());
+        txt_nick.setText(datosUser.getNick());
+        txt_pass.setText(datosUser.getPass());
+        if(datosUser.getRol() == "Administrador"){
+            radio_admin.post(new Runnable() {
+                @Override
+                public void run() {
+                    radio_admin.setChecked(true);
+                }
+            });
+        }
+        select_tipo_id.setSelection(datosUser.getTipo_ide());
     }
 
     @Override

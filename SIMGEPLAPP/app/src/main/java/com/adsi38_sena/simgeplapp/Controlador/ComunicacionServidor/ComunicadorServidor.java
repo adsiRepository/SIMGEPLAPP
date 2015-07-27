@@ -94,6 +94,47 @@ public class ComunicadorServidor {
         }
     }
 
+    public Object[] buscarUsuario(String llave_busqueda) throws Exception/*IOException, JSONException*/ {
+
+        String url = SIMGEPLAPP.Comunicaciones.URL_SERVER + "usuarios/buscar.php";
+        Object[] results = new Object[2];
+        ArrayList<NameValuePair> parametroBusqueda = new ArrayList<NameValuePair>();
+
+        parametroBusqueda.add(new BasicNameValuePair("id", llave_busqueda));
+
+        JSONObject jsonObj = obtenerObjetoJSON(url, parametroBusqueda);
+
+        if (jsonObj != null && jsonObj.length() > 0) {
+            boolean finded = jsonObj.getBoolean("find");
+            //int added = jsonObj.getInt("added");
+            if (finded == true) {
+                results[0] = "finded";
+                JSONObject datos = jsonObj.getJSONObject("user");
+                if (datos != null && datos.length() > 0) {
+                    Usuario usuarioHallado = new Usuario();
+                    usuarioHallado.setIde(datos.getString("id"));
+                    usuarioHallado.setNom(datos.getString("nombre"));
+                    usuarioHallado.setApe(datos.getString("apes"));
+                    usuarioHallado.setTipo_ide(datos.getString("tipo_id"));
+                    usuarioHallado.setTel(datos.getString("telefono"));
+                    usuarioHallado.setEmail(datos.getString("email"));
+                    usuarioHallado.setPass(datos.getString("pass"));
+                    usuarioHallado.setRol(datos.getString("rol"));
+                    usuarioHallado.setNick(datos.getString("nick"));
+                    results[1] = usuarioHallado;
+                }
+
+            } else {
+                results[0] = "No existe el Usuario en la Base de Datos";
+                //return results;
+            }
+        } else {
+            results[0] = "No se obtuvo Respuesta del Servidor";
+            //return results;
+        }
+        return results;
+    }
+
     /*public String[] modificarUsuario(Usuario nuevosDatos) throws Exception {
 
         String url = SIMGEPLAPP.Comunicaciones.URL_SERVER + "usuarios/modif_user.php";

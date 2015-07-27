@@ -27,19 +27,33 @@ public class AsyncUsers extends AsyncTask<ArrayList<Object>, String, ArrayList<O
     //ArrayList<NameValuePair> atributos_usuario = null;
 
     @Override
+    protected void onPreExecute(){
+        super.onPreExecute();
+        try {
+            simgeplapp = (SIMGEPLAPP) activity_raiz.getApplication();
+            server = new ComunicadorServidor();
+            frag_progress_usuarios = new FragmentoCargaServidor();
+            frag_progress_usuarios.show(activity_raiz.getFragmentManager(), SIMGEPLAPP.CargaSegura.TAG_PROGRESO_CARGA_USUARIOS);
+        }catch (Exception eh){
+            Toast.makeText(simgeplapp.getApplicationContext(), "pre exe: "+eh.toString(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
     protected ArrayList<Object> doInBackground(ArrayList<Object>... params) {
 
-        ArrayList<Object> args = params[0];
-        int orden = (Integer)args.get(0);
+        ArrayList<Object> argumentos = params[0];
+        int orden = (Integer)argumentos.get(0);
         ArrayList<Object> postExe = new ArrayList<Object>();
         postExe.add(0, null);
         postExe.add(1, null);
+        postExe.add(2, null);
 
         try {
             switch (orden){
                 case 1:
                     postExe.set(0, 1);
-                    usuario_en_proceso = (Usuario)args.get(1);
+                    usuario_en_proceso = (Usuario)argumentos.get(1);
                     String[] datos_transaccion = server.registrarNuevoUsuario(usuario_en_proceso);
                     if (datos_transaccion != null) {
                         if (datos_transaccion[0] == "added") {
@@ -60,6 +74,27 @@ public class AsyncUsers extends AsyncTask<ArrayList<Object>, String, ArrayList<O
                     else {
                         throw new Exception("No se pudo recibir transaccion nuevo usuario");
                     }
+                    break;
+                case 2:
+                    postExe.set(0, 2);
+                    Object[] resultadoBusqueda = server.buscarUsuario((String)argumentos.get(1));
+                    if(resultadoBusqueda != null){
+                        String r = (String)resultadoBusqueda[0];
+                        if(r == "finded"){
+                            publishProgress("Usuario Encontrado");
+                            Usuario user = (Usuario)resultadoBusqueda[1];
+                            if(user != null) {
+                                postExe.set(2, user);
+                            }
+                            else {
+                                throw new Exception("No se recibieron los datos del usuario");
+                            }
+                        }
+                        else {
+                            postExe.set(1, r);
+                        }
+                    }
+                    break;
             }
 
             return postExe;
@@ -72,17 +107,46 @@ public class AsyncUsers extends AsyncTask<ArrayList<Object>, String, ArrayList<O
     }
 
     @Override
-    protected void onPreExecute(){
-        super.onPreExecute();
+    protected void onPostExecute(ArrayList<Object> result){
+        int decisionFinal;
         try {
-            simgeplapp = (SIMGEPLAPP) activity_raiz.getApplication();
-            server = new ComunicadorServidor();
-            frag_progress_usuarios = new FragmentoCargaServidor();
-            frag_progress_usuarios.show(activity_raiz.getFragmentManager(), SIMGEPLAPP.CargaSegura.TAG_PROGRESO_CARGA_USUARIOS);
-        }catch (Exception eh){
-            Toast.makeText(simgeplapp.getApplicationContext(), "pre exe: "+eh.toString(), Toast.LENGTH_LONG).show();
+            if (activity_raiz != null) {
+                if (result != null) {
+                    decisionFinal = (Integer)result.get(0);
+                    switch (decisionFinal) {
+                        case 1:
+                            activity_raiz.limpiarPantalla();
+                            Toast.makeText(activity_raiz.getApplicationContext(), "Usuario Registrado con Exito", Toast.LENGTH_LONG).show();
+                            SIMGEPLAPP.vibrateExito(activity_raiz);
+                            break;
+                        case 2:
+                            if (result.get(2) != null) {
+                                activity_raiz.plasmarDatosEncotrados((Usuario) result.get(2));
+                            }
+                            else {
+                                Toast.makeText(activity_raiz.getApplicationContext(), (String)result.get(1), Toast.LENGTH_LONG).show();
+                            }
+                    }
+                }else{
+                    SIMGEPLAPP.vibrateError(activity_raiz);
+                    Toast.makeText(activity_raiz.getApplicationContext(), "postExe = null", Toast.LENGTH_LONG).show();
+                }
+
+                frag_progress_usuarios.cerrarCarga(activity_raiz.getFragmentManager());
+
+                SalvaTareas.obtenerInstancia().removerProcesoUsuario(SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_CARGA_USERS);
+
+            } else {
+                SIMGEPLAPP.vibrateError(activity_raiz.getApplicationContext());
+                Toast.makeText(activity_raiz.getApplicationContext(), "AsyUsrs pstExe: Actividad perdida", Toast.LENGTH_LONG).show();
+            }
+
+        }catch(Exception eh){
+            Toast.makeText(activity_raiz.getApplicationContext(), "pstExe"+eh.toString(), Toast.LENGTH_LONG).show();
         }
     }
+
+
 
     //##
     @Override
@@ -105,37 +169,7 @@ public class AsyncUsers extends AsyncTask<ArrayList<Object>, String, ArrayList<O
     }
     //##
 
-    @Override
-    protected void onPostExecute(ArrayList<Object> result){
-        int decisionFinal;
-        try {
-            if (activity_raiz != null) {
-                if (result != null) {
-                    decisionFinal = (Integer)result.get(0);
-                    switch (decisionFinal){
-                        case 1:
-                            activity_raiz.limpiarPantalla();
-                            Toast.makeText(activity_raiz.getApplicationContext(), "Usuario Registrado con Exito", Toast.LENGTH_LONG).show();
-                            SIMGEPLAPP.vibrateExito(activity_raiz);
-                    }
-                }else{
-                    SIMGEPLAPP.vibrateError(activity_raiz);
-                    Toast.makeText(activity_raiz.getApplicationContext(), "postExe = null", Toast.LENGTH_LONG).show();
-                }
 
-                frag_progress_usuarios.cerrarCarga(activity_raiz.getFragmentManager());
-
-                SalvaTareas.obtenerInstancia().removerProcesoUsuario(SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_CARGA_USERS);
-
-            } else {
-                SIMGEPLAPP.vibrateError(activity_raiz.getApplicationContext());
-                Toast.makeText(activity_raiz.getApplicationContext(), "AsyUsrs pstExe: Actividad perdida", Toast.LENGTH_LONG).show();
-            }
-
-        }catch(Exception eh){
-            Toast.makeText(activity_raiz.getApplicationContext(), "pstExe"+eh.toString(), Toast.LENGTH_LONG).show();
-        }
-    }
 
     public void setActivity_raiz(Activity activity_raiz) {
         this.activity_raiz = (ActivityUsuarios)activity_raiz;
