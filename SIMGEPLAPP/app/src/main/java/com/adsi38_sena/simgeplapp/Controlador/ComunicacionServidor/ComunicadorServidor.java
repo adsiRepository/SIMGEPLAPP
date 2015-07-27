@@ -135,41 +135,37 @@ public class ComunicadorServidor {
         return results;
     }
 
-    /*public String[] modificarUsuario(Usuario nuevosDatos) throws Exception {
+
+
+    public String modificarUsuario(Usuario nuevosDatos, String llave) throws Exception {
 
         String url = SIMGEPLAPP.Comunicaciones.URL_SERVER + "usuarios/modif_user.php";
-        String[] results = new String[3];
-        ArrayList<NameValuePair> datos_a_registrar = nuevoUsuario.obtenerPaquete_Atributos();
 
-        if(datos_a_registrar == null){
+        ArrayList<NameValuePair> datos_a_cambiar = nuevosDatos.obtenerPaquete_Atributos();
+
+        if(datos_a_cambiar == null){
             throw new Exception("traduccion name-values Usuario.class");
         }
         else {
 
-            JSONObject jsonObj = obtenerObjetoJSON(url, datos_a_registrar);
+            datos_a_cambiar.add(new BasicNameValuePair("ref", llave));
+
+            JSONObject jsonObj = obtenerObjetoJSON(url, datos_a_cambiar);
 
             if (jsonObj != null && jsonObj.length() > 0) {
-                boolean added = jsonObj.getBoolean("added");
-                //int added = jsonObj.getInt("added");
-                if (added ==  true) {
-                    results[0] = "added";
-                    JSONObject extras = jsonObj.getJSONObject("extras");
-                    if (extras != null && extras.length() > 0) {
-                        results[1] = extras.getString("r_pass");
-                        results[2] = extras.getString("r_nick");
-                    }
-                    return results;
+                boolean modif = jsonObj.getBoolean("modif");
+                if (modif == true) {
+                    return "Modificado";
                 } else {
-                    results[0] = "no_added";
-                    return results;
+                    String error = jsonObj.getString("error");
+                    return error;
                 }
-            } else {
-                results[0] = "failed_conex";
-                return results;
             }
-
+            else {
+                return "No se obtuvo respuesta del Servidor";
+            }
         }
-    }*/
+    }
 
 
 //FUENTE DE LA COMUNICACION CON EL SERVIDOR (metodos generales encargados de tal cosa)

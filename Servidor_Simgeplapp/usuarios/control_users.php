@@ -5,17 +5,16 @@ include '../db_config.php';
 class ControlUsuario {
 
     private $conex;
-
+    public $error;
+    
     function __construct() {
         $mng = new DB();
         $this->conex = $mng->getConnex();
         //$this->conex = new mysqli("localhost", "root", "", "simgeplapp"); //local
         //$this->conex = new mysqli("localhost", "u855993248_ads38", "simgeplap", "u855993248_simge"); //hostinger
-        /*if ($this->conex->connect_errno) {
-            
-        } else {
-            
-        }*/
+        if ($this->conex->connect_errno) {
+            $this->error = $this->conex->error;
+        }
     }
 
     //funcion publica que devuelve el objeto instanciado de la conexion a la base de datos (creado)
@@ -80,9 +79,33 @@ class ControlUsuario {
         }
         return $datos;
     }
+    
+    public function modificarUsuario($ref, $id, $name, $ape, $tipo_id, $tel, $email, $rol, $prev) {
+        try {
+            $query = "update usuarios set id='$id', nombre='$name', apes='$ape', tipo_id='$tipo_id', "
+                . "telefono='$tel', email='$email', rol='$rol' $prev "
+                . "where id='$ref'";
+        
+            $done = $this->conex->query($query);
+            //if($this->conex->affected_rows > 0){
+            if($done == TRUE){
+                return "modificado";
+            } else {
+                return "fail";
+            }
+        } catch (Exception $exc) {
+            //echo $exc->getTraceAsString();
+            return $exc->getTraceAsString();
+        } finally {
+            desconectarDB();
+        }
+    }
 
+    public function obtenerDetalleError() {
+        return $this->conex->error;
+    }
+    
     public function desconectarDB() {
         $this->conex->close();
     }
 }
-?>

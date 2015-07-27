@@ -23,14 +23,15 @@ import java.util.ArrayList;
 
 public class ActivityUsuarios extends Activity implements View.OnClickListener {
 
-    EditText txt_nombre, txt_apes, txt_id, txt_tel, txt_mail, txt_nick, txt_pass;
-    Spinner select_tipo_id;
-    RadioGroup opcs_rol;
-    RadioButton radio_admin, radio_apz;//de aprendiz
-    Button btn_guardar, btn_modificar, btn_buscar, btn_eliminar;
+    private EditText txt_nombre, txt_apes, txt_id, txt_tel, txt_mail, txt_nick, txt_pass;
+    private Spinner select_tipo_id;
+    private RadioGroup opcs_rol;
+    private RadioButton radio_admin, radio_apz;//de aprendiz
+    private Button btn_guardar, btn_modificar, btn_buscar, btn_eliminar;
 
     final String[] tipos_id = {"Tarjeta de Identidad", "Cedula de Ciudadania", "Pasaporte"};
-    String opc_rol_elegida;
+    private String opc_rol_elegida;
+    private String ref_modif;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,7 +132,6 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
             case R.id.btn_users_buscar:
                 try {
                     //Toast.makeText(getApplicationContext(), "", Toast.LENGTH_LONG).show();
-
                     if ((txt_id.getText().toString().length() > 0)) {
 
                         ArrayList<Object> ordenes = new ArrayList<Object>();
@@ -148,6 +148,49 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
                         SalvaTareas.obtenerInstancia().procesarUsuario(SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_CARGA_USERS,
                                 busqueda, ActivityUsuarios.this);
                         busqueda.execute(ordenes);
+
+                        //throw new Exception("instancia no nula");
+
+                    } else {
+                        SIMGEPLAPP.vibrateError(ActivityUsuarios.this);
+                        Toast.makeText(getApplicationContext(), "nombre, apellido e Id requeridos", Toast.LENGTH_LONG).show();
+                    }
+                }catch (Exception eh){
+                    Toast.makeText(getApplicationContext(), "btn_reg: "+eh.toString(), Toast.LENGTH_LONG).show();
+                }
+                break;
+
+            case R.id.btn_users_modif:
+                try {
+                    //Toast.makeText(getApplicationContext(), "", Toast.LENGTH_LONG).show();
+
+                    if ((txt_nick.getText().toString().length() > 0) && (txt_pass.getText().toString().length() > 0)) {
+
+                        Usuario nuevos_datos = new Usuario();
+                        nuevos_datos.setNom(txt_nombre.getText().toString());
+                        nuevos_datos.setApe(txt_apes.getText().toString());
+                        nuevos_datos.setIde(txt_id.getText().toString());
+                        nuevos_datos.setTipo_ide(select_tipo_id.getSelectedItem().toString());
+                        nuevos_datos.setTel(txt_tel.getText().toString());
+                        nuevos_datos.setEmail(txt_mail.getText().toString());
+                        nuevos_datos.setNick(txt_nick.getText().toString());
+                        nuevos_datos.setPass(txt_pass.getText().toString());
+                        nuevos_datos.setRol(opc_rol_elegida);
+
+                        ArrayList<Object> ordenes = new ArrayList<Object>();
+
+                        ordenes.add(0, 3);//dos sera el codigo de la orden de busqueda
+                        ordenes.add(1, ref_modif);
+                        ordenes.add(2, nuevos_datos);
+
+                        //ArrayList<NameValuePair> h = nuevos_datos.obtenerPaquete_Atributos();
+
+                        //Toast.makeText(getApplicationContext(), SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_CARGA_USERS, Toast.LENGTH_LONG).show();
+
+                        AsyncUsers modificar = new AsyncUsers();
+                        SalvaTareas.obtenerInstancia().procesarUsuario(SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_CARGA_USERS,
+                                modificar, ActivityUsuarios.this);
+                        modificar.execute(ordenes);
 
                         //throw new Exception("instancia no nula");
 
@@ -176,6 +219,7 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
         txt_nombre.setText(datosUser.getNom());
         txt_apes.setText(datosUser.getApe());
         txt_id.setText(datosUser.getIde());
+        ref_modif = datosUser.getIde();
         txt_tel.setText(datosUser.getTel());
         txt_mail.setText(datosUser.getEmail());
         txt_nick.setText(datosUser.getNick());

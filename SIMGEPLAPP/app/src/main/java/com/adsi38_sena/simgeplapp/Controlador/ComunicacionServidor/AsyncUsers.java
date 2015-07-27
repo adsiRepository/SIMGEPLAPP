@@ -42,8 +42,8 @@ public class AsyncUsers extends AsyncTask<ArrayList<Object>, String, ArrayList<O
     @Override
     protected ArrayList<Object> doInBackground(ArrayList<Object>... params) {
 
-        ArrayList<Object> argumentos = params[0];
-        int orden = (Integer)argumentos.get(0);
+        ArrayList<Object> ordenes_Activity = params[0];
+        int orden = (Integer)ordenes_Activity.get(0);
         ArrayList<Object> postExe = new ArrayList<Object>();
         postExe.add(0, null);
         postExe.add(1, null);
@@ -53,7 +53,7 @@ public class AsyncUsers extends AsyncTask<ArrayList<Object>, String, ArrayList<O
             switch (orden){
                 case 1:
                     postExe.set(0, 1);
-                    usuario_en_proceso = (Usuario)argumentos.get(1);
+                    usuario_en_proceso = (Usuario)ordenes_Activity.get(1);
                     String[] datos_transaccion = server.registrarNuevoUsuario(usuario_en_proceso);
                     if (datos_transaccion != null) {
                         if (datos_transaccion[0] == "added") {
@@ -77,7 +77,7 @@ public class AsyncUsers extends AsyncTask<ArrayList<Object>, String, ArrayList<O
                     break;
                 case 2:
                     postExe.set(0, 2);
-                    Object[] resultadoBusqueda = server.buscarUsuario((String)argumentos.get(1));
+                    Object[] resultadoBusqueda = server.buscarUsuario((String)ordenes_Activity.get(1));
                     if(resultadoBusqueda != null){
                         String r = (String)resultadoBusqueda[0];
                         if(r == "finded"){
@@ -93,6 +93,18 @@ public class AsyncUsers extends AsyncTask<ArrayList<Object>, String, ArrayList<O
                         else {
                             postExe.set(1, r);
                         }
+                    }
+                    break;
+
+                case 3:
+                    postExe.set(0, 3);
+                    String referencia = (String)ordenes_Activity.get(1);
+                    String modif = server.modificarUsuario((Usuario)ordenes_Activity.get(2), referencia);
+                    if(modif == "Modificado"){
+                        postExe.set(2, true);
+                    }
+                    else {
+                        postExe.set(1, modif);
                     }
                     break;
             }
@@ -119,9 +131,20 @@ public class AsyncUsers extends AsyncTask<ArrayList<Object>, String, ArrayList<O
                             Toast.makeText(activity_raiz.getApplicationContext(), "Usuario Registrado con Exito", Toast.LENGTH_LONG).show();
                             SIMGEPLAPP.vibrateExito(activity_raiz);
                             break;
+
                         case 2:
                             if (result.get(2) != null) {
                                 activity_raiz.plasmarDatosEncotrados((Usuario) result.get(2));
+                            }
+                            else {
+                                Toast.makeText(activity_raiz.getApplicationContext(), (String)result.get(1), Toast.LENGTH_LONG).show();
+                            }
+                            break;
+
+                        case 3:
+                            if(result.get(2) != null){
+                                if(result.get(2) == (Boolean)true)
+                                Toast.makeText(activity_raiz.getApplicationContext(), "Usuario Modificado con Exito", Toast.LENGTH_LONG).show();
                             }
                             else {
                                 Toast.makeText(activity_raiz.getApplicationContext(), (String)result.get(1), Toast.LENGTH_LONG).show();
