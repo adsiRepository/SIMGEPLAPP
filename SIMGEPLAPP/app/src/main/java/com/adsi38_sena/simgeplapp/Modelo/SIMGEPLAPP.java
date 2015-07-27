@@ -131,7 +131,7 @@ public class SIMGEPLAPP extends Application{
         SystemClock.sleep(300);
         vibrator.vibrate(300);
     }
-    public static void vibrateExit(Context context) {
+    public static void vibrateExito(Context context) {
         //long[] patron de vibracion -> retraso inicial, vibra, duerme, vibra, duerme, vibra, duerme, ....
         long[] patron = {0, 500, 200, 500, 200, 1500};
         Vibrator vibrate = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);

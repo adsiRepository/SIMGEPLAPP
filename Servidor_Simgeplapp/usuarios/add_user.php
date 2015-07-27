@@ -1,9 +1,6 @@
 <?php
 include 'control_users.php';
 
-//$db = new mysqli("localhost", "root", "", "simgeplapp");
-//obtenemos las variables enviadas por post desde la aplicacion con el objeto HttpClient
-
 $json_resp = array();
 
 if (isset($_REQUEST["nom"]) && isset($_REQUEST["ape"]) && isset($_REQUEST["id"])) {
@@ -23,39 +20,33 @@ if (isset($_REQUEST["nom"]) && isset($_REQUEST["ape"]) && isset($_REQUEST["id"])
     $json_resp["added"] = NULL;
     
     if ($new_pass == NULL || !(strlen($new_pass) > 0)) {
-        $new_pass = "0000";
-        //$json_resp["extras"]["r_pass"] = "Tu Contrasena -> 0000";
+        $new_pass = $new_id;
+        $json_resp["extras"]["r_pass"] = "Tu Contrasena -> tu Identificacion";
+    }
+    else {
+        $json_resp["extras"]["r_pass"] = "Tu Contrasena -> $new_pass";
     }
 
     if ($new_nick == NULL || !(strlen($new_nick) > 0)) {
         $new_nick = $new_id;
-        //$json_resp["extras"]["r_nick"] = "Tu Nick -> tu Identificacion";
+        $json_resp["extras"]["r_nick"] = "Tu Nick -> tu Identificacion";
+    }
+    else {
+        $json_resp["extras"]["r_nick"] = "Tu Nick -> $new_nick";
     }
 
     $resp_bd = $usuarios_mng->registrarUsuario($new_id, $new_nom, $new_ape, $new_tipo_id, $new_tel, $new_mail, $new_pass, $new_rol, $new_nick);
 
     if ($resp_bd == TRUE) {
-        /*echo "<script type='text/javascript'>
-                        alert('Guardado Correctamente');
-                        </script>";*/
-        $json_resp["added"] = 1;
-        //$respuesta[] = array("added" => "1");
-        //echo "<p id='display1'>".$resp_bd."</p>";
+        $json_resp["added"] = TRUE;
     } else {
-        /*echo "<script type='text/javascript'>
-                        alert('No se agrego');
-                        </script>";*/
-        $json_resp["added"] = 0;
-        //$respuesta[] = array("added" => "0");
-        //echo "<p id='display1'>".$resp_bd."</p>";
+        $json_resp["added"] = FALSE;
     }
 
-    //echo json_encode($respuesta); //envio de respuesta a la app
-    echo json_encode($respuesta);/*"<p id='display2'>" . *//* . "</p>"*//*$json_resp*/
+    echo json_encode($json_resp);
 }
 ?>
-<!-->
-<!DOCTYPE html>
+<!--<!DOCTYPE html>
 <html>
     <head></head>
     <body>
@@ -88,4 +79,3 @@ if (isset($_REQUEST["nom"]) && isset($_REQUEST["ape"]) && isset($_REQUEST["id"])
         </form>
     </body>
 </html>-->
-
