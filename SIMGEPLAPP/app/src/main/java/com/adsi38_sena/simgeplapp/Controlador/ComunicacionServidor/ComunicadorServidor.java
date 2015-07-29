@@ -148,7 +148,7 @@ public class ComunicadorServidor {
         }
         else {
 
-            datos_a_cambiar.add(new BasicNameValuePair("ref", llave));
+            datos_a_cambiar.set(9, new BasicNameValuePair("id_base", llave));
 
             JSONObject jsonObj = obtenerObjetoJSON(url, datos_a_cambiar);
 
