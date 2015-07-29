@@ -24,9 +24,9 @@ public class AsyncLoggin extends AsyncTask<String, String, Boolean> {
     private FragmentoCargaServidor dialogo_carga;
     private ActivityLogin myActy;
 
-    ComunicadorServidor server;
+    private ComunicadorServidor server;
 
-    private String user_process, pass_onprocess;
+    private static String[] resp_server = new String[4];
 
     @Override
     protected void onPreExecute() {
@@ -41,33 +41,20 @@ public class AsyncLoggin extends AsyncTask<String, String, Boolean> {
     protected Boolean doInBackground(String... params) {
         boolean pro;
         try {//obtenemos user_process y pass_onprocess
-            user_process = params[0];
-            pass_onprocess = params[1];
-            //SystemClock.sleep(4000);
-            //enviamos, recibimos y analizamos los datos en segundo plano.
-            switch (server.intentoLoggeo(user_process, pass_onprocess)) {//ejecuto el metodo intentoLoggeo del objeto server este instanciado de la clase "ComunicadorServidor"
-                case -1:
-                    publishProgress(new String[]{"No se obtuvo respuesta del servidor"});
-                    pro = false;
-                    break;
-                case 0:
-                    publishProgress(new String[]{"El usuario no existe en la Base de Datos"});
-                    pro = false;
-                    break;
-                case 1:
-                    publishProgress(new String[]{"Autenticado"});
-                    pro = true;
-                    break;
-                default:
-                    publishProgress(new String[]{"Error desconocido"});
-                    pro = false;
-                    break;
+            resp_server = server.intentoLoggeo(params[0], params[1]);
+            if(resp_server[0] == "logged") {
+                publishProgress(new String[]{"Autenticado"});
+                pro = true;
+            }
+            else {
+                publishProgress(new String[]{resp_server[0]});
+                pro = false;
             }
         } catch (ConnectTimeoutException e){
             publishProgress(new String[]{e.getMessage()+". Tiempo de espera terminado"});
             pro = false;
         } catch (ClientProtocolException e) {
-            publishProgress(new String[]{e.getMessage()+". El Dominio no Existe o no esta disponible el Servidor"});
+            publishProgress(new String[]{e.getMessage()});
             pro = false;
         } catch (UnsupportedEncodingException e) {
             publishProgress(new String[]{e.toString()});
@@ -93,11 +80,13 @@ public class AsyncLoggin extends AsyncTask<String, String, Boolean> {
             if (result == true) {
                 // if(simgeplapp.sessionAlive == false) {
                 simgeplapp.session = new SIMGEPLAPP.Session();//Inicializo el objeto de session de la aplicacion
-                simgeplapp.session.user = user_process;
+                simgeplapp.session.id = resp_server[1];
+                simgeplapp.session.user = resp_server[2];
+                simgeplapp.session.rol = resp_server[3];
                 //configura los detalles de sesion que se conservaran durante reinicios y demas hasta que el usuario decida abandonar
                 SharedPreferences confUser = myActy.getSharedPreferences("mi_usuario", myActy.MODE_PRIVATE);
                 SharedPreferences.Editor editor = confUser.edit();
-                editor.putString("usuario", user_process);
+                editor.putString("usuario", resp_server[2]);
                 editor.putString("onsesion", "ok");//guardo en las preferencias q la sesion esta iniciada para por si se apaga el cel por ejemplo, al volver no deba iniciar de nuevo
                 editor.commit();
                 simgeplapp.sessionAlive = true;

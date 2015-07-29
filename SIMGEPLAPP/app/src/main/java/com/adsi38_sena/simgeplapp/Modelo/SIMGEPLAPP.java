@@ -35,10 +35,10 @@ public class SIMGEPLAPP extends Application{
 
     public static class Comunicaciones{
         //SERVIDOR LOCAL (mi pc)
-        //public static String dirIP_server = "192.168.0.14";
-        //public static String URL_SERVER = "http://" + dirIP_server + "/Servidor_Simgeplapp/";
+        public static String dirIP_server = "192.168.0.14";
+        public static String URL_SERVER = "http://" + dirIP_server + "/REPOSITORIO__Simgeplapp/Servidor_Simgeplapp/";
         //SERVIDOR REMOTO (hostinger)
-        public static String URL_SERVER = "http://adsi38.esy.es/Servidor_Simgeplapp/";
+        //public static String URL_SERVER = "http://adsi38.esy.es/Servidor_Simgeplapp/";
     }
 
     public static class CargaSegura {
@@ -144,17 +144,23 @@ public class SIMGEPLAPP extends Application{
     public static class Session implements Parcelable{// refs -> http://androcode.es/2012/12/trabajando-con-parcelables/
         public static String user;
         public static String password;
+        public static String id;
+        public static String rol;
 
         public Session(){
             super();
             user = null;
             password = null;
+            id = null;
+            rol = null;
         }
 
         public Session(Parcel parcel){
             super();
             user = parcel.readString();
             password = parcel.readString();
+            id = parcel.readString();
+            rol = parcel.readString();
         }
 
         //auto implementada

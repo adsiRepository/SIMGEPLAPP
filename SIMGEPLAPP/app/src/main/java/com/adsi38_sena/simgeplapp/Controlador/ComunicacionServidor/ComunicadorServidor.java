@@ -27,11 +27,11 @@ public class ComunicadorServidor {
 
 
 //METODO DE LOGGEO
-    public int intentoLoggeo(String user, String pass) throws Exception {
+    public String[] intentoLoggeo(String user, String pass) throws Exception {
 
         String url = SIMGEPLAPP.Comunicaciones.URL_SERVER + "usuarios/login.php";
 
-        int isInDB;//se puede loggear?, existe en base de datos?
+        String[] resp = new String[4];
 
         ArrayList<NameValuePair> valoresEnviados = new ArrayList<NameValuePair>();
         valoresEnviados.add(new BasicNameValuePair("user", user));
@@ -39,18 +39,26 @@ public class ComunicadorServidor {
 
         //JSONObject jarray = //metodo que obtiene la respuesta del servidor
         JSONObject jobj = obtenerObjetoJSON(url, valoresEnviados);
-        if (jobj != null) {
-            //viene con un array codificado en json que contiene en este caso un solo indice (un solo valor)
-            //isInDB = jobj.getInt("logged");//el json viene desde el php con un entero entre 0 y 1
+        if (jobj != null && jobj.length() > 0) {
             boolean log = jobj.getBoolean("logged");
-            if (log == true) {//por convencion 1 es verdadero, si existe en bd me envia 1
-                return 1;
+            if (log == true) {
+                resp[0] = "logged";
+                JSONObject data = jobj.getJSONObject("data_sesion");
+                if(data != null && data.length() > 0){
+                    resp[1] = data.getString("id");
+                    resp[2] = data.getString("nombre");
+                    resp[3] = data.getString("rol");
+                }
+                else{
+                    throw new Exception("No llegaron los Datos");
+                }
             } else {
-                return 0;//0 es que no existe en la base de datos
+                resp[0] = jobj.getString("msg");//"El usuario no Existe en la Base de Datos";
             }
         } else {
-            return -1;//-1 significa que no obtuvo respuesta del servidor
+            resp[0] = "No hubo respuesta del Servidor";
         }
+        return resp;
     }
 
 
