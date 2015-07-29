@@ -27,7 +27,7 @@ public class ComunicadorServidor {
 
 
 //METODO DE LOGGEO
-    public int intentoLoggeo(String user, String pass) throws JSONException, IOException {
+    public int intentoLoggeo(String user, String pass) throws Exception {
 
         String url = SIMGEPLAPP.Comunicaciones.URL_SERVER + "usuarios/login.php";
 

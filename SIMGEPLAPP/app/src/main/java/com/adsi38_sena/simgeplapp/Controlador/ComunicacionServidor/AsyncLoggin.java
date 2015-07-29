@@ -10,6 +10,12 @@ import com.adsi38_sena.simgeplapp.Controlador.SalvaTareas;
 import com.adsi38_sena.simgeplapp.Vistas.ActivityLogin;
 import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
 
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.conn.ConnectTimeoutException;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
 
 public class AsyncLoggin extends AsyncTask<String, String, Boolean> {
 
@@ -33,6 +39,7 @@ public class AsyncLoggin extends AsyncTask<String, String, Boolean> {
 
     @Override
     protected Boolean doInBackground(String... params) {
+        boolean pro;
         try {//obtenemos user_process y pass_onprocess
             user_process = params[0];
             pass_onprocess = params[1];
@@ -41,22 +48,38 @@ public class AsyncLoggin extends AsyncTask<String, String, Boolean> {
             switch (server.intentoLoggeo(user_process, pass_onprocess)) {//ejecuto el metodo intentoLoggeo del objeto server este instanciado de la clase "ComunicadorServidor"
                 case -1:
                     publishProgress(new String[]{"No se obtuvo respuesta del servidor"});
-                    return false;
+                    pro = false;
+                    break;
                 case 0:
                     publishProgress(new String[]{"El usuario no existe en la Base de Datos"});
-                    return false;
+                    pro = false;
+                    break;
                 case 1:
                     publishProgress(new String[]{"Autenticado"});
-                    return true;
+                    pro = true;
+                    break;
                 default:
                     publishProgress(new String[]{"Error desconocido"});
-                    return false;
+                    pro = false;
+                    break;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ConnectTimeoutException e){
+            publishProgress(new String[]{e.getMessage()+". Tiempo de espera terminado"});
+            pro = false;
+        } catch (ClientProtocolException e) {
+            publishProgress(new String[]{e.getMessage()+". El Dominio no Existe o no esta disponible el Servidor"});
+            pro = false;
+        } catch (UnsupportedEncodingException e) {
             publishProgress(new String[]{e.toString()});
-            return false;
+            pro = false;
+        } catch (IOException e) {
+            publishProgress(new String[]{e.toString()});
+            pro = false;
+        } catch (Exception e) {
+            publishProgress(new String[]{e.toString()});
+            pro = false;
         }
+        return pro;
     }
 
     @Override
