@@ -75,6 +75,7 @@ public class AsyncUsers extends AsyncTask<ArrayList<Object>, String, ArrayList<O
                         throw new Exception("No se pudo recibir transaccion nuevo usuario");
                     }
                     break;
+
                 case 2:
                     postExe.set(0, 2);
                     Object[] resultadoBusqueda = server.buscarUsuario((String)ordenes_Activity.get(1));
@@ -99,12 +100,12 @@ public class AsyncUsers extends AsyncTask<ArrayList<Object>, String, ArrayList<O
                 case 3:
                     postExe.set(0, 3);
                     String referencia = (String)ordenes_Activity.get(1);
-                    String modif = server.modificarUsuario((Usuario)ordenes_Activity.get(2), referencia);
-                    if(modif == "Modificado"){
+                    String msg_modif = server.modificarUsuario((Usuario)ordenes_Activity.get(2), referencia);
+                    if(msg_modif == "Modificado"){
                         postExe.set(2, true);
                     }
                     else {
-                        postExe.set(1, modif);
+                        postExe.set(1, msg_modif);
                     }
                     break;
             }
@@ -126,13 +127,13 @@ public class AsyncUsers extends AsyncTask<ArrayList<Object>, String, ArrayList<O
                 if (result != null) {
                     decisionFinal = (Integer)result.get(0);
                     switch (decisionFinal) {
-                        case 1:
+                        case 1://registrar nuevo usuario
                             activity_raiz.limpiarPantalla();
                             Toast.makeText(activity_raiz.getApplicationContext(), "Usuario Registrado con Exito", Toast.LENGTH_LONG).show();
                             SIMGEPLAPP.vibrateExito(activity_raiz);
                             break;
 
-                        case 2:
+                        case 2://buscar usuario
                             if (result.get(2) != null) {
                                 activity_raiz.plasmarDatosEncotrados((Usuario) result.get(2));
                             }
@@ -141,7 +142,7 @@ public class AsyncUsers extends AsyncTask<ArrayList<Object>, String, ArrayList<O
                             }
                             break;
 
-                        case 3:
+                        case 3://modificar usuario
                             if(result.get(2) != null){
                                 if(result.get(2) == (Boolean)true)
                                 Toast.makeText(activity_raiz.getApplicationContext(), "Usuario Modificado con Exito", Toast.LENGTH_LONG).show();

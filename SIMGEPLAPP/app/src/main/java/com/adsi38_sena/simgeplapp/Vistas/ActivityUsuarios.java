@@ -1,6 +1,10 @@
 package com.adsi38_sena.simgeplapp.Vistas;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,6 +19,7 @@ import android.widget.Toast;
 
 import com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor.AsyncUsers;
 import com.adsi38_sena.simgeplapp.Controlador.SalvaTareas;
+import com.adsi38_sena.simgeplapp.Controlador.ServicioMonitoreo;
 import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
 import com.adsi38_sena.simgeplapp.Modelo.Usuario;
 import com.adsi38_sena.simgeplapp.R;
@@ -31,7 +36,7 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
 
     final String[] tipos_id = {"Tarjeta de Identidad", "Cedula de Ciudadania", "Pasaporte"};
     private String opc_rol_elegida;
-    private String ref_modif;
+    private static String ref_modif;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +58,7 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
         radio_admin = (RadioButton)findViewById(R.id.radio_admin);
         radio_apz = (RadioButton)findViewById(R.id.radio_aprendiz);
         opcs_rol = (RadioGroup) findViewById(R.id.opcs_users_rol);
+
         opcs_rol.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -98,6 +104,8 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
                 if ((txt_nombre.getText().toString().length() > 0) && (txt_apes.getText().toString().length() > 0) &&
                         (txt_id.getText().toString().length() > 0)) {
 
+
+
                     Usuario nuevo_usuario = new Usuario();
                     nuevo_usuario.setNom(txt_nombre.getText().toString());
                     nuevo_usuario.setApe(txt_apes.getText().toString());
@@ -129,6 +137,7 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
                 Toast.makeText(getApplicationContext(), "btn_reg: "+eh.toString(), Toast.LENGTH_LONG).show();
             }
                 break;
+
             case R.id.btn_users_buscar:
                 try {
                     //Toast.makeText(getApplicationContext(), "", Toast.LENGTH_LONG).show();
@@ -164,42 +173,44 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
                 try {
                     //Toast.makeText(getApplicationContext(), "", Toast.LENGTH_LONG).show();
 
-                    if ((txt_nick.getText().toString().length() > 0) && (txt_pass.getText().toString().length() > 0)) {
-
-                        Usuario nuevos_datos = new Usuario();
-                        nuevos_datos.setNom(txt_nombre.getText().toString());
-                        nuevos_datos.setApe(txt_apes.getText().toString());
-                        nuevos_datos.setIde(txt_id.getText().toString());
-                        nuevos_datos.setTipo_ide(select_tipo_id.getSelectedItem().toString());
-                        nuevos_datos.setTel(txt_tel.getText().toString());
-                        nuevos_datos.setEmail(txt_mail.getText().toString());
-                        nuevos_datos.setNick(txt_nick.getText().toString());
-                        nuevos_datos.setPass(txt_pass.getText().toString());
-                        nuevos_datos.setRol(opc_rol_elegida);
-
-                        ArrayList<Object> ordenes = new ArrayList<Object>();
-
-                        ordenes.add(0, 3);//dos sera el codigo de la orden de busqueda
-                        ordenes.add(1, ref_modif);
-                        ordenes.add(2, nuevos_datos);
-
-                        //ArrayList<NameValuePair> h = nuevos_datos.obtenerPaquete_Atributos();
-
-                        //Toast.makeText(getApplicationContext(), SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_CARGA_USERS, Toast.LENGTH_LONG).show();
-
-                        AsyncUsers modificar = new AsyncUsers();
-                        SalvaTareas.obtenerInstancia().procesarUsuario(SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_CARGA_USERS,
-                                modificar, ActivityUsuarios.this);
-                        modificar.execute(ordenes);
-
-                        //throw new Exception("instancia no nula");
-
-                    } else {
+                    if (!(txt_id.getText().toString().length() > 0) || !(txt_nombre.getText().toString().length() > 0) || !(txt_apes.getText().toString().length() > 0)) {
                         SIMGEPLAPP.vibrateError(ActivityUsuarios.this);
-                        Toast.makeText(getApplicationContext(), "nombre, apellido e Id requeridos", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Identificacion, Nombre, ni Apellido pueden ir vacios." +
+                                "Se mantendra lo Original", Toast.LENGTH_LONG).show();
+                    }
+                    else {
+                        if(!(txt_nick.getText().toString().length() > 0) && !(txt_pass.getText().toString().length() > 0)) {
+
+                            SIMGEPLAPP.vibrateError(ActivityUsuarios.this);
+                            AlertDialog.Builder construct_msg = new AlertDialog.Builder(this);
+                            construct_msg
+                                    .setTitle("Precaucion")
+                                    .setMessage("Sin nick ni password este usuario no podra acceder a la Aplicacion. Si " +
+                                    "dejas estos campos vacios se conservaran los datos anteriores.")
+                                    .setPositiveButton("Conservar Anterior",
+                                            new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    ejecutarModificacion();
+                                                }
+                                            })
+                                    .setNegativeButton("Quedarme a Editar",
+                                            new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    dialog.cancel();
+                                                }
+                                            });
+
+                            AlertDialog msg_emerg = construct_msg.create();
+                            msg_emerg.show();
+                        }
+                        else {
+                            ejecutarModificacion();
+                        }
                     }
                 }catch (Exception eh){
-                    Toast.makeText(getApplicationContext(), "btn_reg: "+eh.toString(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "btnModif: "+eh.toString(), Toast.LENGTH_LONG).show();
                 }
         }
     }
@@ -233,6 +244,30 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
             });
         }
         select_tipo_id.setSelection(datosUser.getTipo_ide());
+    }
+
+    private void ejecutarModificacion(){
+        Usuario nuevos_datos = new Usuario();
+        nuevos_datos.setNom(txt_nombre.getText().toString());
+        nuevos_datos.setApe(txt_apes.getText().toString());
+        nuevos_datos.setIde(txt_id.getText().toString());
+        nuevos_datos.setTipo_ide(select_tipo_id.getSelectedItem().toString());
+        nuevos_datos.setTel(txt_tel.getText().toString());
+        nuevos_datos.setEmail(txt_mail.getText().toString());
+        nuevos_datos.setNick(txt_nick.getText().toString());
+        nuevos_datos.setPass(txt_pass.getText().toString());
+        nuevos_datos.setRol(opc_rol_elegida);
+
+        ArrayList<Object> ordenes = new ArrayList<Object>();
+
+        ordenes.add(0, 3);//dos sera el codigo de la orden de busqueda
+        ordenes.add(1, ref_modif);
+        ordenes.add(2, nuevos_datos);
+
+        AsyncUsers modificar = new AsyncUsers();
+        SalvaTareas.obtenerInstancia().procesarUsuario(SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_CARGA_USERS,
+                modificar, ActivityUsuarios.this);
+        modificar.execute(ordenes);
     }
 
     @Override

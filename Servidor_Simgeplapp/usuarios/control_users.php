@@ -80,29 +80,28 @@ class ControlUsuario {
         return $datos;
     }
     
-    public function modificarUsuario($ref, $id, $name, $ape, $tipo_id, $tel, $email, $rol, $prev) {
+    public function modificarUsuario($query) {
         try {
-            $query = "update usuarios set id='$id', nombre='$name', apes='$ape', tipo_id='$tipo_id', "
-                . "telefono='$tel', email='$email', rol='$rol' $prev "
-                . "where id='$ref'";
-        
             $done = $this->conex->query($query);
             //if($this->conex->affected_rows > 0){
-            if($done == TRUE){
+            if($done === TRUE){
                 return "modificado";
             } else {
-                return "fail";
+                //return "fail";
+                return $this->conex->error;
             }
+         //return $query;
         } catch (Exception $exc) {
             //echo $exc->getTraceAsString();
             return $exc->getTraceAsString();
         } finally {
-            desconectarDB();
+            $this->desconectarDB();
         }
     }
 
     public function obtenerDetalleError() {
-        return $this->conex->error;
+        //return $this->conex->error;
+        return "Error en Base de Datos";
     }
     
     public function desconectarDB() {
