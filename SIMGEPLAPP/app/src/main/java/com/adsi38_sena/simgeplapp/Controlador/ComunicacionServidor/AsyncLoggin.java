@@ -79,6 +79,7 @@ public class AsyncLoggin extends AsyncTask<String, String, Boolean> {
         if(myActy != null) {
             if (result == true) {
                 // if(simgeplapp.sessionAlive == false) {
+                simgeplapp.sessionAlive = true;
                 simgeplapp.session = new SIMGEPLAPP.Session();//Inicializo el objeto de session de la aplicacion
                 simgeplapp.session.id = resp_server[1];
                 simgeplapp.session.user = resp_server[2];
@@ -86,10 +87,11 @@ public class AsyncLoggin extends AsyncTask<String, String, Boolean> {
                 //configura los detalles de sesion que se conservaran durante reinicios y demas hasta que el usuario decida abandonar
                 SharedPreferences confUser = myActy.getSharedPreferences("mi_usuario", myActy.MODE_PRIVATE);
                 SharedPreferences.Editor editor = confUser.edit();
-                editor.putString("usuario", resp_server[2]);
+                editor.putString("id", simgeplapp.session.id);
+                editor.putString("usuario", simgeplapp.session.user);
+                editor.putString("rol", simgeplapp.session.rol);
                 editor.putString("onsesion", "ok");//guardo en las preferencias q la sesion esta iniciada para por si se apaga el cel por ejemplo, al volver no deba iniciar de nuevo
                 editor.commit();
-                simgeplapp.sessionAlive = true;
                 myActy.onLogged();
             } else {
                 //loggError();

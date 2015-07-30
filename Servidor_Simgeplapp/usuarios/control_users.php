@@ -25,8 +25,7 @@ class ControlUsuario {
     public function loggin($nick, $pass){
         //loggeo
         $datos[] = NULL;
-        $consulta = "select * from usuarios where nick='$nick' and pass='$pass'";
-        $result = $this->conex->query($consulta);
+        $result = $this->conex->query("select * from usuarios where nick='$nick' and pass='$pass'");
         if ($result->num_rows > 0) {
             $datos[0] = "logged";
             while ($row = $result->fetch_array()) {

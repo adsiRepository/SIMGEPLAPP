@@ -1,6 +1,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.adsi38_sena.simgeplapp.Vistas.ActivityMenu">
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" android:showAsAction="never" />
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context="com.adsi38_sena.simgeplapp.Vistas.ActivityMenu">
+
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_settings"/>
+
+    <item
+        android:id="@+id/terminar_sesion"
+        android:icon="@android:drawable/ic_menu_close_clear_cancel"
+        android:orderInCategory="1"
+        android:showAsAction="ifRoom"
+        android:title="Cerrar Sesion"/>
+
 </menu>
