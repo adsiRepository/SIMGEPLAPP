@@ -52,7 +52,7 @@ public class AsyncUsers extends AsyncTask<ArrayList<Object>, String, ArrayList<O
         try {
             switch (orden){
                 case 1:
-                    postExe.set(0, 1);
+                    postExe.set(0, 1);//registrar usuario
                     usuario_en_proceso = (Usuario)ordenes_Activity.get(1);
                     String[] datos_transaccion = server.registrarNuevoUsuario(usuario_en_proceso);
                     if (datos_transaccion != null) {
@@ -60,15 +60,15 @@ public class AsyncUsers extends AsyncTask<ArrayList<Object>, String, ArrayList<O
                             publishProgress("Usuario Añadido");
                             publishProgress(datos_transaccion[1]);//SystemClock.sleep(100);
                             publishProgress(datos_transaccion[2]);
-                            postExe.set(1, "ok");
+                            postExe.set(1, true);
                         }
                         if (datos_transaccion[0] == "no_added") {
                             publishProgress("Usuario No Añadido");
-                            postExe.set(1, "no");
+                            postExe.set(1, false);
                         }
                         if (datos_transaccion[0] == "failed_conex") {
                             publishProgress("Error de Conexion");
-                            postExe.set(1, "no");
+                            postExe.set(1, false);
                         }
                     }
                     else {
@@ -76,7 +76,7 @@ public class AsyncUsers extends AsyncTask<ArrayList<Object>, String, ArrayList<O
                     }
                     break;
 
-                case 2:
+                case 2://buscar usuario
                     postExe.set(0, 2);
                     Object[] resultadoBusqueda = server.buscarUsuario((String)ordenes_Activity.get(1));
                     if(resultadoBusqueda != null){
@@ -97,7 +97,7 @@ public class AsyncUsers extends AsyncTask<ArrayList<Object>, String, ArrayList<O
                     }
                     break;
 
-                case 3:
+                case 3://modificar usuario
                     postExe.set(0, 3);
                     String referencia = (String)ordenes_Activity.get(1);
                     String msg_modif = server.modificarUsuario((Usuario)ordenes_Activity.get(2), referencia);
@@ -128,10 +128,17 @@ public class AsyncUsers extends AsyncTask<ArrayList<Object>, String, ArrayList<O
                     decisionFinal = (Integer)result.get(0);
                     switch (decisionFinal) {
                         case 1://registrar nuevo usuario
-                            activity_raiz.limpiarPantalla();
-                            Toast.makeText(activity_raiz.getApplicationContext(), "Usuario Registrado con Exito", Toast.LENGTH_LONG).show();
-                            SIMGEPLAPP.vibrateExito(activity_raiz);
-                            break;
+                            if((Boolean)result.get(1) == true) {
+                                activity_raiz.limpiarPantalla();
+                                Toast.makeText(activity_raiz.getApplicationContext(), "Usuario Registrado con Exito", Toast.LENGTH_LONG).show();
+                                SIMGEPLAPP.vibrateExito(activity_raiz);
+                            }
+                            else {
+                                SIMGEPLAPP.vibrateError(activity_raiz);
+                                Toast.makeText(activity_raiz.getApplicationContext(), "Verifica el numero de Identificacion," +
+                                        " este no se puede repetir en la Base de Datos", Toast.LENGTH_LONG).show();
+                            }
+                        break;
 
                         case 2://buscar usuario
                             if (result.get(2) != null) {
@@ -144,8 +151,10 @@ public class AsyncUsers extends AsyncTask<ArrayList<Object>, String, ArrayList<O
 
                         case 3://modificar usuario
                             if(result.get(2) != null){
-                                if(result.get(2) == (Boolean)true)
-                                Toast.makeText(activity_raiz.getApplicationContext(), "Usuario Modificado con Exito", Toast.LENGTH_LONG).show();
+                                if(result.get(2) == (Boolean)true) {
+                                    activity_raiz.limpiarPantalla();
+                                    Toast.makeText(activity_raiz.getApplicationContext(), "Usuario Modificado con Exito", Toast.LENGTH_LONG).show();
+                                }
                             }
                             else {
                                 Toast.makeText(activity_raiz.getApplicationContext(), (String)result.get(1), Toast.LENGTH_LONG).show();

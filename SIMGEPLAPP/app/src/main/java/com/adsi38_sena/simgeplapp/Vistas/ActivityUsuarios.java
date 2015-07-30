@@ -63,6 +63,13 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
         radio_apz = (RadioButton)findViewById(R.id.radio_aprendiz);
         opcs_rol = (RadioGroup) findViewById(R.id.opcs_users_rol);
 
+        if(radio_admin.isChecked()){
+            opc_rol_elegida = "Administrador";
+        }
+        if(radio_apz.isChecked()){
+            opc_rol_elegida = "Aprendiz";
+        }
+
         opcs_rol.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -100,6 +107,10 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
             btn_guardar.setEnabled(true);
             btn_modificar.setEnabled(true);
             btn_eliminar.setEnabled(true);
+        }
+
+        if(ref_modif == null){
+            btn_modificar.setEnabled(false);
         }
 
         //linea que me permite recapturar el hilo donde se despliega el dialogo emergente; aqui se sostiene el hilo y se adjunta cosntantemente al nuevo activity al cambiar configuaciones
@@ -169,7 +180,8 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
 
                     } else {
                         SIMGEPLAPP.vibrateError(ActivityUsuarios.this);
-                        Toast.makeText(getApplicationContext(), "nombre, apellido e Id requeridos", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Un numero de Identificacion es el parametro de Busqueda",
+                                Toast.LENGTH_LONG).show();
                     }
 
                 }catch (Exception eh){
@@ -181,12 +193,15 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
                 try {
                     //Toast.makeText(getApplicationContext(), "", Toast.LENGTH_LONG).show();
 
-                    if (!(txt_id.getText().toString().length() > 0) || !(txt_nombre.getText().toString().length() > 0) || !(txt_apes.getText().toString().length() > 0)) {
+                    if (!(txt_id.getText().toString().length() > 0 || !(txt_nombre.getText().toString().length() > 0)
+                            || !(txt_apes.getText().toString().length() > 0))) {
+
                         SIMGEPLAPP.vibrateError(ActivityUsuarios.this);
-                        Toast.makeText(getApplicationContext(), "Identificacion, Nombre, ni Apellido pueden ir vacios." +
-                                "Se mantendra lo Original", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Identificacion, Nombre, ni Apellido pueden ir vacios.",
+                                Toast.LENGTH_LONG).show();
                     }
                     else {
+
                         if(!(txt_nick.getText().toString().length() > 0) && !(txt_pass.getText().toString().length() > 0)) {
 
                             SIMGEPLAPP.vibrateError(ActivityUsuarios.this);
@@ -231,18 +246,23 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
         txt_mail.setText("");
         txt_nick.setText("");
         txt_pass.setText("");
-        SIMGEPLAPP.vibrateExito(this);
+        ref_modif = null;
+        runOnUiThread(new Runnable() {
+            public void run() {
+                btn_modificar.setEnabled(false);
+            }
+        });
     }
 
     public void plasmarDatosEncotrados(Usuario datosUser){
         txt_nombre.setText(datosUser.getNom());
         txt_apes.setText(datosUser.getApe());
         txt_id.setText(datosUser.getIde());
-        ref_modif = datosUser.getIde();
         txt_tel.setText(datosUser.getTel());
         txt_mail.setText(datosUser.getEmail());
         txt_nick.setText(datosUser.getNick());
         txt_pass.setText(datosUser.getPass());
+
         if(datosUser.getRol() == "Administrador"){
             radio_admin.post(new Runnable() {
                 @Override
@@ -251,7 +271,16 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
                 }
             });
         }
+
         select_tipo_id.setSelection(datosUser.getTipo_ide());
+
+        ref_modif = datosUser.getIde();
+
+        runOnUiThread(new Runnable() {
+            public void run() {
+                btn_modificar.setEnabled(true);
+            }
+        });
     }
 
     private void ejecutarModificacion(){
@@ -299,8 +328,13 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        /*if (id == R.id.action_settings) {
             return true;
+        }*/
+        switch (id){
+            case R.id.users_limpiar_pantalla:
+                limpiarPantalla();
+                break;
         }
 
         return super.onOptionsItemSelected(item);

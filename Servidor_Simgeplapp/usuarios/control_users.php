@@ -56,9 +56,8 @@ class ControlUsuario {
         desconectarDB();
     }
 
-    public function comprobarExistencia($id) {
-        $query = "select * from usuarios where id='$id'";
-        $results = $this->cnxDB->query($query);
+    public function comprobarExistencia($id_s) {
+        $results = $this->cnxDB->query("select * from usuarios where id='$id_s'");
         if ($results->num_rows > 0) {
             return TRUE;
         } else {
@@ -68,24 +67,26 @@ class ControlUsuario {
     
     public function devolverInformacion($id_s) {
         $datos[] = NULL;
-        $query = "select * from usuarios where id='$id_s'";
-        $result = $this->conex->query($query);
+        $result = $this->conex->query("select * from usuarios where id='$id_s'");
         if ($result->num_rows > 0) {
+            $datos[0] = "ok";
             while ($row = $result->fetch_array()) {
-                $datos[0] = "$row[0]";
-                $datos[1] = "$row[1]";
-                $datos[2] = "$row[2]";
-                $datos[3] = "$row[3]";
-                $datos[4] = "$row[4]";
-                $datos[5] = "$row[5]";
-                $datos[6] = "$row[6]";
-                $datos[7] = "$row[7]";
-                $datos[8] = "$row[8]";
+                $datos[1] = "$row[0]";
+                $datos[2] = "$row[1]";
+                $datos[3] = "$row[2]";
+                $datos[4] = "$row[3]";
+                $datos[5] = "$row[4]";
+                $datos[6] = "$row[5]";
+                $datos[7] = "$row[6]";
+                $datos[8] = "$row[7]";
+                $datos[9] = "$row[8]";
             }
+        } else {
+           $datos[0] = $this->conex->error; 
         }
         return $datos;
     }
-    
+
     public function modificarUsuario($query) {
         try {
             $done = $this->conex->query($query);
@@ -106,8 +107,8 @@ class ControlUsuario {
     }
 
     public function obtenerDetalleError() {
-        //return $this->conex->error;
-        return "Error en Base de Datos";
+        return $this->conex->error;
+        //return "Error en Base de Datos";
     }
     
     public function desconectarDB() {

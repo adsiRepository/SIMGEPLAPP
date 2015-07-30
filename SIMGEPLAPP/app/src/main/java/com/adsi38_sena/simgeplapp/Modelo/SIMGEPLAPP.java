@@ -120,22 +120,20 @@ public class SIMGEPLAPP extends Application{
 
     }
 
+    @Override
     public void onTerminate(){
 
     }
 
 
     public static void vibrateError(Context context) {
+        long[] patron = {0, 400, 230, 400};
         Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-        vibrator.vibrate(1000);
-        SystemClock.sleep(700);
-        vibrator.vibrate(300);
-        SystemClock.sleep(300);
-        vibrator.vibrate(300);
+        vibrator.vibrate(patron, -1);
     }
     public static void vibrateExito(Context context) {
         //long[] patron de vibracion -> retraso inicial, vibra, duerme, vibra, duerme, vibra, duerme, ....
-        long[] patron = {0, 500, 200, 500, 200, 1500};
+        long[] patron = {0, 500, 200, 500, 200, 900};
         Vibrator vibrate = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         vibrate.vibrate(patron, -1);//indice(repeticion) = -1 -> solo se ejecutara una vez, 0 indefinido
     }

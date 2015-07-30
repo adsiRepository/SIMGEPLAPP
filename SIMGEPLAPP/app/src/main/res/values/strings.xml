@@ -6,6 +6,6 @@
     <string name="title_activity_monitoreo">Monitoreo</string>
     <string name="title_activity_menu__simgeplapp">Simgeplapp</string>
     <string name="title_activity_login">Login Simgeplapp</string>
-    <string name="title_activity_gestion_usuarios">Usuarios Simgeplapp</string>
+    <string name="title_activity_gestion_usuarios">Usuarios</string>
 
 </resources>

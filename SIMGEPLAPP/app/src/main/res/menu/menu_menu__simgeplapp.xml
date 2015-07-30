@@ -10,7 +10,7 @@
 
     <item
         android:id="@+id/terminar_sesion"
-        android:icon="@android:drawable/ic_menu_close_clear_cancel"
+        android:icon="@drawable/salir_app"
         android:orderInCategory="1"
         android:showAsAction="ifRoom"
         android:title="Cerrar Sesion"/>

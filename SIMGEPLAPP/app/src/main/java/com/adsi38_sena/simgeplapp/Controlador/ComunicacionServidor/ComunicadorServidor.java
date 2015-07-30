@@ -131,8 +131,8 @@ public class ComunicadorServidor {
                     usuarioHallado.setNick(datos.getString("nick"));
                     results[1] = usuarioHallado;
                 }
-
             } else {
+                //results[0] = jsonObj.getString("msg");
                 results[0] = "No existe el Usuario en la Base de Datos";
                 //return results;
             }
