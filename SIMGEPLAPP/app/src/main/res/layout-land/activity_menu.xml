@@ -7,14 +7,15 @@
     tools:context=".Modelo.MenuActivity"
     android:background="#ff020800">
 
+
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:id="@+id/fondo_menu"
         android:layout_alignParentBottom="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:background="@drawable/meutt"
+        android:background="@drawable/menu6"
         android:layout_alignParentRight="true"/>
 
     <LinearLayout
@@ -25,35 +26,6 @@
         android:id="@+id/linearLayout"
         android:layout_marginLeft="24dp">
 
-        <Button
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:text="Usuarios"
-            android:id="@+id/btn_usuarios"
-            android:background="#ff21cd14"
-            android:layout_above="@+id/btn_revision"
-            android:layout_alignLeft="@+id/btn_revision"
-            android:layout_marginBottom="10dp"/>
-
-        <Button
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:text="Revision"
-            android:id="@+id/btn_revision"
-            android:background="#ff21cd14"
-            android:layout_above="@+id/switch_monitorear"
-            android:layout_alignLeft="@+id/btn_monitoreo"
-            android:layout_marginBottom="10dp"/>
-
-        <Button
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:text="Monitoreo"
-            android:id="@+id/btn_monitoreo"
-            android:background="#ff21cd14"
-            android:layout_below="@+id/txv_user_session"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="10dp"/>
     </LinearLayout>
 
     <Switch
@@ -65,8 +37,8 @@
         android:textColor="#ffffffff"
         android:textSize="21dp"
         android:shadowColor="#ffa7a7a7"
-        android:layout_alignBottom="@+id/fondo_menu"
-        android:layout_centerHorizontal="true"/>
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -77,5 +49,36 @@
         android:layout_above="@+id/linearLayout"
         android:layout_alignRight="@+id/fondo_menu"
         />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="Monitoreo"
+        android:id="@+id/btn_monitoreo"
+        android:background="#ff21cd14"
+        android:layout_below="@+id/linearLayout"
+        android:layout_marginTop="26dp"
+        android:layout_alignRight="@+id/btn_usuarios"
+        android:layout_alignLeft="@+id/btn_usuarios" />
+
+    <Button
+        android:layout_width="200dp"
+        android:layout_height="40dp"
+        android:text="Usuarios"
+        android:id="@+id/btn_usuarios"
+        android:background="#ff21cd14"
+        android:layout_above="@+id/txv_user_session"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="38dp" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="Revision"
+        android:id="@+id/btn_revision"
+        android:background="#ff21cd14"
+        android:layout_alignBottom="@+id/txv_user_session"
+        android:layout_alignLeft="@+id/btn_usuarios"
+        android:layout_alignRight="@+id/btn_usuarios" />
 
 </RelativeLayout>

@@ -27,7 +27,8 @@
         android:background="@android:color/white"
         android:textColor="#ff0e060e"
         android:layout_above="@+id/textView_pass"
-        android:layout_alignLeft="@+id/textView_pass" />
+        android:layout_alignLeft="@+id/textView_pass"
+        android:layout_alignRight="@+id/btn_solic_reg" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -37,9 +38,9 @@
         android:id="@+id/edt_contrasena"
         android:background="@android:color/white"
         android:textColor="#ff0e060e"
-        android:layout_marginRight="31dp"
         android:layout_centerVertical="true"
-        android:layout_alignRight="@+id/btn_loggin" />
+        android:layout_alignLeft="@+id/btn_loggin"
+        android:layout_alignRight="@+id/btn_solic_reg" />
 
     <ImageButton
         android:layout_width="120dp"
@@ -54,8 +55,9 @@
         android:focusableInTouchMode="false"
         android:longClickable="false"
         android:visibility="visible"
-        android:layout_above="@+id/btn_solic_reg"
-        android:layout_alignParentRight="true"/>
+        android:layout_alignTop="@+id/btn_solic_reg"
+        android:layout_toLeftOf="@+id/btn_solic_reg"
+        android:layout_marginRight="29dp" />
 
     <ImageButton
         android:layout_width="wrap_content"
@@ -64,7 +66,9 @@
         android:background="@drawable/registrar"
         android:clickable="true"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"/>
+        android:layout_alignRight="@+id/fondo"
+        android:layout_marginRight="31dp"
+        android:layout_marginBottom="37dp" />
 
     <TextView
         android:layout_width="wrap_content"

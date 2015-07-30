@@ -5,7 +5,18 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin">
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/monitor1">
+
+    <AnalogClock
+    android:id="@+id/AnalogClock01"
+    android:layout_width="130dp"
+    android:layout_height="130dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="37dp"
+        android:layout_toLeftOf="@+id/lbl_temp" />
+
 
     <TextView
         android:layout_width="wrap_content"
@@ -13,9 +24,11 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Nivel"
         android:id="@+id/lbl_nivel"
-        android:layout_below="@+id/txv_lec_pres"
-        android:layout_alignLeft="@+id/lbl_presion"
-        android:layout_marginTop="16dp" />
+        android:textColor="#fffff9ff"
+        android:background="#ffffb012"
+        android:layout_marginTop="28dp"
+        android:layout_below="@+id/txv_lec_niv"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -23,9 +36,11 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Presion"
         android:id="@+id/lbl_presion"
-        android:layout_below="@+id/txv_lec_temp"
-        android:layout_alignLeft="@+id/lbl_temp"
-        android:layout_marginTop="16dp" />
+        android:textColor="#fffff9ff"
+        android:background="#ffffb012"
+        android:layout_marginTop="28dp"
+        android:layout_below="@+id/txv_lec_pres"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -33,10 +48,11 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Temperatura"
         android:id="@+id/lbl_temp"
-        android:layout_marginTop="41dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="43dp" />
+        android:textColor="#fffff9ff"
+        android:background="#ffffb012"
+        android:layout_above="@+id/txv_lec_pres"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="34dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -44,8 +60,9 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="56"
         android:id="@+id/txv_lec_temp"
-        android:layout_below="@+id/lbl_temp"
-        android:layout_alignLeft="@+id/txv_lec_pres" />
+        android:layout_above="@+id/txv_lec_pres"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="74dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -53,8 +70,8 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="58"
         android:id="@+id/txv_lec_pres"
-        android:layout_below="@+id/lbl_presion"
-        android:layout_alignLeft="@+id/txv_lec_niv" />
+        android:layout_centerVertical="true"
+        android:layout_alignLeft="@+id/txv_lec_temp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -62,18 +79,18 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="68"
         android:id="@+id/txv_lec_niv"
-        android:layout_below="@+id/lbl_nivel"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="60dp" />
+        android:layout_marginTop="37dp"
+        android:layout_below="@+id/lbl_presion"
+        android:layout_alignLeft="@+id/txv_lec_pres" />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:text="probar"
         android:id="@+id/btn_init"
         android:textSize="22dp"
+        android:background="#ff12ff1a"
         android:layout_alignParentBottom="true"
-        android:layout_alignRight="@+id/txv_lec_niv"
-        android:layout_marginBottom="53dp" />
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
