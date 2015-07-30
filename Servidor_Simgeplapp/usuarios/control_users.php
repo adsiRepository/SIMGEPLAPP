@@ -24,18 +24,24 @@ class ControlUsuario {
 
     public function loggin($nick, $pass){
         //loggeo
-        $consulta = "select * from usuarios where nick='$nick' and pass='$pass'";
-        $result = $this->conex->query($consulta);
+        $datos[] = NULL;
+        $result = $this->conex->query("select * from usuarios where nick='$nick' and pass='$pass'");
         if ($result->num_rows > 0) {
-            return TRUE;
+            $datos[0] = "logged";
+            while ($row = $result->fetch_array()) {
+                $datos[1] = "$row[id]";//campos de la tabla
+                $datos[2] = "$row[nombre]";
+                $datos[3] = "$row[rol]";
+            }
         }
         else {
-            return FALSE;
+            $datos[0] = "El Usuario no Existe en la Base de Datos";
         }
-        desconectarDB();
+        return $datos;
+        //desconectarDB();
     }
 
-        public function registrarUsuario($id, $name, $ape, $tipo_id, $tel, $email, $pass, $rol, $nick) {
+    public function registrarUsuario($id, $name, $ape, $tipo_id, $tel, $email, $pass, $rol, $nick) {
 
         $consulta = "insert into usuarios values ('$id','$name','$ape','$tipo_id','$tel','$email',"
                 . "'$pass','$rol','$nick')";

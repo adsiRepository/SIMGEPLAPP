@@ -145,6 +145,17 @@ public class ActivityMenu extends Activity {
         super.onDestroy();
     }
 
+    //CIERRE DE SESSION ==>
+    /*@Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)  {
+
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }*/
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -160,50 +171,51 @@ public class ActivityMenu extends Activity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        /*if (id == R.id.action_settings) {
             return true;
+        }*/
+
+        switch (id){
+            case R.id.terminar_sesion:
+                AlertDialog.Builder construct_msg = new AlertDialog.Builder(this);
+                construct_msg.setMessage("Deseas Salir de la Aplicacion?")
+                        .setTitle("Simgeplapp")
+                        .setPositiveButton("Salir",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        simgeplapp.sessionAlive = false;
+                                        simgeplapp.session.user = null;
+                                        simgeplapp.session.id = null;
+                                        simgeplapp.session.rol = null;
+                                        simgeplapp.session = null;
+                                        SharedPreferences confUser = getSharedPreferences("mi_usuario", MODE_PRIVATE);
+                                        SharedPreferences.Editor editor = confUser.edit();
+                                        editor.putString("id", null);
+                                        editor.putString("usuario", null);
+                                        editor.putString("rol", null);
+                                        editor.putString("onsesion", null);
+                                        editor.commit();
+                                        finish();
+                                        stopService(new Intent(ActivityMenu.this, ServicioMonitoreo.class));
+                                        startActivity(new Intent(ActivityMenu.this, ActivityLogin.class));
+                                    }
+                                })
+                        .setNegativeButton("Cancelar",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                });
+
+                AlertDialog msg_emerg = construct_msg.create();
+                msg_emerg.show();
+
+            break;
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    //CIERRE DE SESSION ==>
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event)  {
-
-        if (keyCode == KeyEvent.KEYCODE_BACK /*&& event.getRepeatCount() > 1*/) {
-
-            AlertDialog.Builder construct_msg = new AlertDialog.Builder(this);
-            construct_msg.setMessage("Deseas Salir de la Aplicacion?")
-                    .setTitle("Simgeplapp")
-                    .setPositiveButton("Salir",
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    SharedPreferences confUser = getSharedPreferences("mi_usuario", MODE_PRIVATE);
-                                    SharedPreferences.Editor editor = confUser.edit();
-                                    editor.putString("usuario", null);
-                                    editor.putString("onsesion", null);
-                                    editor.commit();
-                                    finish();
-                                    stopService(new Intent(ActivityMenu.this, ServicioMonitoreo.class));
-                                    startActivity(new Intent(ActivityMenu.this, ActivityLogin.class));
-                                }
-                            })
-                    .setNegativeButton("Cancelar",
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.cancel();
-                                }
-                            });
-            AlertDialog msg_emerg = construct_msg.create();
-
-            msg_emerg.show();
-            return true;
-        }
-
-        return super.onKeyDown(keyCode, event);
     }
 
 }
