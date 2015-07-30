@@ -11,54 +11,69 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/fondo_menu"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/switch_monitorear"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentBottom="true"
-        android:layout_alignRight="@+id/btn_revision"
-        android:src="@drawable/men"/>
+        android:background="@drawable/menuss"/>
 
-    <Button
-        android:layout_width="110dp"
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Usuarios"
-        android:id="@+id/btn_usuarios"
-        android:background="#ff5ccd51"
-        android:layout_marginTop="230dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"/>
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp">
 
-    <Button
-        android:layout_width="110dp"
-        android:layout_height="wrap_content"
-        android:text="Revision"
-        android:id="@+id/btn_revision"
-        android:background="#ff5ccd51"
-        android:layout_alignBaseline="@+id/btn_usuarios"
-        android:layout_alignBottom="@+id/btn_usuarios"
-        android:layout_alignRight="@+id/switch_monitorear"
-        android:layout_marginTop="230dp"/>
+        <Button
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:text="Monitoreo"
+            android:id="@+id/btn_monitoreo"
+            android:background="#ff21cd14"
+            android:layout_below="@+id/txv_user_session"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="110dp"
+            android:textColor="#ff18130d"
+            android:layout_marginTop="65dp"/>
 
-    <Button
-        android:layout_width="110dp"
-        android:layout_height="wrap_content"
-        android:text="Monitoreo"
-        android:id="@+id/btn_monitoreo"
-        android:background="#ff5ccd51"
-        android:layout_marginTop="62dp"
-        android:layout_below="@+id/txv_user_session"
-        android:layout_centerHorizontal="true"/>
+        <Button
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:text="Usuarios"
+            android:id="@+id/btn_usuarios"
+            android:background="#ff21cd14"
+            android:layout_above="@+id/btn_revision"
+            android:layout_alignLeft="@+id/btn_revision"
+            android:layout_marginBottom="10dp"
+            android:textColor="#ff18130d"
+            />
+
+        <Button
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:text="Revision"
+            android:id="@+id/btn_revision"
+            android:background="#ff21cd14"
+            android:layout_above="@+id/switch_monitorear"
+            android:layout_alignLeft="@+id/btn_monitoreo"
+            android:layout_marginBottom="40dp"
+            android:textColor="#ff18130d"
+            />
+
+    </LinearLayout>
 
     <Switch
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sincronizar"
+        android:text="Monitorear"
         android:id="@+id/switch_monitorear"
-        android:layout_alignBottom="@+id/fondo_menu"
-        android:layout_alignParentRight="true"
         android:checked="false"
         android:textColor="#ffffffff"
         android:textSize="21dp"
-        android:shadowColor="#ffa7a7a7"/>
+        android:shadowColor="#ffa7a7a7"
+        android:layout_alignBottom="@+id/fondo_menu"
+        android:layout_alignParentRight="true"/>
 
     <TextView
         android:layout_width="wrap_content"

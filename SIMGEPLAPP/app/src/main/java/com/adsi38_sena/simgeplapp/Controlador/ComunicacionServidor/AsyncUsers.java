@@ -3,19 +3,21 @@ package com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor;
 
 import android.app.Activity;
 import android.os.AsyncTask;
-import android.os.SystemClock;
 import android.widget.Toast;
 
 import com.adsi38_sena.simgeplapp.Controlador.SalvaTareas;
 import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
 import com.adsi38_sena.simgeplapp.Modelo.Usuario;
+import com.adsi38_sena.simgeplapp.Vistas.ActivityUsuarios;
+
+import java.util.ArrayList;
 
 
-public class AsyncUsers extends AsyncTask<Usuario, String, String>{
+public class AsyncUsers extends AsyncTask<ArrayList<Object>, String, ArrayList<Object>>{
 
     SIMGEPLAPP simgeplapp;
 
-    Activity activity_raiz;
+    ActivityUsuarios activity_raiz;
 
     FragmentoCargaServidor frag_progress_usuarios;
 
@@ -38,77 +40,129 @@ public class AsyncUsers extends AsyncTask<Usuario, String, String>{
     }
 
     @Override
-    protected String doInBackground(Usuario... params) {
+    protected ArrayList<Object> doInBackground(ArrayList<Object>... params) {
+
+        ArrayList<Object> ordenes_Activity = params[0];
+        int orden = (Integer)ordenes_Activity.get(0);
+        ArrayList<Object> postExe = new ArrayList<Object>();
+        postExe.add(0, null);
+        postExe.add(1, null);
+        postExe.add(2, null);
+
         try {
-            usuario_en_proceso = params[0];
-            String paso = null;
-            //atributos_usuario = usuario_en_proceso.obtenerPaquete_Atributos();
-
-            String[] datos_transaccion = server.registrarNuevoUsuario(usuario_en_proceso);
-
-            if (datos_transaccion != null) {
-
-                if (datos_transaccion[0] == "added") {
-                    //publishProgress("Usuario Añadido");
-                    if (datos_transaccion[1] != null && datos_transaccion[1].length() > 0) {
-                        publishProgress(datos_transaccion[1]);
-                        SystemClock.sleep(300);
-                        publishProgress(datos_transaccion[2]);
+            switch (orden){
+                case 1:
+                    postExe.set(0, 1);//registrar usuario
+                    usuario_en_proceso = (Usuario)ordenes_Activity.get(1);
+                    String[] datos_transaccion = server.registrarNuevoUsuario(usuario_en_proceso);
+                    if (datos_transaccion != null) {
+                        if (datos_transaccion[0] == "added") {
+                            publishProgress("Usuario Añadido");
+                            publishProgress(datos_transaccion[1]);//SystemClock.sleep(100);
+                            publishProgress(datos_transaccion[2]);
+                            postExe.set(1, true);
+                        }
+                        if (datos_transaccion[0] == "no_added") {
+                            publishProgress("Usuario No Añadido");
+                            postExe.set(1, false);
+                        }
+                        if (datos_transaccion[0] == "failed_conex") {
+                            publishProgress("Error de Conexion");
+                            postExe.set(1, false);
+                        }
                     }
-                    paso = "ok";
-                }
-                if (datos_transaccion[0] == "no_added") {
-                    publishProgress("Usuario No Añadido");
-                    paso = "no";
-                }
-                if (datos_transaccion[0] == "failed_conex") {
-                    publishProgress("Error de Conexion");
-                    paso = "no";
-                }
-            }
-            else {
-                throw new Exception("No se pudo recibir el objeto");
+                    else {
+                        throw new Exception("No se pudo recibir transaccion nuevo usuario");
+                    }
+                    break;
+
+                case 2://buscar usuario
+                    postExe.set(0, 2);
+                    Object[] resultadoBusqueda = server.buscarUsuario((String)ordenes_Activity.get(1));
+                    if(resultadoBusqueda != null){
+                        String r = (String)resultadoBusqueda[0];
+                        if(r == "finded"){
+                            publishProgress("Usuario Encontrado");
+                            Usuario user = (Usuario)resultadoBusqueda[1];
+                            if(user != null) {
+                                postExe.set(2, user);
+                            }
+                            else {
+                                throw new Exception("No se recibieron los datos del usuario");
+                            }
+                        }
+                        else {
+                            postExe.set(1, r);
+                        }
+                    }
+                    break;
+
+                case 3://modificar usuario
+                    postExe.set(0, 3);
+                    String referencia = (String)ordenes_Activity.get(1);
+                    String msg_modif = server.modificarUsuario((Usuario)ordenes_Activity.get(2), referencia);
+                    if(msg_modif == "Modificado"){
+                        postExe.set(2, true);
+                    }
+                    else {
+                        postExe.set(1, msg_modif);
+                    }
+                    break;
             }
 
-            //for(int i = 0; i < atributos_usuario.size(); i++){
-                //Thread.sleep(6000);
-              //  publishProgress(atributos_usuario.get(i).getValue());
-            //}
-            //return true;
-            return paso;
+            return postExe;
 
         } catch (Exception e) {
             e.printStackTrace();
-            //Toast.makeText(activity_raiz.getApplicationContext(), "dobackg AsyUsrs: "+e.toString(), Toast.LENGTH_LONG).show();
-            return "dobackg AsyUsrs: "+e.toString();
+            postExe.set(1, "dobackg AsyUsrs: " + e.toString());
+            return postExe;
         }
     }
 
-    //##
     @Override
-    protected void onProgressUpdate(String... values){
-        try {
-            if(values[0] != null) {
-                Toast.makeText(activity_raiz.getApplicationContext(), values[0], Toast.LENGTH_LONG).show();
-            }
-            else {
-                throw new Exception("publishProg = null");
-            }
-        }catch (Exception eh){
-            Toast.makeText(activity_raiz.getApplicationContext(), "progUpdt: "+eh.toString(), Toast.LENGTH_LONG).show();
-        }
-    }
-    //##
-
-    @Override
-    protected void onPostExecute(String result){
+    protected void onPostExecute(ArrayList<Object> result){
+        int decisionFinal;
         try {
             if (activity_raiz != null) {
-                if (result == "ok") {
-                    Toast.makeText(activity_raiz.getApplicationContext(), "Usuario Registrado con Exito", Toast.LENGTH_LONG).show();
+                if (result != null) {
+                    decisionFinal = (Integer)result.get(0);
+                    switch (decisionFinal) {
+                        case 1://registrar nuevo usuario
+                            if((Boolean)result.get(1) == true) {
+                                activity_raiz.limpiarPantalla();
+                                Toast.makeText(activity_raiz.getApplicationContext(), "Usuario Registrado con Exito", Toast.LENGTH_LONG).show();
+                                SIMGEPLAPP.vibrateExito(activity_raiz);
+                            }
+                            else {
+                                SIMGEPLAPP.vibrateError(activity_raiz);
+                                Toast.makeText(activity_raiz.getApplicationContext(), "Verifica el numero de Identificacion," +
+                                        " este no se puede repetir en la Base de Datos", Toast.LENGTH_LONG).show();
+                            }
+                        break;
+
+                        case 2://buscar usuario
+                            if (result.get(2) != null) {
+                                activity_raiz.plasmarDatosEncotrados((Usuario) result.get(2));
+                            }
+                            else {
+                                Toast.makeText(activity_raiz.getApplicationContext(), (String)result.get(1), Toast.LENGTH_LONG).show();
+                            }
+                            break;
+
+                        case 3://modificar usuario
+                            if(result.get(2) != null){
+                                if(result.get(2) == (Boolean)true) {
+                                    activity_raiz.limpiarPantalla();
+                                    Toast.makeText(activity_raiz.getApplicationContext(), "Usuario Modificado con Exito", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                            else {
+                                Toast.makeText(activity_raiz.getApplicationContext(), (String)result.get(1), Toast.LENGTH_LONG).show();
+                            }
+                    }
                 }else{
                     SIMGEPLAPP.vibrateError(activity_raiz);
-                    Toast.makeText(activity_raiz.getApplicationContext(), result, Toast.LENGTH_LONG).show();
+                    Toast.makeText(activity_raiz.getApplicationContext(), "postExe = null", Toast.LENGTH_LONG).show();
                 }
 
                 frag_progress_usuarios.cerrarCarga(activity_raiz.getFragmentManager());
@@ -125,8 +179,33 @@ public class AsyncUsers extends AsyncTask<Usuario, String, String>{
         }
     }
 
+
+
+    //##
+    @Override
+    protected void onProgressUpdate(String... values){
+        try {
+            if(values[0] != null) {
+                if(activity_raiz != null) {
+                    Toast.makeText(activity_raiz.getApplicationContext(), values[0], Toast.LENGTH_LONG).show();
+                }
+            }
+            else {
+                throw new Exception("publishProg = null");
+            }
+
+        }catch (Exception eh){
+            if(activity_raiz != null) {
+                Toast.makeText(activity_raiz.getApplicationContext(), "progUpdt: " + eh.toString(), Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+    //##
+
+
+
     public void setActivity_raiz(Activity activity_raiz) {
-        this.activity_raiz = activity_raiz;
+        this.activity_raiz = (ActivityUsuarios)activity_raiz;
     }
 
     public void desAdjuntar() {

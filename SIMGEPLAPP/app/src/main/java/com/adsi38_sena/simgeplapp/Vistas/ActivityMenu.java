@@ -58,10 +58,33 @@ public class ActivityMenu extends Activity {
                     }
                 });
             }
+            swch_service.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked){
+                        startService(new Intent(ActivityMenu.this, ServicioMonitoreo.class));
+                        swch_service.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                swch_service.setText("Monitoreando");
+                            }
+                        });
+                    }
+                    else {
+                        stopService(new Intent(ActivityMenu.this, ServicioMonitoreo.class));
+                        swch_service.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                swch_service.setText("Monitorear");
+                            }
+                        });
+                    }
+                }
+            });
 
             lbl_user = (TextView)findViewById(R.id.txv_user_session);
 
-            lbl_user.setText(""+simgeplapp.session.user);
+            lbl_user.setText("" + simgeplapp.session.user);
 
             btn_monitoreo.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -73,18 +96,6 @@ public class ActivityMenu extends Activity {
                 @Override
                 public void onClick(View v) {
                     startActivity(new Intent(ActivityMenu.this, ActivityUsuarios.class));
-                }
-            });
-
-            swch_service.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if(isChecked){
-                        startService(new Intent(ActivityMenu.this, ServicioMonitoreo.class));
-                    }
-                    else {
-                        stopService(new Intent(ActivityMenu.this, ServicioMonitoreo.class));
-                    }
                 }
             });
 
@@ -134,6 +145,17 @@ public class ActivityMenu extends Activity {
         super.onDestroy();
     }
 
+    //CIERRE DE SESSION ==>
+    /*@Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)  {
+
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }*/
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -149,50 +171,51 @@ public class ActivityMenu extends Activity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        /*if (id == R.id.action_settings) {
             return true;
+        }*/
+
+        switch (id){
+            case R.id.terminar_sesion:
+                AlertDialog.Builder construct_msg = new AlertDialog.Builder(this);
+                construct_msg.setMessage("Deseas Salir de la Aplicacion?")
+                        .setTitle("Simgeplapp")
+                        .setPositiveButton("Salir",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        simgeplapp.sessionAlive = false;
+                                        simgeplapp.session.user = null;
+                                        simgeplapp.session.id = null;
+                                        simgeplapp.session.rol = null;
+                                        simgeplapp.session = null;
+                                        SharedPreferences confUser = getSharedPreferences("mi_usuario", MODE_PRIVATE);
+                                        SharedPreferences.Editor editor = confUser.edit();
+                                        editor.putString("id", null);
+                                        editor.putString("usuario", null);
+                                        editor.putString("rol", null);
+                                        editor.putString("onsesion", null);
+                                        editor.commit();
+                                        finish();
+                                        stopService(new Intent(ActivityMenu.this, ServicioMonitoreo.class));
+                                        startActivity(new Intent(ActivityMenu.this, ActivityLogin.class));
+                                    }
+                                })
+                        .setNegativeButton("Cancelar",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                });
+
+                AlertDialog msg_emerg = construct_msg.create();
+                msg_emerg.show();
+
+            break;
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    //CIERRE DE SESSION ==>
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event)  {
-
-        if (keyCode == KeyEvent.KEYCODE_BACK /*&& event.getRepeatCount() > 1*/) {
-
-            AlertDialog.Builder construct_msg = new AlertDialog.Builder(this);
-            construct_msg.setMessage("Deseas Salir de la Aplicacion?")
-                    .setTitle("Simgeplapp")
-                    .setPositiveButton("Salir",
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    SharedPreferences confUser = getSharedPreferences("mi_usuario", MODE_PRIVATE);
-                                    SharedPreferences.Editor editor = confUser.edit();
-                                    editor.putString("usuario", null);
-                                    editor.putString("onsesion", null);
-                                    editor.commit();
-                                    finish();
-                                    stopService(new Intent(ActivityMenu.this, ServicioMonitoreo.class));
-                                    startActivity(new Intent(ActivityMenu.this, ActivityLogin.class));
-                                }
-                            })
-                    .setNegativeButton("Cancelar",
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.cancel();
-                                }
-                            });
-            AlertDialog msg_emerg = construct_msg.create();
-
-            msg_emerg.show();
-            return true;
-        }
-
-        return super.onKeyDown(keyCode, event);
     }
 
 }
