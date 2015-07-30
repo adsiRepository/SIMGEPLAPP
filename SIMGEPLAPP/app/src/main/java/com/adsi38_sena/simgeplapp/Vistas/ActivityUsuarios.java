@@ -263,11 +263,17 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
         txt_nick.setText(datosUser.getNick());
         txt_pass.setText(datosUser.getPass());
 
-        if(datosUser.getRol() == "Administrador"){
-            radio_admin.post(new Runnable() {
-                @Override
+        if(datosUser.getRol().compareTo("Administrador") == 0){
+            runOnUiThread(new Runnable() {
                 public void run() {
                     radio_admin.setChecked(true);
+                }
+            });
+        }
+        if(datosUser.getRol().compareTo("Aprendiz") == 0){
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    radio_apz.setChecked(true);
                 }
             });
         }
