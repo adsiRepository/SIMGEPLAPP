@@ -15,16 +15,10 @@ import java.util.ArrayList;
 
 public class AsyncUsers extends AsyncTask<ArrayList<Object>, String, ArrayList<Object>>{
 
-    SIMGEPLAPP simgeplapp;
-
-    ActivityUsuarios activity_raiz;
-
-    FragmentoCargaServidor frag_progress_usuarios;
-
-    ComunicadorServidor server;
-
-    Usuario usuario_en_proceso = null;
-    //ArrayList<NameValuePair> atributos_usuario = null;
+    private SIMGEPLAPP simgeplapp;
+    private ActivityUsuarios activity_raiz;
+    private FragmentoCargaServidor frag_progress_usuarios;
+    private ComunicadorServidor server;
 
     @Override
     protected void onPreExecute(){
@@ -42,18 +36,17 @@ public class AsyncUsers extends AsyncTask<ArrayList<Object>, String, ArrayList<O
     @Override
     protected ArrayList<Object> doInBackground(ArrayList<Object>... params) {
 
-        ArrayList<Object> ordenes_Activity = params[0];
-        int orden = (Integer)ordenes_Activity.get(0);
+        ArrayList<Object> parametros_del_hilo = params[0];
         ArrayList<Object> postExe = new ArrayList<Object>();
         postExe.add(0, null);
         postExe.add(1, null);
         postExe.add(2, null);
 
         try {
-            switch (orden){
+            switch ((Integer)parametros_del_hilo.get(0)){//numero enviado en el indice 0 del ArrayList<Object> pasado en el execute
                 case 1:
                     postExe.set(0, 1);//registrar usuario
-                    usuario_en_proceso = (Usuario)ordenes_Activity.get(1);
+                    Usuario usuario_en_proceso = (Usuario)parametros_del_hilo.get(1);
                     String[] datos_transaccion = server.registrarNuevoUsuario(usuario_en_proceso);
                     if (datos_transaccion != null) {
                         if (datos_transaccion[0] == "added") {
@@ -78,7 +71,7 @@ public class AsyncUsers extends AsyncTask<ArrayList<Object>, String, ArrayList<O
 
                 case 2://buscar usuario
                     postExe.set(0, 2);
-                    Object[] resultadoBusqueda = server.buscarUsuario((String)ordenes_Activity.get(1));
+                    Object[] resultadoBusqueda = server.buscarUsuario((String)parametros_del_hilo.get(1));
                     if(resultadoBusqueda != null){
                         String r = (String)resultadoBusqueda[0];
                         if(r == "finded"){
@@ -99,13 +92,24 @@ public class AsyncUsers extends AsyncTask<ArrayList<Object>, String, ArrayList<O
 
                 case 3://modificar usuario
                     postExe.set(0, 3);
-                    String referencia = (String)ordenes_Activity.get(1);
-                    String msg_modif = server.modificarUsuario((Usuario)ordenes_Activity.get(2), referencia);
+                    String referencia = (String)parametros_del_hilo.get(1);
+                    String msg_modif = server.modificarUsuario((Usuario)parametros_del_hilo.get(2), referencia);
                     if(msg_modif == "Modificado"){
                         postExe.set(2, true);
                     }
                     else {
                         postExe.set(1, msg_modif);
+                    }
+                    break;
+
+                case 4://eliminar usuario
+                    postExe.set(0, 4);
+                    Object[] resp = server.eliminarUsuario((String)parametros_del_hilo.get(1));//parseo la variable tipo String q recibe del formulario. Esta esta en la posicion 1 del arreglo que le pase como parametros al hilo
+                    if(resp[0] == (Boolean)true){
+                        postExe.set(2, true);
+                    }
+                    else {
+                        postExe.set(1, resp[1]);
                     }
                     break;
             }
@@ -115,6 +119,7 @@ public class AsyncUsers extends AsyncTask<ArrayList<Object>, String, ArrayList<O
         } catch (Exception e) {
             e.printStackTrace();
             postExe.set(1, "dobackg AsyUsrs: " + e.toString());
+
             return postExe;
         }
     }
@@ -159,6 +164,19 @@ public class AsyncUsers extends AsyncTask<ArrayList<Object>, String, ArrayList<O
                             else {
                                 Toast.makeText(activity_raiz.getApplicationContext(), (String)result.get(1), Toast.LENGTH_LONG).show();
                             }
+                            break;
+
+                        case 4://eliminar usuario
+                            if(result.get(2) != null){
+                                if(result.get(2) == (Boolean)true) {
+                                    activity_raiz.limpiarPantalla();
+                                    Toast.makeText(activity_raiz.getApplicationContext(), "Eliminado", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                            else {
+                                Toast.makeText(activity_raiz.getApplicationContext(), (String)result.get(1), Toast.LENGTH_LONG).show();
+                            }
+                            break;
                     }
                 }else{
                     SIMGEPLAPP.vibrateError(activity_raiz);
@@ -175,7 +193,7 @@ public class AsyncUsers extends AsyncTask<ArrayList<Object>, String, ArrayList<O
             }
 
         }catch(Exception eh){
-            Toast.makeText(activity_raiz.getApplicationContext(), "pstExe"+eh.toString(), Toast.LENGTH_LONG).show();
+            Toast.makeText(activity_raiz.getApplicationContext(), "pstExe: "+eh.toString(), Toast.LENGTH_LONG).show();
         }
     }
 

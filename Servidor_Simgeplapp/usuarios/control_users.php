@@ -101,8 +101,25 @@ class ControlUsuario {
         } catch (Exception $exc) {
             //echo $exc->getTraceAsString();
             return $exc->getTraceAsString();
-        } finally {
+        }/* finally {
             $this->desconectarDB();
+        }*/
+    }
+    
+    public function eliminarUsuario($param) {
+        //$string_resp;
+        try{
+            $this->conex->query("delete from usuarios where id='$param'");
+            if($this->conex->affected_rows > 0){
+                $string_resp = true;
+            }
+            else {
+                $string_resp = "No se Elimino el Registro";                
+            }
+            return $string_resp;
+        } catch (Exception $ex) {
+            $string_resp = $ex->getTraceAsString();
+            return $string_resp;
         }
     }
 

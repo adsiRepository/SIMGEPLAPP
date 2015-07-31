@@ -50,4 +50,44 @@ if (isset($_REQUEST["id_base"])) {
     header('Content-type: application/json; charset=utf-8');
     echo json_encode($json_resp);
     
+exit();
 }
+?>
+<!--<!DOCTYPE html><html>
+    <head>
+        <style>
+            *{
+                border: 1px dashed black;
+            }
+        </style>
+    </head>
+    <body>
+        <p id="display1"></p>
+        <br>
+        <p id="display2"></p>
+        <br><br>
+        <form action="modif_user.php" method="post">
+            <label>Ref</label>
+            <input type="text" name="ref"/><br>
+            <label>Nombre</label>
+            <input type="text" name="nom"/><br>
+            <label>Apellido</label>
+            <input type="text" name="ape"/><br>
+            <label>Id</label>
+            <input type="text" name="id"/><br>
+            <label>Tipo Id</label>
+            <input type="text" name="tipo_id"/><br>
+            <label>Telefono</label>
+            <input type="text" name="tel"/><br>
+            <label>Email</label>
+            <input type="text" name="email"/><br>
+            <label>Nick</label>
+            <input type="text" name="nick"/><br>
+            <label>Password</label>
+            <input type="text" name="pass"/><br>
+            <label>Rol</label>
+            <input type="text" name="rol"/><br>
+            <input type="submit" value="Submit"/>
+        </form>
+    </body>
+</html>-->

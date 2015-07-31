@@ -3,14 +3,13 @@ package com.adsi38_sena.simgeplapp.Vistas;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -19,7 +18,6 @@ import android.widget.Toast;
 
 import com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor.AsyncUsers;
 import com.adsi38_sena.simgeplapp.Controlador.SalvaTareas;
-import com.adsi38_sena.simgeplapp.Controlador.ServicioMonitoreo;
 import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
 import com.adsi38_sena.simgeplapp.Modelo.Usuario;
 import com.adsi38_sena.simgeplapp.R;
@@ -37,8 +35,8 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
     private Button btn_guardar, btn_modificar, btn_buscar, btn_eliminar;
 
     final String[] tipos_id = {"Tarjeta de Identidad", "Cedula de Ciudadania", "Pasaporte"};
-    private static String opc_rol_elegida;
-    private static String ref_modif;
+    private static String opc_rol_elegida = null;
+    private static String id_ref = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,18 +57,37 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
         ArrayAdapter<String> adp = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, tipos_id);
         select_tipo_id.setAdapter(adp);
 
+        opcs_rol = (RadioGroup) findViewById(R.id.opcs_users_rol);
         radio_admin = (RadioButton)findViewById(R.id.radio_admin);
         radio_apz = (RadioButton)findViewById(R.id.radio_aprendiz);
-        opcs_rol = (RadioGroup) findViewById(R.id.opcs_users_rol);
 
-        if(radio_admin.isChecked()){
+        radio_admin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    opc_rol_elegida = "Administrador";
+                    //Toast.makeText(getApplicationContext(), opc_rol_elegida, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        radio_apz.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    opc_rol_elegida = "Aprendiz";
+                    //Toast.makeText(getApplicationContext(), opc_rol_elegida, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        /*if(radio_admin.isChecked()){
             opc_rol_elegida = "Administrador";
         }
         if(radio_apz.isChecked()){
             opc_rol_elegida = "Aprendiz";
-        }
+        }*/
 
-        opcs_rol.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        /*opcs_rol.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
@@ -84,7 +101,7 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
                         break;
                 }
             }
-        });
+        });*/
 
         /*radio_admin  = (RadioButton)findViewById(R.id.radio_admin);
         radio_apz  = (RadioButton)findViewById(R.id.radio_aprendiz);*/
@@ -109,8 +126,9 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
             btn_eliminar.setEnabled(true);
         }
 
-        if(ref_modif == null){
+        if(id_ref == null){
             btn_modificar.setEnabled(false);
+            btn_eliminar.setEnabled(false);
         }
 
         //linea que me permite recapturar el hilo donde se despliega el dialogo emergente; aqui se sostiene el hilo y se adjunta cosntantemente al nuevo activity al cambiar configuaciones
@@ -130,28 +148,32 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
                 if ((txt_nombre.getText().toString().length() > 0) && (txt_apes.getText().toString().length() > 0) &&
                         (txt_id.getText().toString().length() > 0)) {
 
-                    Usuario nuevo_usuario = new Usuario();
-                    nuevo_usuario.setNom(txt_nombre.getText().toString());
-                    nuevo_usuario.setApe(txt_apes.getText().toString());
-                    nuevo_usuario.setIde(txt_id.getText().toString());
-                    nuevo_usuario.setTipo_ide(select_tipo_id.getSelectedItem().toString());
-                    nuevo_usuario.setTel(txt_tel.getText().toString());
-                    nuevo_usuario.setEmail(txt_mail.getText().toString());
-                    nuevo_usuario.setNick(txt_nick.getText().toString());
-                    nuevo_usuario.setPass(txt_pass.getText().toString());
-                    nuevo_usuario.setRol(opc_rol_elegida);
+                    if(opc_rol_elegida != null) {
 
-                    ArrayList<Object> ordenes = new ArrayList<Object>();
+                        Usuario nuevo_usuario = new Usuario();
+                        nuevo_usuario.setNom(txt_nombre.getText().toString());
+                        nuevo_usuario.setApe(txt_apes.getText().toString());
+                        nuevo_usuario.setIde(txt_id.getText().toString());
+                        nuevo_usuario.setTipo_ide(select_tipo_id.getSelectedItem().toString());
+                        nuevo_usuario.setTel(txt_tel.getText().toString());
+                        nuevo_usuario.setEmail(txt_mail.getText().toString());
+                        nuevo_usuario.setNick(txt_nick.getText().toString());
+                        nuevo_usuario.setPass(txt_pass.getText().toString());
+                        nuevo_usuario.setRol(opc_rol_elegida);
 
-                    ordenes.add(0, 1);//uno = codigo que indica q la orden es guardar nuevo usuario
-                    ordenes.add(1, nuevo_usuario);
+                        ArrayList<Object> ordenes = new ArrayList<Object>();
 
-                    AsyncUsers registro = new AsyncUsers();
-                    SalvaTareas.obtenerInstancia().procesarUsuario(SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_CARGA_USERS,
-                            registro, ActivityUsuarios.this);
-                    registro.execute(ordenes);
+                        ordenes.add(0, 1);//uno = codigo que indica q la orden es guardar nuevo usuario
+                        ordenes.add(1, nuevo_usuario);
 
-                    //throw new Exception("instancia no nula");
+                        AsyncUsers registro = new AsyncUsers();
+                        SalvaTareas.obtenerInstancia().procesarUsuario(SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_CARGA_USERS,
+                                registro, ActivityUsuarios.this);
+                        registro.execute(ordenes);
+                    }
+                    else {
+                        Toast.makeText(getApplicationContext(), "Define el Rol del Usuario", Toast.LENGTH_LONG).show();
+                    }
 
                 } else {
                     SIMGEPLAPP.vibrateError(ActivityUsuarios.this);
@@ -235,6 +257,44 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
                 }catch (Exception eh){
                     Toast.makeText(getApplicationContext(), "btnModif: "+eh.toString(), Toast.LENGTH_LONG).show();
                 }
+            break;
+
+            case R.id.btn_users_eliminar:
+                try {
+                    AlertDialog.Builder construct_msg = new AlertDialog.Builder(this);
+                    construct_msg
+                            //.setTitle("Precaucion")
+                            .setMessage("Realmente quieres retirar el Registro de este usuario de la base de Datos?")
+                            .setPositiveButton("Eliminar",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                            ArrayList<Object> ordenes = new ArrayList<Object>();
+                                            ordenes.add(0, 4);
+                                            ordenes.add(1, id_ref);
+
+                                            AsyncUsers eliminar = new AsyncUsers();
+                                            SalvaTareas.obtenerInstancia().procesarUsuario(SIMGEPLAPP.CargaSegura.LLAVE_PROCESO_CARGA_USERS,
+                                                    eliminar, ActivityUsuarios.this);
+                                            eliminar.execute(ordenes);
+                                        }
+                                    })
+                            .setNegativeButton("Cancelar",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.cancel();
+                                        }
+                                    });
+
+                    AlertDialog msg_emerg = construct_msg.create();
+                    msg_emerg.show();
+
+                } catch (Exception eh) {
+                    Toast.makeText(getApplicationContext(), "btnDrop: " + eh.toString(), Toast.LENGTH_LONG).show();
+                }
+                break;
         }
     }
 
@@ -246,15 +306,16 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
         txt_mail.setText("");
         txt_nick.setText("");
         txt_pass.setText("");
-        ref_modif = null;
+        id_ref = null;
         runOnUiThread(new Runnable() {
             public void run() {
                 btn_modificar.setEnabled(false);
+                btn_eliminar.setEnabled(false);
             }
         });
     }
 
-    public void plasmarDatosEncotrados(Usuario datosUser){
+    public void plasmarDatosEncotrados(Usuario datosUser) {
         txt_nombre.setText(datosUser.getNom());
         txt_apes.setText(datosUser.getApe());
         txt_id.setText(datosUser.getIde());
@@ -263,14 +324,14 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
         txt_nick.setText(datosUser.getNick());
         txt_pass.setText(datosUser.getPass());
 
-        if(datosUser.getRol().compareTo("Administrador") == 0){
+        if (datosUser.getRol().compareTo("Administrador") == 0) {
             runOnUiThread(new Runnable() {
                 public void run() {
                     radio_admin.setChecked(true);
                 }
             });
         }
-        if(datosUser.getRol().compareTo("Aprendiz") == 0){
+        if (datosUser.getRol().compareTo("Aprendiz") == 0) {
             runOnUiThread(new Runnable() {
                 public void run() {
                     radio_apz.setChecked(true);
@@ -280,11 +341,12 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
 
         select_tipo_id.setSelection(datosUser.getTipo_ide());
 
-        ref_modif = datosUser.getIde();
+        id_ref = datosUser.getIde();
 
         runOnUiThread(new Runnable() {
             public void run() {
                 btn_modificar.setEnabled(true);
+                btn_eliminar.setEnabled(true);
             }
         });
     }
@@ -304,7 +366,7 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
         ArrayList<Object> ordenes = new ArrayList<Object>();
 
         ordenes.add(0, 3);//dos sera el codigo de la orden de busqueda
-        ordenes.add(1, ref_modif);
+        ordenes.add(1, id_ref);
         ordenes.add(2, nuevos_datos);
 
         AsyncUsers modificar = new AsyncUsers();
@@ -312,6 +374,7 @@ public class ActivityUsuarios extends Activity implements View.OnClickListener {
                 modificar, ActivityUsuarios.this);
         modificar.execute(ordenes);
     }
+
 
     @Override
     protected void onDestroy(){
