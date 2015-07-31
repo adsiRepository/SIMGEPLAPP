@@ -15,16 +15,10 @@ import java.util.ArrayList;
 
 public class AsyncUsers extends AsyncTask<ArrayList<Object>, String, ArrayList<Object>>{
 
-    SIMGEPLAPP simgeplapp;
-
-    ActivityUsuarios activity_raiz;
-
-    FragmentoCargaServidor frag_progress_usuarios;
-
-    ComunicadorServidor server;
-
-    Usuario usuario_en_proceso = null;
-    //ArrayList<NameValuePair> atributos_usuario = null;
+    private SIMGEPLAPP simgeplapp;
+    private ActivityUsuarios activity_raiz;
+    private FragmentoCargaServidor frag_progress_usuarios;
+    private ComunicadorServidor server;
 
     @Override
     protected void onPreExecute(){
@@ -42,42 +36,42 @@ public class AsyncUsers extends AsyncTask<ArrayList<Object>, String, ArrayList<O
     @Override
     protected ArrayList<Object> doInBackground(ArrayList<Object>... params) {
 
-        ArrayList<Object> ordenes_Activity = params[0];
-        int orden = (Integer)ordenes_Activity.get(0);
+        ArrayList<Object> parametros_del_hilo = params[0];
         ArrayList<Object> postExe = new ArrayList<Object>();
         postExe.add(0, null);
         postExe.add(1, null);
         postExe.add(2, null);
 
         try {
-            switch (orden){
+            switch ((Integer)parametros_del_hilo.get(0)){//numero enviado en el indice 0 del ArrayList<Object> pasado en el execute
                 case 1:
-                    postExe.set(0, 1);
-                    usuario_en_proceso = (Usuario)ordenes_Activity.get(1);
+                    postExe.set(0, 1);//registrar usuario
+                    Usuario usuario_en_proceso = (Usuario)parametros_del_hilo.get(1);
                     String[] datos_transaccion = server.registrarNuevoUsuario(usuario_en_proceso);
                     if (datos_transaccion != null) {
                         if (datos_transaccion[0] == "added") {
                             publishProgress("Usuario Añadido");
                             publishProgress(datos_transaccion[1]);//SystemClock.sleep(100);
                             publishProgress(datos_transaccion[2]);
-                            postExe.set(1, "ok");
+                            postExe.set(1, true);
                         }
                         if (datos_transaccion[0] == "no_added") {
                             publishProgress("Usuario No Añadido");
-                            postExe.set(1, "no");
+                            postExe.set(1, false);
                         }
                         if (datos_transaccion[0] == "failed_conex") {
                             publishProgress("Error de Conexion");
-                            postExe.set(1, "no");
+                            postExe.set(1, false);
                         }
                     }
                     else {
                         throw new Exception("No se pudo recibir transaccion nuevo usuario");
                     }
                     break;
-                case 2:
+
+                case 2://buscar usuario
                     postExe.set(0, 2);
-                    Object[] resultadoBusqueda = server.buscarUsuario((String)ordenes_Activity.get(1));
+                    Object[] resultadoBusqueda = server.buscarUsuario((String)parametros_del_hilo.get(1));
                     if(resultadoBusqueda != null){
                         String r = (String)resultadoBusqueda[0];
                         if(r == "finded"){
@@ -96,15 +90,26 @@ public class AsyncUsers extends AsyncTask<ArrayList<Object>, String, ArrayList<O
                     }
                     break;
 
-                case 3:
+                case 3://modificar usuario
                     postExe.set(0, 3);
-                    String referencia = (String)ordenes_Activity.get(1);
-                    String modif = server.modificarUsuario((Usuario)ordenes_Activity.get(2), referencia);
-                    if(modif == "Modificado"){
+                    String referencia = (String)parametros_del_hilo.get(1);
+                    String msg_modif = server.modificarUsuario((Usuario)parametros_del_hilo.get(2), referencia);
+                    if(msg_modif == "Modificado"){
                         postExe.set(2, true);
                     }
                     else {
-                        postExe.set(1, modif);
+                        postExe.set(1, msg_modif);
+                    }
+                    break;
+
+                case 4://eliminar usuario
+                    postExe.set(0, 4);
+                    Object[] resp = server.eliminarUsuario((String)parametros_del_hilo.get(1));//parseo la variable tipo String q recibe del formulario. Esta esta en la posicion 1 del arreglo que le pase como parametros al hilo
+                    if(resp[0] == (Boolean)true){
+                        postExe.set(2, true);
+                    }
+                    else {
+                        postExe.set(1, resp[1]);
                     }
                     break;
             }
@@ -114,6 +119,7 @@ public class AsyncUsers extends AsyncTask<ArrayList<Object>, String, ArrayList<O
         } catch (Exception e) {
             e.printStackTrace();
             postExe.set(1, "dobackg AsyUsrs: " + e.toString());
+
             return postExe;
         }
     }
@@ -126,13 +132,20 @@ public class AsyncUsers extends AsyncTask<ArrayList<Object>, String, ArrayList<O
                 if (result != null) {
                     decisionFinal = (Integer)result.get(0);
                     switch (decisionFinal) {
-                        case 1:
-                            activity_raiz.limpiarPantalla();
-                            Toast.makeText(activity_raiz.getApplicationContext(), "Usuario Registrado con Exito", Toast.LENGTH_LONG).show();
-                            SIMGEPLAPP.vibrateExito(activity_raiz);
-                            break;
+                        case 1://registrar nuevo usuario
+                            if((Boolean)result.get(1) == true) {
+                                activity_raiz.limpiarPantalla();
+                                Toast.makeText(activity_raiz.getApplicationContext(), "Usuario Registrado con Exito", Toast.LENGTH_LONG).show();
+                                SIMGEPLAPP.vibrateExito(activity_raiz);
+                            }
+                            else {
+                                SIMGEPLAPP.vibrateError(activity_raiz);
+                                Toast.makeText(activity_raiz.getApplicationContext(), "Verifica el numero de Identificacion," +
+                                        " este no se puede repetir en la Base de Datos", Toast.LENGTH_LONG).show();
+                            }
+                        break;
 
-                        case 2:
+                        case 2://buscar usuario
                             if (result.get(2) != null) {
                                 activity_raiz.plasmarDatosEncotrados((Usuario) result.get(2));
                             }
@@ -141,14 +154,29 @@ public class AsyncUsers extends AsyncTask<ArrayList<Object>, String, ArrayList<O
                             }
                             break;
 
-                        case 3:
+                        case 3://modificar usuario
                             if(result.get(2) != null){
-                                if(result.get(2) == (Boolean)true)
-                                Toast.makeText(activity_raiz.getApplicationContext(), "Usuario Modificado con Exito", Toast.LENGTH_LONG).show();
+                                if(result.get(2) == (Boolean)true) {
+                                    activity_raiz.limpiarPantalla();
+                                    Toast.makeText(activity_raiz.getApplicationContext(), "Usuario Modificado con Exito", Toast.LENGTH_LONG).show();
+                                }
                             }
                             else {
                                 Toast.makeText(activity_raiz.getApplicationContext(), (String)result.get(1), Toast.LENGTH_LONG).show();
                             }
+                            break;
+
+                        case 4://eliminar usuario
+                            if(result.get(2) != null){
+                                if(result.get(2) == (Boolean)true) {
+                                    activity_raiz.limpiarPantalla();
+                                    Toast.makeText(activity_raiz.getApplicationContext(), "Eliminado", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                            else {
+                                Toast.makeText(activity_raiz.getApplicationContext(), (String)result.get(1), Toast.LENGTH_LONG).show();
+                            }
+                            break;
                     }
                 }else{
                     SIMGEPLAPP.vibrateError(activity_raiz);
@@ -165,7 +193,7 @@ public class AsyncUsers extends AsyncTask<ArrayList<Object>, String, ArrayList<O
             }
 
         }catch(Exception eh){
-            Toast.makeText(activity_raiz.getApplicationContext(), "pstExe"+eh.toString(), Toast.LENGTH_LONG).show();
+            Toast.makeText(activity_raiz.getApplicationContext(), "pstExe: "+eh.toString(), Toast.LENGTH_LONG).show();
         }
     }
 

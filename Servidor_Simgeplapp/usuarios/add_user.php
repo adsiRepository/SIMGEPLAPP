@@ -43,7 +43,11 @@ if (isset($_REQUEST["nom"]) && isset($_REQUEST["ape"]) && isset($_REQUEST["id"])
         $json_resp["added"] = FALSE;
     }
 
-    echo json_encode($json_resp);
+    header('Content-type: application/json; charset=utf-8');
+    echo json_encode($json_resp, JSON_FORCE_OBJECT);
+    
+    //echo json_encode($json_resp);
+    exit();
 }
 ?>
 <!--<!DOCTYPE html>

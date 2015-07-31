@@ -33,7 +33,7 @@ public class FragmentoCargaServidor extends DialogFragment {
         dialogo_progreso.setMessage("Espera...");
         dialogo_progreso.setIndeterminate(true);
         dialogo_progreso.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        setCancelable(false);
+        setCancelable(true);
         return dialogo_progreso;
     }
 

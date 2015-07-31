@@ -6,85 +6,133 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:background="@drawable/monitor1">
+                android:background="@drawable/back_monitor_port">
 
-    <AnalogClock
-    android:id="@+id/AnalogClock01"
-    android:layout_width="130dp"
-    android:layout_height="130dp"
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="143dp"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginTop="37dp"
-        android:layout_toLeftOf="@+id/lbl_temp" />
+        android:layout_centerHorizontal="true">
 
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/lbl_presion"
+            >
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Nivel"
-        android:id="@+id/lbl_nivel"
-        android:textColor="#fffff9ff"
-        android:background="#ffffb012"
-        android:layout_marginTop="28dp"
-        android:layout_below="@+id/txv_lec_niv"
-        android:layout_centerHorizontal="true" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Temperatura"
+                android:id="@+id/lbl_temp"
+                android:background="#ffffb012"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@+id/lbl_presion"
+                android:layout_marginBottom="25dp"
+                android:textSize="22dp"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Presion"
-        android:id="@+id/lbl_presion"
-        android:textColor="#fffff9ff"
-        android:background="#ffffb012"
-        android:layout_marginTop="28dp"
-        android:layout_below="@+id/txv_lec_pres"
-        android:layout_centerHorizontal="true" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Presion"
+                android:id="@+id/lbl_presion"
+                android:background="#ffffb012"
+                android:layout_above="@+id/txv_lec_temp"
+                android:layout_alignLeft="@+id/btn_init"
+                android:layout_marginBottom="25dp"
+                android:textSize="22dp"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Temperatura"
-        android:id="@+id/lbl_temp"
-        android:textColor="#fffff9ff"
-        android:background="#ffffb012"
-        android:layout_above="@+id/txv_lec_pres"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="34dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Nivel"
+                android:id="@+id/lbl_nivel"
+                android:background="#ffffb012"
+                android:layout_below="@+id/txv_lec_temp"
+                android:layout_alignLeft="@+id/lbl_presion"
+                android:layout_marginBottom="25dp"
+                android:textSize="22dp"/>
+        </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="56"
-        android:id="@+id/txv_lec_temp"
-        android:layout_above="@+id/txv_lec_pres"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="74dp" />
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="58"
-        android:id="@+id/txv_lec_pres"
-        android:layout_centerVertical="true"
-        android:layout_alignLeft="@+id/txv_lec_temp" />
+            <TableLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="68"
-        android:id="@+id/txv_lec_niv"
-        android:layout_marginTop="37dp"
-        android:layout_below="@+id/lbl_presion"
-        android:layout_alignLeft="@+id/txv_lec_pres" />
+                <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginBottom="9dp">
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="56"
+                        android:id="@+id/txv_lec_temp"
+                        android:layout_alignLeft="@+id/txv_lec_pres"
+                        android:layout_centerVertical="true"
+                        android:background="#ffffffff"
+                        android:layout_marginLeft="25dp"
+                        android:textSize="22dp"
+                        android:layout_marginBottom="15dp"/>
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginBottom="9dp">
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="58"
+                        android:id="@+id/txv_lec_pres"
+                        android:layout_alignTop="@+id/lbl_presion"
+                        android:layout_alignLeft="@+id/txv_lec_niv"
+                        android:background="#ffffffff"
+                        android:layout_marginLeft="25dp"
+                        android:textSize="22dp"
+                        android:layout_marginBottom="15dp"/>
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginBottom="9dp">
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="68"
+                        android:id="@+id/txv_lec_niv"
+                        android:layout_alignTop="@+id/lbl_nivel"
+                        android:layout_toRightOf="@+id/btn_init"
+                        android:background="#ffffffff"
+                        android:layout_marginLeft="25dp"
+                        android:textSize="22dp"
+                        android:layout_marginBottom="15dp"/>
+                </TableRow>
+            </TableLayout>
+
+        </LinearLayout>
+    </LinearLayout>
 
     <Button
-        android:layout_width="250dp"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:text="probar"
         android:id="@+id/btn_init"

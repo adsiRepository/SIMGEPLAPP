@@ -27,11 +27,11 @@ public class ComunicadorServidor {
 
 
 //METODO DE LOGGEO
-    public int intentoLoggeo(String user, String pass) throws JSONException, IOException {
+    public String[] intentoLoggeo(String user, String pass) throws Exception {
 
         String url = SIMGEPLAPP.Comunicaciones.URL_SERVER + "usuarios/login.php";
 
-        int isInDB;//se puede loggear?, existe en base de datos?
+        String[] resp = new String[4];
 
         ArrayList<NameValuePair> valoresEnviados = new ArrayList<NameValuePair>();
         valoresEnviados.add(new BasicNameValuePair("user", user));
@@ -39,18 +39,26 @@ public class ComunicadorServidor {
 
         //JSONObject jarray = //metodo que obtiene la respuesta del servidor
         JSONObject jobj = obtenerObjetoJSON(url, valoresEnviados);
-        if (jobj != null) {
-            //viene con un array codificado en json que contiene en este caso un solo indice (un solo valor)
-            //isInDB = jobj.getInt("logged");//el json viene desde el php con un entero entre 0 y 1
+        if (jobj != null && jobj.length() > 0) {
             boolean log = jobj.getBoolean("logged");
-            if (log == true) {//por convencion 1 es verdadero, si existe en bd me envia 1
-                return 1;
+            if (log == true) {
+                resp[0] = "logged";
+                JSONObject data = jobj.getJSONObject("data_sesion");
+                if(data != null && data.length() > 0){
+                    resp[1] = data.getString("id");
+                    resp[2] = data.getString("nombre");
+                    resp[3] = data.getString("rol");
+                }
+                else{
+                    throw new Exception("No llegaron los Datos");
+                }
             } else {
-                return 0;//0 es que no existe en la base de datos
+                resp[0] = jobj.getString("msg");//"El usuario no Existe en la Base de Datos";
             }
         } else {
-            return -1;//-1 significa que no obtuvo respuesta del servidor
+            resp[0] = "No hubo respuesta del Servidor";
         }
+        return resp;
     }
 
 
@@ -123,10 +131,13 @@ public class ComunicadorServidor {
                     usuarioHallado.setNick(datos.getString("nick"));
                     results[1] = usuarioHallado;
                 }
-
             } else {
-                results[0] = "No existe el Usuario en la Base de Datos";
-                //return results;
+                if(jsonObj.getString("msg") != null && jsonObj.getString("msg").length() > 0){
+                    results[0] = jsonObj.getString("msg");
+                }
+                else {
+                    results[0] = "No existe el Usuario en la Base de Datos";
+                }
             }
         } else {
             results[0] = "No se obtuvo Respuesta del Servidor";
@@ -148,7 +159,7 @@ public class ComunicadorServidor {
         }
         else {
 
-            datos_a_cambiar.add(new BasicNameValuePair("ref", llave));
+            datos_a_cambiar.set(9, new BasicNameValuePair("id_base", llave));
 
             JSONObject jsonObj = obtenerObjetoJSON(url, datos_a_cambiar);
 
@@ -165,6 +176,33 @@ public class ComunicadorServidor {
                 return "No se obtuvo respuesta del Servidor";
             }
         }
+    }
+
+
+    public Object[] eliminarUsuario(String parametro) throws Exception {
+        String url = SIMGEPLAPP.Comunicaciones.URL_SERVER + "usuarios/drop_user.php";
+
+        ArrayList<NameValuePair> ref_eliminar = new ArrayList<NameValuePair>();
+        ref_eliminar.add(new BasicNameValuePair("id_ref", parametro));
+
+        Object[] valores_retornados = new Object[2];
+
+        JSONObject jobj = obtenerObjetoJSON(url, ref_eliminar);
+        if(jobj != null && jobj.length() > 0){
+            boolean erase = jobj.getBoolean("erase");
+            if(erase == true){
+                valores_retornados[0] = true;
+            }
+            else {
+                valores_retornados[0] = false;
+                valores_retornados[1] = jobj.getString("msg");
+            }
+        }
+        else {
+            valores_retornados[0] = false;
+            valores_retornados[1] = "No hubo Respuesta del Servidor";
+        }
+        return valores_retornados;
     }
 
 
