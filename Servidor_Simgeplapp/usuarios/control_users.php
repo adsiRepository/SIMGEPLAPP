@@ -24,18 +24,24 @@ class ControlUsuario {
 
     public function loggin($nick, $pass){
         //loggeo
-        $consulta = "select * from usuarios where nick='$nick' and pass='$pass'";
-        $result = $this->conex->query($consulta);
+        $datos[] = NULL;
+        $result = $this->conex->query("select * from usuarios where nick='$nick' and pass='$pass'");
         if ($result->num_rows > 0) {
-            return TRUE;
+            $datos[0] = "logged";
+            while ($row = $result->fetch_array()) {
+                $datos[1] = "$row[id]";//campos de la tabla
+                $datos[2] = "$row[nombre]";
+                $datos[3] = "$row[rol]";
+            }
         }
         else {
-            return FALSE;
+            $datos[0] = "El Usuario no Existe en la Base de Datos";
         }
-        desconectarDB();
+        return $datos;
+        //desconectarDB();
     }
 
-        public function registrarUsuario($id, $name, $ape, $tipo_id, $tel, $email, $pass, $rol, $nick) {
+    public function registrarUsuario($id, $name, $ape, $tipo_id, $tel, $email, $pass, $rol, $nick) {
 
         $consulta = "insert into usuarios values ('$id','$name','$ape','$tipo_id','$tel','$email',"
                 . "'$pass','$rol','$nick')";
@@ -50,9 +56,8 @@ class ControlUsuario {
         desconectarDB();
     }
 
-    public function comprobarExistencia($id) {
-        $query = "select * from usuarios where id='$id'";
-        $results = $this->cnxDB->query($query);
+    public function comprobarExistencia($id_s) {
+        $results = $this->cnxDB->query("select * from usuarios where id='$id_s'");
         if ($results->num_rows > 0) {
             return TRUE;
         } else {
@@ -62,47 +67,65 @@ class ControlUsuario {
     
     public function devolverInformacion($id_s) {
         $datos[] = NULL;
-        $query = "select * from usuarios where id='$id_s'";
-        $result = $this->conex->query($query);
+        $result = $this->conex->query("select * from usuarios where id='$id_s'");
         if ($result->num_rows > 0) {
+            $datos[0] = "ok";
             while ($row = $result->fetch_array()) {
-                $datos[0] = "$row[0]";
-                $datos[1] = "$row[1]";
-                $datos[2] = "$row[2]";
-                $datos[3] = "$row[3]";
-                $datos[4] = "$row[4]";
-                $datos[5] = "$row[5]";
-                $datos[6] = "$row[6]";
-                $datos[7] = "$row[7]";
-                $datos[8] = "$row[8]";
+                $datos[1] = "$row[0]";
+                $datos[2] = "$row[1]";
+                $datos[3] = "$row[2]";
+                $datos[4] = "$row[3]";
+                $datos[5] = "$row[4]";
+                $datos[6] = "$row[5]";
+                $datos[7] = "$row[6]";
+                $datos[8] = "$row[7]";
+                $datos[9] = "$row[8]";
             }
+        } else {
+           $datos[0] = $this->conex->error; 
         }
         return $datos;
     }
-    
-    public function modificarUsuario($ref, $id, $name, $ape, $tipo_id, $tel, $email, $rol, $prev) {
+
+    public function modificarUsuario($query) {
         try {
-            $query = "update usuarios set id='$id', nombre='$name', apes='$ape', tipo_id='$tipo_id', "
-                . "telefono='$tel', email='$email', rol='$rol' $prev "
-                . "where id='$ref'";
-        
             $done = $this->conex->query($query);
             //if($this->conex->affected_rows > 0){
-            if($done == TRUE){
+            if($done === TRUE){
                 return "modificado";
             } else {
-                return "fail";
+                //return "fail";
+                return $this->conex->error;
             }
+         //return $query;
         } catch (Exception $exc) {
             //echo $exc->getTraceAsString();
             return $exc->getTraceAsString();
-        } finally {
-            desconectarDB();
+        }/* finally {
+            $this->desconectarDB();
+        }*/
+    }
+    
+    public function eliminarUsuario($param) {
+        //$string_resp;
+        try{
+            $this->conex->query("delete from usuarios where id='$param'");
+            if($this->conex->affected_rows > 0){
+                $string_resp = true;
+            }
+            else {
+                $string_resp = "No se Elimino el Registro";                
+            }
+            return $string_resp;
+        } catch (Exception $ex) {
+            $string_resp = $ex->getTraceAsString();
+            return $string_resp;
         }
     }
 
     public function obtenerDetalleError() {
         return $this->conex->error;
+        //return "Error en Base de Datos";
     }
     
     public function desconectarDB() {

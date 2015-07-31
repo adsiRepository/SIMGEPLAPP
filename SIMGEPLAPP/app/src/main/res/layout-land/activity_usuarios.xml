@@ -243,7 +243,7 @@
                             android:layout_height="wrap_content"
                             android:text="Aprendiz"
                             android:id="@+id/radio_aprendiz"
-                            android:checked="true"/>
+                            android:checked="false"/>
                     </RadioGroup>
                 </TableRow>
 
