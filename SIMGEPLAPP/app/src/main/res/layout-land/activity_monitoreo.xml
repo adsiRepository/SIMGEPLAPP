@@ -15,7 +15,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="55dp"
-        android:layout_above="@+id/btn_init">
+        >
 
         <LinearLayout
             android:orientation="vertical"
@@ -80,7 +80,7 @@
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="56"
+                        android:text="0.0"
                         android:id="@+id/txv_lec_temp"
                         android:layout_alignLeft="@+id/txv_lec_pres"
                         android:layout_centerVertical="true"
@@ -98,7 +98,7 @@
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="58"
+                        android:text="0.0"
                         android:id="@+id/txv_lec_pres"
                         android:layout_alignTop="@+id/lbl_presion"
                         android:layout_alignLeft="@+id/txv_lec_niv"
@@ -116,7 +116,7 @@
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="68"
+                        android:text="0.0"
                         android:id="@+id/txv_lec_niv"
                         android:layout_alignTop="@+id/lbl_nivel"
                         android:layout_toRightOf="@+id/btn_init"
@@ -128,15 +128,5 @@
 
         </LinearLayout>
     </LinearLayout>
-
-    <Button
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:text="probar"
-        android:id="@+id/btn_init"
-        android:textSize="22dp"
-        android:background="#ff12ff1a"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

@@ -34,80 +34,66 @@ public class ActivityMenu extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
 
-        simgeplapp = (SIMGEPLAPP)getApplication();
+        simgeplapp = (SIMGEPLAPP) getApplication();
 
-        btn_monitoreo = (Button)findViewById(R.id.btn_monitoreo);
-        btn_gestion_usuarios = (Button)findViewById(R.id.btn_usuarios);
+        btn_monitoreo = (Button) findViewById(R.id.btn_monitoreo);
+        btn_gestion_usuarios = (Button) findViewById(R.id.btn_usuarios);
 
-        if(simgeplapp.sessionAlive == true){
-
-            swch_service = (Switch)findViewById(R.id.switch_monitorear);
-            if(simgeplapp.serviceOn == true){
-                swch_service.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        swch_service.setChecked(true);
-                    }
-                });
-            }
-            else {
-                swch_service.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        swch_service.setChecked(false);
-                    }
-                });
-            }
-            swch_service.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        swch_service = (Switch) findViewById(R.id.switch_monitorear);
+        if (simgeplapp.serviceOn == true) {
+            swch_service.post(new Runnable() {
                 @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if(isChecked){
-                        startService(new Intent(ActivityMenu.this, ServicioMonitoreo.class));
-                        swch_service.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                swch_service.setText("Monitoreando");
-                            }
-                        });
-                    }
-                    else {
-                        stopService(new Intent(ActivityMenu.this, ServicioMonitoreo.class));
-                        swch_service.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                swch_service.setText("Monitorear");
-                            }
-                        });
-                    }
+                public void run() {
+                    swch_service.setChecked(true);
                 }
             });
-
-            lbl_user = (TextView)findViewById(R.id.txv_user_session);
-
-            lbl_user.setText("" + simgeplapp.session.user);
-
-            btn_monitoreo.setOnClickListener(new View.OnClickListener() {
+        } else {
+            swch_service.post(new Runnable() {
                 @Override
-                public void onClick(View v) {
-                    startActivity(new Intent(ActivityMenu.this, ActivityMonitoreo.class));
+                public void run() {
+                    swch_service.setChecked(false);
                 }
             });
-            btn_gestion_usuarios.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startActivity(new Intent(ActivityMenu.this, ActivityUsuarios.class));
-                }
-            });
-
         }
-        else {
+        swch_service.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    startService(new Intent(ActivityMenu.this, ServicioMonitoreo.class));
+                    swch_service.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            swch_service.setText("Monitoreando");
+                        }
+                    });
+                } else {
+                    stopService(new Intent(ActivityMenu.this, ServicioMonitoreo.class));
+                    swch_service.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            swch_service.setText("Monitorear");
+                        }
+                    });
+                }
+            }
+        });
 
-            finish();
-            startActivity(new Intent(this, InicioSimgeplapp.class));
-            Toast.makeText(getApplicationContext(), "Inicia Sesion", Toast.LENGTH_LONG).show();
+        lbl_user = (TextView) findViewById(R.id.txv_user_session);
 
-        }
+        lbl_user.setText("" + simgeplapp.session.user);
 
+        btn_monitoreo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ActivityMenu.this, ActivityMonitoreo.class));
+            }
+        });
+        btn_gestion_usuarios.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ActivityMenu.this, ActivityUsuarios.class));
+            }
+        });
 
     }
 
@@ -189,6 +175,7 @@ public class ActivityMenu extends Activity {
                                         simgeplapp.session.id = null;
                                         simgeplapp.session.rol = null;
                                         simgeplapp.session = null;
+
                                         SharedPreferences confUser = getSharedPreferences("mi_usuario", MODE_PRIVATE);
                                         SharedPreferences.Editor editor = confUser.edit();
                                         editor.putString("id", null);
@@ -196,7 +183,8 @@ public class ActivityMenu extends Activity {
                                         editor.putString("rol", null);
                                         editor.putString("onsesion", null);
                                         editor.commit();
-                                        finish();
+
+                                        ActivityMenu.this.finish();
                                         stopService(new Intent(ActivityMenu.this, ServicioMonitoreo.class));
                                         startActivity(new Intent(ActivityMenu.this, ActivityLogin.class));
                                     }

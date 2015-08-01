@@ -20,6 +20,7 @@ import android.widget.Toast;
 //se define y se inicia al ejecutar por primera vez la aplicacion, lo que hacemos en cada componente es recoger esa instancia y obtener asi las variables globales.
 public class SIMGEPLAPP extends Application{
 
+    //http://www.elandroidelibre.com/2015/07/errores-habituales-desarrollador-android.html
 
     //ATRIBUTOS DE LA APLICACION
     //variables globales accesibles a todos los elementos pertenecientes a la aplicacion: activities, services, clases, etc.
@@ -74,7 +75,7 @@ public class SIMGEPLAPP extends Application{
         super.onCreate();
 
         SharedPreferences preferencias = getSharedPreferences("mi_usuario", MODE_PRIVATE);
-        String estado_sesion = preferencias.getString("onsesion", null);//false valor por defecto
+        String estado_sesion = preferencias.getString("onsesion", null);//null valor por defecto
 
         if(estado_sesion != null){
             sessionAlive = true;

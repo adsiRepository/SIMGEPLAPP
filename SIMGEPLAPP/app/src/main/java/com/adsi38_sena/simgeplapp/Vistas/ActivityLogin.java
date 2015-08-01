@@ -75,7 +75,7 @@ public class ActivityLogin extends Activity /*implements AsyncLoggin.Llamados_de
     }
 
     public void onLogged(){
-        finish();
+        this.finish();
         startActivity(new Intent(getApplicationContext(), ActivityMenu.class));
         Toast.makeText(getApplicationContext(), "Session Iniciada", Toast.LENGTH_LONG).show();
     }
