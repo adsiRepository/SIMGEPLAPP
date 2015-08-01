@@ -6,21 +6,21 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
 import com.adsi38_sena.simgeplapp.R;
 
 public class InicioSimgeplapp extends Activity {
 
-	SIMGEPLAPP simgeplapp;//aqui definimos un objeto de la clase global, lo mismo para cada componente
+	private SIMGEPLAPP simgeplapp;//aqui definimos un objeto de la clase global, lo mismo para cada componente
 
-    protected ImageButton btn_entrar;
+    private ImageButton btn_entrar;
 
     //constructor
     public InicioSimgeplapp(){
 
     }
-
 
     //MANTENER EL ESTADO AL ROTAR LA PANTALLA O AL REGRESAR
     //fuentes => https://sekthdroid.wordpress.com/2012/10/04/mantener-los-datos-cuando-rotemos-la-pantalla-en-android/
@@ -52,7 +52,13 @@ public class InicioSimgeplapp extends Activity {
         btn_entrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(InicioSimgeplapp.this, ActivityLogin.class));
+                if(simgeplapp.sessionAlive == true){
+                    startActivity(new Intent(InicioSimgeplapp.this, ActivityMenu.class));
+                }
+                else {
+                    startActivity(new Intent(InicioSimgeplapp.this, ActivityLogin.class));
+                    Toast.makeText(getApplicationContext(), "Inicia Sesion", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

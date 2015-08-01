@@ -20,13 +20,13 @@ import java.util.Random;
 public class ServicioMonitoreo extends Service {
 	private static final String TAG = "ServicioMonitoreo";
 
-	public int ID_PETICION_SERVICIO = 3, ID_RESPUESTA_PETICION = 5;
-
-	public int val1, val2;
-
-	private SIMGEPLAPP simgeplapp;
-
+    private SIMGEPLAPP simgeplapp;
     protected Notificador notif;
+
+	public int ID_PETICION_SERVICIO = 3, ID_RESPUESTA_PETICION = 5;
+    public int val1, val2;
+
+    private Double[] lecs_to_activity;
 
 
     //ciclo de vida de un service y conexion a este (bound) -> http://www.androidcurso.com/index.php/tutoriales-android/38-unidad-8-servicios-notificaciones-y-receptores-de-anuncios/289-ciclo-de-vida-de-un-servicio
@@ -38,6 +38,7 @@ public class ServicioMonitoreo extends Service {
 		Toast.makeText(getBaseContext(), "Monitoreo Simgeplapp en marcha", Toast.LENGTH_LONG).show();
         simgeplapp.serviceOn = true;
         notif = new Notificador(/*simgeplapp*/);
+        lecs_to_activity = new Double[3];
 	}
 
 
@@ -59,15 +60,18 @@ public class ServicioMonitoreo extends Service {
 		public void run() {//por ahora estamos generando las variables con Random. Aqui hay que implementar la comunicacion al servidor
 			while(simgeplapp.serviceOn) {
 				try {
-                    Thread.sleep(180000);//cada tres minutos cambia
+                    Thread.sleep(120000);//cada dos minutos cambia
                     simgeplapp.TEMP = (random.nextDouble() * (178 - 19)) + 19;
 					simgeplapp.PRES = (random.nextDouble() * (168 - 16)) + 16;
                     simgeplapp.NIV = (random.nextDouble() * (166 - 18)) + 18;
                     if(simgeplapp.TEMP > 170 || simgeplapp.PRES > 140 || simgeplapp.NIV > 160){
-                        notif.notificarAlertaPlanta(ServicioMonitoreo.this);
+                        lecs_to_activity[0] = simgeplapp.TEMP;
+                        lecs_to_activity[1] = simgeplapp.PRES;
+                        lecs_to_activity[2] = simgeplapp.NIV;
+                        notif.notificarAlertaPlanta(ServicioMonitoreo.this, lecs_to_activity);
                     }
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+                    Toast.makeText(getBaseContext(), "hilServ: "+e.toString(), Toast.LENGTH_LONG).show();
 				}
 			}
 		}

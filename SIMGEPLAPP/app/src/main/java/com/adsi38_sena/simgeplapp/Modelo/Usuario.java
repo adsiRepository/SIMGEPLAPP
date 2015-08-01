@@ -82,17 +82,17 @@ public class Usuario {
     }
 
     public int getTipo_ide() {
-        int t = 1;
-        if(tipo_ide == "Tarjeta de Identidad") {
-            t = 0;
+        if (tipo_ide.compareTo("TI") == 0){
+            return 0;
         }
-        if(tipo_ide == "Cedula de Ciudadania"){
-            t = 1;
+        else {
+            if (tipo_ide.compareTo("CC") == 0) {
+                return 1;
+            }
+            else {
+                return 2;
+            }
         }
-        if(tipo_ide == "Pasaporte"){
-            t = 2;
-        }
-        return t;
     }
 
     public void setTipo_ide(String tipo_ide) {

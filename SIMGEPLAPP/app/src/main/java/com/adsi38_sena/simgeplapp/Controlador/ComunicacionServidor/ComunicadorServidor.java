@@ -132,9 +132,12 @@ public class ComunicadorServidor {
                     results[1] = usuarioHallado;
                 }
             } else {
-                //results[0] = jsonObj.getString("msg");
-                results[0] = "No existe el Usuario en la Base de Datos";
-                //return results;
+                if(jsonObj.getString("msg") != null && jsonObj.getString("msg").length() > 0){
+                    results[0] = jsonObj.getString("msg");
+                }
+                else {
+                    results[0] = "No existe el Usuario en la Base de Datos";
+                }
             }
         } else {
             results[0] = "No se obtuvo Respuesta del Servidor";
@@ -173,6 +176,33 @@ public class ComunicadorServidor {
                 return "No se obtuvo respuesta del Servidor";
             }
         }
+    }
+
+
+    public Object[] eliminarUsuario(String parametro) throws Exception {
+        String url = SIMGEPLAPP.Comunicaciones.URL_SERVER + "usuarios/drop_user.php";
+
+        ArrayList<NameValuePair> ref_eliminar = new ArrayList<NameValuePair>();
+        ref_eliminar.add(new BasicNameValuePair("id_ref", parametro));
+
+        Object[] valores_retornados = new Object[2];
+
+        JSONObject jobj = obtenerObjetoJSON(url, ref_eliminar);
+        if(jobj != null && jobj.length() > 0){
+            boolean erase = jobj.getBoolean("erase");
+            if(erase == true){
+                valores_retornados[0] = true;
+            }
+            else {
+                valores_retornados[0] = false;
+                valores_retornados[1] = jobj.getString("msg");
+            }
+        }
+        else {
+            valores_retornados[0] = false;
+            valores_retornados[1] = "No hubo Respuesta del Servidor";
+        }
+        return valores_retornados;
     }
 
 

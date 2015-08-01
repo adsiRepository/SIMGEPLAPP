@@ -5,15 +5,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context=".LoginActivity"
-    android:background="#ff010201">
-
-    <ImageView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/fondo"
-        android:background="@drawable/inter"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"/>
+    android:background="@drawable/back_login_port">
 
     <EditText
         android:layout_width="wrap_content"
@@ -43,7 +35,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/btn_loggin"
         android:layout_gravity="center_horizontal"
-        android:background="@drawable/ingr"
+        android:background="@drawable/btn_loggin_ingresar"
         android:clickable="false"
         android:baselineAlignBottom="false"
         android:focusable="false"
@@ -59,10 +51,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/btn_solic_reg"
-        android:background="@drawable/registrar"
+        android:background="@drawable/btn_loggin_registrar"
         android:clickable="true"
-        android:layout_alignBottom="@+id/fondo"
-        android:layout_alignParentLeft="true"/>
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"/>
 
     <TextView
         android:layout_width="wrap_content"
