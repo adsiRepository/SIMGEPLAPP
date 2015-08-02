@@ -2,6 +2,7 @@ package com.adsi38_sena.simgeplapp.Vistas;
 
 import android.app.Activity;
 import android.app.NotificationManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -59,38 +60,11 @@ public class ActivityMonitoreo extends Activity {
         try {
             simgeplapp = (SIMGEPLAPP) getApplication();
 
-            //
-
             txv_TEMP = (TextView) findViewById(R.id.txv_lec_temp);
             txv_PRES = (TextView) findViewById(R.id.txv_lec_pres);
             txv_NIV = (TextView) findViewById(R.id.txv_lec_niv);
 
             temporal = simgeplapp.TEMP;//variable q me permitira realizar una simulacion de lecturas mas frecuente de en lo q realmente son recibidas del servidor
-
-            if (getIntent().getExtras() != null) {
-                openFromService = getIntent().getBooleanExtra("en_espera", false);//el false es por defecto, por si no se recibe nada
-                if (openFromService == true) {
-
-                    if (simgeplapp.serviceOn == true) {
-                        monitorear = false;
-                    }
-                    txv_TEMP.setText(""+decimalFormat.format(getIntent().getDoubleExtra("temperatura", /*simgeplapp.TEMP*/3)));
-                    txv_PRES.setText(""+decimalFormat.format(getIntent().getDoubleExtra("presion", /*simgeplapp.PRES*/2)));
-                    txv_NIV.setText(""+decimalFormat.format(getIntent().getDoubleExtra("nivel", /*simgeplapp.NIV*/1)));
-                    //Toast.makeText(getBaseContext(), "en_espera = true", Toast.LENGTH_LONG).show();
-                }
-            } else {
-                if (simgeplapp.serviceOn == true) {
-                    if (!MotorMonitor.isAlive()) {
-                        monitorear = simgeplapp.serviceOn;
-                        MotorMonitor.start();
-                    }
-                }
-            }
-
-            NotificationManager managerNotificaciones = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            managerNotificaciones.cancel(SIMGEPLAPP.NOTIFICACIONES.ID_NOTIFICACION_ALERTA);
-
 
         } catch (Exception e) {
             Toast.makeText(getBaseContext(), "onCreate: " + e.toString(), Toast.LENGTH_LONG).show();
@@ -102,10 +76,38 @@ public class ActivityMonitoreo extends Activity {
         super.onStart();
     }
 
+    @Override//se utiliza este metodo para sincronizar el intent y pueda ser actualizada la interfaz en base a lo enviado por la notificacion
+    protected void onNewIntent(Intent newIntent){
+        super.onNewIntent(newIntent);
+        setIntent(newIntent);
+    }
+
     @Override
     protected void onResume(){
         super.onResume();
         //SalvaTareas.obtenerInstancia().atraparHilo(SIMGEPLAPP.LLAVE_PROCESO_MONITOREO, this);
+        if (getIntent().getExtras() != null) {
+            openFromService = getIntent().getBooleanExtra("en_espera", false);//el false es por defecto, por si no se recibe nada
+            if (openFromService == true) {
+
+                if (simgeplapp.serviceOn == true) {
+                    monitorear = false;
+                }
+                txv_TEMP.setText(""+decimalFormat.format(getIntent().getDoubleExtra("temperatura", /*simgeplapp.TEMP*/3)));
+                txv_PRES.setText(""+decimalFormat.format(getIntent().getDoubleExtra("presion", /*simgeplapp.PRES*/2)));
+                txv_NIV.setText(""+decimalFormat.format(getIntent().getDoubleExtra("nivel", /*simgeplapp.NIV*/1)));
+                //Toast.makeText(getBaseContext(), "en_espera = true", Toast.LENGTH_LONG).show();
+                NotificationManager managerNotificaciones = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                managerNotificaciones.cancel(SIMGEPLAPP.NOTIFICACIONES.ID_NOTIFICACION_ALERTA);
+            }
+        } else {
+            if (simgeplapp.serviceOn == true) {
+                if (!MotorMonitor.isAlive()) {
+                    monitorear = simgeplapp.serviceOn;
+                    MotorMonitor.start();
+                }
+            }
+        }
     }
 
     @Override

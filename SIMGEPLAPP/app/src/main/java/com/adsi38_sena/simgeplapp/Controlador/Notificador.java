@@ -43,7 +43,7 @@ public class Notificador {
             to_Monitoreo.putExtra("nivel", variables[2]);
 
             PendingIntent acty_pendiente = PendingIntent.getActivity(service, /*codigoPeticion*/0,
-                    /*intent*/to_Monitoreo, /*flags*/ 0);
+                    /*intent*/to_Monitoreo, /*flags*/ PendingIntent.FLAG_UPDATE_CURRENT);
 
             NotificationManager mngNotif = (NotificationManager) service.getSystemService(service.NOTIFICATION_SERVICE);
 
