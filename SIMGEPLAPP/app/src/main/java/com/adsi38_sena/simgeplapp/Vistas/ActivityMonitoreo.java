@@ -3,11 +3,15 @@ package com.adsi38_sena.simgeplapp.Vistas;
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,10 +26,10 @@ public class ActivityMonitoreo extends Activity {
     SIMGEPLAPP simgeplapp;
     private final DecimalFormat decimalFormat = new DecimalFormat("#.#");
     private Double temporal;
-    private Double[] valores;
+    private static Double[] lecs_actuales;
     private Random random = new Random();
     int aux;
-    private boolean openFromService;
+    private static boolean openFromService, disponerMenu;
     private static boolean monitorear;
 
     //ServicioMonitoreo theService;
@@ -85,30 +89,149 @@ public class ActivityMonitoreo extends Activity {
     @Override
     protected void onResume(){
         super.onResume();
-        //SalvaTareas.obtenerInstancia().atraparHilo(SIMGEPLAPP.LLAVE_PROCESO_MONITOREO, this);
-        if (getIntent().getExtras() != null) {
-            openFromService = getIntent().getBooleanExtra("en_espera", false);//el false es por defecto, por si no se recibe nada
-            if (openFromService == true) {
+        try {
+            //SalvaTareas.obtenerInstancia().atraparHilo(SIMGEPLAPP.LLAVE_PROCESO_MONITOREO, this);
+            if (getIntent().getExtras() != null) {
+                openFromService = getIntent().getBooleanExtra("en_espera", false);//el false es por defecto, por si no se recibe nada
+                if (openFromService == true) {
 
+                    NotificationManager managerNotificaciones = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                    managerNotificaciones.cancel(SIMGEPLAPP.NOTIFICACIONES.ID_NOTIFICACION_ALERTA);
+
+                    /*lecs_actuales[0] = getIntent().getDoubleExtra("temperatura",3);
+                    lecs_actuales[1] = getIntent().getDoubleExtra("presion", 3);
+                    lecs_actuales[2] = getIntent().getDoubleExtra("nivel", 3);*/
+
+                    txv_TEMP.setText("" + decimalFormat.format(getIntent().getDoubleExtra("temperatura", /*simgeplapp.TEMP*/3)));
+                    txv_PRES.setText("" + decimalFormat.format(getIntent().getDoubleExtra("presion", /*simgeplapp.PRES*/2)));
+                    txv_NIV.setText("" + decimalFormat.format(getIntent().getDoubleExtra("nivel", /*simgeplapp.NIV*/1)));
+                    //Toast.makeText(getBaseContext(), "en_espera = true", Toast.LENGTH_LONG).show();
+
+                    if (simgeplapp.serviceOn == true) {
+                        monitorear = false;
+                    }
+
+      //PERSONALIZACION DE UN TOAST => https://amatellanes.wordpress.com/2013/08/09/android-notificaciones-en-android-parte-1-toasts/
+
+                    if(simgeplapp.usuario_notificado == false) {
+
+                        LayoutInflater inflador_deLayouts = getLayoutInflater();
+                        View toast_personal = inflador_deLayouts.inflate(R.layout.toast_personalizado, (ViewGroup) findViewById(R.id.custoast_monitor_ok_notif));
+                /*TextView textToast = (TextView) layout.findViewById(R.id.text_toast);
+                textToast.setText("any text");*/
+                        Toast toast = new Toast(ActivityMonitoreo.this);
+                        toast.setDuration(Toast.LENGTH_LONG);
+                        toast.setView(toast_personal);
+                        toast.setGravity(Gravity.TOP, -10, 60);
+                        toast.show();
+                    }
+
+                    simgeplapp.usuario_notificado = true;
+                    disponerMenu = true;
+                    mnutem_mail.setEnabled(true);
+                    mnutem_llamada.setEnabled(true);
+
+                }
+            } else {
                 if (simgeplapp.serviceOn == true) {
-                    monitorear = false;
+                    if (!MotorMonitor.isAlive()) {
+                        monitorear = simgeplapp.serviceOn;
+                        MotorMonitor.start();
+                    }
                 }
-                txv_TEMP.setText(""+decimalFormat.format(getIntent().getDoubleExtra("temperatura", /*simgeplapp.TEMP*/3)));
-                txv_PRES.setText(""+decimalFormat.format(getIntent().getDoubleExtra("presion", /*simgeplapp.PRES*/2)));
-                txv_NIV.setText(""+decimalFormat.format(getIntent().getDoubleExtra("nivel", /*simgeplapp.NIV*/1)));
-                //Toast.makeText(getBaseContext(), "en_espera = true", Toast.LENGTH_LONG).show();
-                NotificationManager managerNotificaciones = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                managerNotificaciones.cancel(SIMGEPLAPP.NOTIFICACIONES.ID_NOTIFICACION_ALERTA);
+                disponerMenu = false;
             }
-        } else {
-            if (simgeplapp.serviceOn == true) {
-                if (!MotorMonitor.isAlive()) {
-                    monitorear = simgeplapp.serviceOn;
-                    MotorMonitor.start();
-                }
-            }
+        }catch (Exception e){
+            Toast.makeText(getBaseContext(), "onResume: " + e.toString(), Toast.LENGTH_LONG).show();
         }
     }
+
+    //MENU
+    private MenuItem mnutem_mail, mnutem_llamada;
+
+    @Override
+    public void invalidateOptionsMenu(){
+        super.invalidateOptionsMenu();
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        try {
+            //super.invalidateOptionsMenu();
+            //
+            if (disponerMenu == true) {
+                menu.getItem(0).setEnabled(true);
+                menu.getItem(1).setEnabled(true);
+                //menu.clear();
+
+            } else {
+                menu.getItem(0).setEnabled(false);
+                menu.getItem(1).setEnabled(false);
+            }
+        }catch (Exception e){
+            Toast.makeText(getBaseContext(), "onPrepMenu: " + e.toString(), Toast.LENGTH_LONG).show();
+        }
+        //return super.onPrepareOptionsMenu(menu);
+        return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it stream present.
+        //getMenuInflater().inflate(com.adsi38_sena.simgeplapp.R.menu.menu_monitoreo, menu);
+
+        MenuInflater infladorMenues = getMenuInflater();
+        infladorMenues.inflate(com.adsi38_sena.simgeplapp.R.menu.menu_monitoreo, menu);
+        mnutem_mail = menu.getItem(1);
+        mnutem_llamada = menu.getItem(0);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        /*if (id == R.id.action_settings) {
+            return true;
+        }*/
+
+        switch (id){
+            case R.id.mnutem_enviar_correo:
+
+                String[] destinatario_s = {/*correo de la planta*/"miguelon_91@misena.edu.co"};
+                String[] copiados = {/*direcciones email de quienes recibiran una copia de este correo*/};
+                String asunto = "Notificacion de Sobresalto en la Planta";
+                String mensaje = "Alerta! he recibido un aviso en mi movil de parte de la planta, existe una anomalía, por favor Revisar Inmediatemente.";
+
+                Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                emailIntent.setData(Uri.parse("mailto:"));
+                emailIntent.putExtra(Intent.EXTRA_EMAIL, destinatario_s);
+                emailIntent.putExtra(Intent.EXTRA_CC, copiados);
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, asunto);
+                emailIntent.putExtra(Intent.EXTRA_TEXT, mensaje);
+                emailIntent.setType("message/rfc822");
+                startActivity(Intent.createChooser(emailIntent, "Email "));
+
+            break;
+
+            case R.id.mnutem_llamar_central:
+                try {
+                    startActivity(new Intent(Intent.ACTION_CALL, Uri.parse("tel:3173567440")));
+                } catch (Exception e) {
+                    Toast.makeText(ActivityMonitoreo.this, "LamarCentral: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                }
+                break;
+
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
 
     @Override
     protected void onPause(){
@@ -131,6 +254,8 @@ public class ActivityMonitoreo extends Activity {
         super.onDestroy();
 
     }
+
+
 
     private Thread MotorMonitor = new Thread(new Runnable() {
         @Override
@@ -174,6 +299,7 @@ public class ActivityMonitoreo extends Activity {
             }
         }
     });
+
 
 
     //////--------      METODOS DE ENLACE AL SERVICE EN SEGUNDO PLANO
@@ -239,27 +365,6 @@ public class ActivityMonitoreo extends Activity {
     //////--------
 
 
-    //MENU
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it stream present.
-        getMenuInflater().inflate(com.adsi38_sena.simgeplapp.R.menu.main, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
 }

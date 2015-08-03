@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#7d000000"
+                android:id="@+id/custoast_monitor_ok_notif">
+
+    <RelativeLayout
+        android:layout_width="220sp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:background="#ff73b5c6"
+        android:padding="5sp">
+
+        <TextView
+            android:layout_width="200sp"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Ha Habido un sobresalto en la planta, ahora puedes notificarlo"
+            android:id="@+id/textView4"
+            android:layout_below="@+id/imageView"
+            android:layout_alignRight="@+id/imageView"
+            android:singleLine="false"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView"
+            android:src="@drawable/see_up"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
+
+</RelativeLayout>

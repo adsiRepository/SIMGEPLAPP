@@ -7,5 +7,8 @@
     <string name="title_activity_menu__simgeplapp">Simgeplapp</string>
     <string name="title_activity_login">Login Simgeplapp</string>
     <string name="title_activity_gestion_usuarios">Usuarios</string>
+    <string name="title_activity_activity_email">E-mail</string>
+
+    <string name="hello_world">Hello world!</string>
 
 </resources>

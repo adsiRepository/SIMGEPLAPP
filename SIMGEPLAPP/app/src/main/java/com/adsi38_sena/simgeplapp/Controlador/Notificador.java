@@ -41,6 +41,7 @@ public class Notificador {
             to_Monitoreo.putExtra("temperatura", variables[0]);
             to_Monitoreo.putExtra("presion", variables[1]);
             to_Monitoreo.putExtra("nivel", variables[2]);
+            to_Monitoreo.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
             PendingIntent acty_pendiente = PendingIntent.getActivity(service, /*codigoPeticion*/0,
                     /*intent*/to_Monitoreo, /*flags*/ PendingIntent.FLAG_UPDATE_CURRENT);

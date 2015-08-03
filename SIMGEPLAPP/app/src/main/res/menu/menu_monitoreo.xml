@@ -1,7 +1,21 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.adsi38_sena.simgeplapp.Vistas.ActivityMonitoreo">
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100"/>
+
+    <item
+        android:id="@+id/mnutem_llamar_central"
+        android:icon="@drawable/call_phone"
+        android:orderInCategory="1"
+        android:showAsAction="ifRoom"
+        android:title="Llamar a Central"/>
+
+    <item
+        android:id="@+id/mnutem_enviar_correo"
+        android:icon="@drawable/email_send"
+        android:orderInCategory="2"
+        android:showAsAction="ifRoom"
+        android:title="Enviar Email"/>
+
 </menu>

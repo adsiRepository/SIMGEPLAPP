@@ -33,6 +33,8 @@ public class SIMGEPLAPP extends Application{
 
     public static boolean sessionAlive;
 
+    public static boolean usuario_notificado = false;
+
 
     public static class Comunicaciones{
         //SERVIDOR LOCAL (mi pc)
