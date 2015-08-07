@@ -6,6 +6,8 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.SystemClock;
@@ -25,7 +27,7 @@ public class SIMGEPLAPP extends Application{
     //ATRIBUTOS DE LA APLICACION
     //variables globales accesibles a todos los elementos pertenecientes a la aplicacion: activities, services, clases, etc.
 
-    public static Double TEMP = 0.0, PRES = 0.0, NIV = 0.0; // temperatura, presion y nivel.
+    public static double TEMP = 0.0, PRES = 0.0, NIV = 0.0; // temperatura, presion y nivel.
                                             //variables de la aplicacion
     public static Session session;
 
@@ -33,7 +35,35 @@ public class SIMGEPLAPP extends Application{
 
     public static boolean sessionAlive;
 
-    public static boolean usuario_notificado = false;
+    public static boolean llamada_mail_habilitados = false;
+
+    static ConnectivityManager manager_deConexiones;
+    static NetworkInfo net_info;
+
+    public static boolean hayConexionInternet(Context contexto){
+
+        manager_deConexiones = (ConnectivityManager)contexto.getSystemService(Context.CONNECTIVITY_SERVICE);
+        net_info = manager_deConexiones.getActiveNetworkInfo();
+        /*//saber el estado del wifi -> http://stackoverflow.com/questions/3841317/how-to-see-if-wifi-is-connected-in-android
+        WifiManager wifi_mng = (WifiManager)getSystemService(Context.WIFI_SERVICE);
+        WifiInfo info = wifi_mng.getConnectionInfo();
+        SupplicantState suplicante = info.getSupplicantState();*/
+
+        if (net_info != null && net_info.isConnected()){
+            return true;
+        }
+        else {
+            return false;
+
+        }
+        /*ConnectivityManager connectivity = (ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo[] info = connectivity.getAllNetworkInfo();
+        for (int i = 0; i < info.length; i++){
+            if (info[i].getState() == NetworkInfo.State.CONNECTED);
+        }*/
+
+
+    }
 
 
     public static class Comunicaciones{
@@ -57,6 +87,7 @@ public class SIMGEPLAPP extends Application{
 
     public static class NOTIFICACIONES{
         public static final int ID_NOTIFICACION_ALERTA = 5;
+        public static final int ID_NOTIFICACION_PERDIDA_CONEXION = 6;
     }
 
     public static final String LLAVE_PROCESO_MONITOREO = "monitoreando";

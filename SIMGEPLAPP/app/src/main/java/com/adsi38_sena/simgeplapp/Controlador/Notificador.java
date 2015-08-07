@@ -3,12 +3,10 @@ package com.adsi38_sena.simgeplapp.Controlador;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
@@ -27,7 +25,7 @@ public class Notificador {
       //  this.simgeplapp = app;
     }
 
-    public void notificarAlertaPlanta(Service service, Double[] variables) {
+    public void notificarAlertaPlanta(Service service, double[] variables) {
         //fuentes => http://androcode.es/2012/09/notificaciones-metodo-tradicional-notification-builder-y-jelly-bean/
         try {
             //se supone que debe enviar notificacion al obtener lecturas extrañas:
@@ -56,7 +54,7 @@ public class Notificador {
                     .setContentText("Ha habido un sobresalto en la planta")
                     .setWhen(System.currentTimeMillis())
                             //sonido personalizado; archivo ubicado en la carpeta raw
-                    .setSound(Uri.parse("android.resource://" + service.getPackageName() + "/" + R.raw.windows_error_hip_hop_song))
+                    .setSound(Uri.parse("android.resource://" + service.getPackageName() + "/" + R.raw.windows_error))
                     .setVibrate(new long[]{800, 500, 900, 150, 1100})//tiempos entre vibracion y descanso
                     .setLargeIcon(icon)
                     .setLights(Color.RED, 1, 0);
@@ -67,6 +65,39 @@ public class Notificador {
             Toast.makeText(service.getApplicationContext(), eh.toString(), Toast.LENGTH_LONG).show();
         }
     }
+
+
+    public void notificarPerdida_deConexion(Service context){
+        try {
+            NotificationManager mngNotif = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+
+            //RemoteViews vistaNotificacion = new RemoteViews(context.getPackageName(), R.layout.custom_view_notif);
+
+            NotificationCompat.Builder constructorNotificacion = new NotificationCompat.Builder(context)
+                    .setTicker("falla de conexion Simgeplapp")
+                    .setSmallIcon(R.drawable.err_conn)
+                    .setContentTitle("No hay Conexion a Internet")
+                    .setContentText("Reinicia el Servicio al tener conexion nuevamente.")
+                    .setSubText("No hay Conexion a Internet en estos momentos, por lo tanto el servicio se detendra." +
+                            "Asegurate de reactivarlo al coseguir conexion nuevamente.")
+                    .setAutoCancel(true)
+                    .setWhen(System.currentTimeMillis())
+                            //sonido personalizado; archivo ubicado en la carpeta raw
+                            //FUENTE DE SONIDOS => http://soundbible.com/
+                    .setSound(Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.windows_error))
+                    .setVibrate(new long[]{800, 500, 900, 150, 1100})//tiempos entre vibracion y descanso
+                    .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.img_fail_conex))
+                    .setLights(Color.RED, 1, 0);
+
+
+            mngNotif.notify(SIMGEPLAPP.NOTIFICACIONES.ID_NOTIFICACION_PERDIDA_CONEXION, constructorNotificacion.build());
+
+        } catch (Exception eh) {
+            Toast.makeText(context.getApplicationContext(), eh.toString(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+
 }
 
 

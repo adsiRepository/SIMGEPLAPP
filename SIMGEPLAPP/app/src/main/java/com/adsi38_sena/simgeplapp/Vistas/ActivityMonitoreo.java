@@ -3,8 +3,13 @@ package com.adsi38_sena.simgeplapp.Vistas;
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,6 +22,7 @@ import android.widget.Toast;
 
 import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
 import com.adsi38_sena.simgeplapp.R;
+import com.adsi38_sena.simgeplapp.Controlador.ServicioMonitoreo;
 
 import java.text.DecimalFormat;
 import java.util.Random;
@@ -70,6 +76,25 @@ public class ActivityMonitoreo extends Activity {
 
             temporal = simgeplapp.TEMP;//variable q me permitira realizar una simulacion de lecturas mas frecuente de en lo q realmente son recibidas del servidor
 
+            /*conexService = new ServiceConnection() {
+                @Override
+                public void onServiceConnected(ComponentName componentName, IBinder servicio) {//este servicio es la interfaz recibida una vez se ha conectado al servicio
+                    //Enlace enlace = (Enlace)servicio;
+                    //theService = enlace.getService();
+                    mensajero = new Messenger(servicio);//aqui recibe la interfaz retornada en el metodo onBind del servicio
+                    if(mensajero != null){
+                        Toast.makeText(getBaseContext(), "Conexion Establecida Correctamente", Toast.LENGTH_LONG).show();
+                    }
+                }
+                @Override
+                public void onServiceDisconnected(ComponentName componentName) {
+                    //theService = null;
+                    mensajero = null;
+                }
+            };
+
+            bindService(new Intent(ActivityMonitoreo.this, ServicioMonitoreo.class), conexService, Context.BIND_AUTO_CREATE);//*/
+
         } catch (Exception e) {
             Toast.makeText(getBaseContext(), "onCreate: " + e.toString(), Toast.LENGTH_LONG).show();
         }
@@ -92,20 +117,16 @@ public class ActivityMonitoreo extends Activity {
         try {
             //SalvaTareas.obtenerInstancia().atraparHilo(SIMGEPLAPP.LLAVE_PROCESO_MONITOREO, this);
             if (getIntent().getExtras() != null) {
+                //este valor "openFromService" proviene del intent q despliega esta pantalla desde la notificacion o alerta q genera el servicio
                 openFromService = getIntent().getBooleanExtra("en_espera", false);//el false es por defecto, por si no se recibe nada
-                if (openFromService == true) {
-
+                if (openFromService == true) {//si abriste el monitoreo desde la notificacion se ejcutara lo sgte
+                    //quito la notificacion de la barra ->
                     NotificationManager managerNotificaciones = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                     managerNotificaciones.cancel(SIMGEPLAPP.NOTIFICACIONES.ID_NOTIFICACION_ALERTA);
 
-                    /*lecs_actuales[0] = getIntent().getDoubleExtra("temperatura",3);
-                    lecs_actuales[1] = getIntent().getDoubleExtra("presion", 3);
-                    lecs_actuales[2] = getIntent().getDoubleExtra("nivel", 3);*/
-
-                    txv_TEMP.setText("" + decimalFormat.format(getIntent().getDoubleExtra("temperatura", /*simgeplapp.TEMP*/3)));
-                    txv_PRES.setText("" + decimalFormat.format(getIntent().getDoubleExtra("presion", /*simgeplapp.PRES*/2)));
-                    txv_NIV.setText("" + decimalFormat.format(getIntent().getDoubleExtra("nivel", /*simgeplapp.NIV*/1)));
-                    //Toast.makeText(getBaseContext(), "en_espera = true", Toast.LENGTH_LONG).show();
+                    txv_TEMP.setText("" + decimalFormat.format(getIntent().getDoubleExtra("temperatura", SIMGEPLAPP.TEMP)));
+                    txv_PRES.setText("" + decimalFormat.format(getIntent().getDoubleExtra("presion", SIMGEPLAPP.PRES)));
+                    txv_NIV.setText("" + decimalFormat.format(getIntent().getDoubleExtra("nivel", SIMGEPLAPP.NIV)));
 
                     if (simgeplapp.serviceOn == true) {
                         monitorear = false;
@@ -113,10 +134,10 @@ public class ActivityMonitoreo extends Activity {
 
       //PERSONALIZACION DE UN TOAST => https://amatellanes.wordpress.com/2013/08/09/android-notificaciones-en-android-parte-1-toasts/
 
-                    if(simgeplapp.usuario_notificado == false) {
+                    if(simgeplapp.llamada_mail_habilitados == false) {
 
                         LayoutInflater inflador_deLayouts = getLayoutInflater();
-                        View toast_personal = inflador_deLayouts.inflate(R.layout.toast_personalizado, (ViewGroup) findViewById(R.id.custoast_monitor_ok_notif));
+                        View toast_personal = inflador_deLayouts.inflate(R.layout.toast_personalizado, (ViewGroup) findViewById(R.id.custoast_monitor_ok_notif));//id del componente raiz, es decir sobre el cual ponemos los elementos, o sea un relative layout, linear layout, etc.
                 /*TextView textToast = (TextView) layout.findViewById(R.id.text_toast);
                 textToast.setText("any text");*/
                         Toast toast = new Toast(ActivityMonitoreo.this);
@@ -126,7 +147,7 @@ public class ActivityMonitoreo extends Activity {
                         toast.show();
                     }
 
-                    simgeplapp.usuario_notificado = true;
+                    simgeplapp.llamada_mail_habilitados = true;
                     disponerMenu = true;
                     mnutem_mail.setEnabled(true);
                     mnutem_llamada.setEnabled(true);
@@ -134,17 +155,184 @@ public class ActivityMonitoreo extends Activity {
                 }
             } else {
                 if (simgeplapp.serviceOn == true) {
+                    txv_TEMP.setText("" + decimalFormat.format(SIMGEPLAPP.TEMP));
+                    txv_PRES.setText("" + decimalFormat.format(SIMGEPLAPP.PRES));
+                    txv_NIV.setText("" + decimalFormat.format(SIMGEPLAPP.NIV));
+
                     if (!MotorMonitor.isAlive()) {
                         monitorear = simgeplapp.serviceOn;
                         MotorMonitor.start();
                     }
                 }
-                disponerMenu = false;
+                else {
+                    disponerMenu = false;
+                    txv_TEMP.setText("--");
+                    txv_PRES.setText("--");
+                    txv_NIV.setText("--");
+                }
+
             }
         }catch (Exception e){
             Toast.makeText(getBaseContext(), "onResume: " + e.toString(), Toast.LENGTH_LONG).show();
         }
     }
+
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        //SalvaTareas.obtenerInstancia().soltarHilo(SIMGEPLAPP.LLAVE_PROCESO_MONITOREO);
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+    }
+
+    @Override
+    protected void onRestart(){
+        super.onRestart();
+    }
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+
+    }
+
+    private Thread MotorMonitor = new Thread(new Runnable() {
+
+        @Override
+        public void run() {
+
+            while (monitorear == true) {
+                try {
+                    //Looper.prepare();
+                    aux = random.nextInt(3);//intervalo desde 0 hasta 3 sin tomarlo, es decir realmente hasta 2.
+                    switch (aux) {
+                        case 0:
+                            txv_TEMP.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    txv_TEMP.setText("" + decimalFormat.format(SIMGEPLAPP.TEMP));
+                                    //txv_TEMP.setText("" + decimalFormat.format((random.nextDouble() * (112 - 19)) + 19));
+                                }
+                            });
+                            break;
+                        case 1:
+                            txv_PRES.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    txv_PRES.setText("" + decimalFormat.format(SIMGEPLAPP.PRES));
+                                    //txv_PRES.setText("" + decimalFormat.format((random.nextDouble() * (98 - 16)) + 16));
+                                }
+                            });
+                            break;
+                        case 2:
+                            txv_NIV.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    txv_NIV.setText("" + decimalFormat.format(SIMGEPLAPP.NIV));
+                                    //txv_NIV.setText("" + decimalFormat.format((random.nextDouble() * (100 - 18)) + 18));
+                                }
+                            });
+                            break;
+                    }
+                    Thread.sleep(5000);
+
+                 /*   Message msg = Message.obtain(null, new ServicioMonitoreo().ID_PETICION_SERVICIO);//este metodo obtain es para identificar el mensaje dentro del canal de estos.
+                    msg.replyTo = new Messenger(new RecibidorRespuestasServicio());//este metodo se ejecutara en el servicio (msg.replyTo), aqui le damos una instancia de RecibidorRespuestasServicio, por ende ejecutara el codigo alli escrito
+                    //Bundle bund = new Bundle();
+                    //bund.putString("datoTransferido", valorEnviado);
+                    //msg.setData(bund);
+
+                    mensajero.send(msg);//mensajero es el campo que contiene el IBinder recibido del ServiceConnection. Este contiene el manejador (la clase Handler) que se encuentra en el servicio (su manejador de mensajes)
+                        //asi que al pasarle un mensaje (.send(mensaje)) se esta ejecutando el codigo del Handler del servicio*/
+
+                } catch (final Exception eh) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(ActivityMonitoreo.this, "ActyMon-pubLec: " + eh.toString(), Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+                //Looper.loop();
+            }
+
+        }
+    });
+
+    //////--------      METODOS DE ENLACE AL SERVICE EN SEGUNDO PLANO
+
+    //enlace al servicio. Consulta: servicios enlazados en android
+    //
+    //metodos para enlazar servicios en segundo plano para intercambiar datos, actualmente no usados debido al uso de variables globales
+    private Messenger mensajero;
+    //definicion del Objeto que enlaza al servicio
+    private ServiceConnection conexService;
+
+    private class RecibidorRespuestasServicio extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+
+            int CualMsg = msg.what;
+            if (CualMsg == new ServicioMonitoreo().ID_RESPUESTA_PETICION) {
+                //String respuesta = msg.getData().getString("msgBack");
+                final double[] valoresRecibidos = msg.getData().getDoubleArray("lecturas");
+                /*txv_TEMP.setText(String.valueOf(valoresRecibidos[0]));
+                txv_PRES.setText(String.valueOf(valoresRecibidos[1]));
+                txv_NIV.setText(String.valueOf(valoresRecibidos[2]));*/
+
+                txv_TEMP.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        txv_TEMP.setText("" + decimalFormat.format(valoresRecibidos[0]));
+                        //txv_TEMP.setText("" + decimalFormat.format((random.nextDouble() * (112 - 19)) + 19));
+                    }
+                });
+                txv_PRES.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        txv_PRES.setText("" + decimalFormat.format(valoresRecibidos[1]));
+                        //txv_PRES.setText("" + decimalFormat.format((random.nextDouble() * (98 - 16)) + 16));
+                    }
+                });
+                txv_NIV.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        txv_NIV.setText("" + decimalFormat.format(valoresRecibidos[2]));
+                        //txv_NIV.setText("" + decimalFormat.format((random.nextDouble() * (100 - 18)) + 18));
+                    }
+                });
+            }
+        }
+    }
+
+
+    private void comunicarseConServidor_Bind() {
+            //String valorEnviado = txt_valorEnviado.getText().toString();
+				Message msg = Message.obtain(null, new ServicioMonitoreo().ID_PETICION_SERVICIO);//este metodo obtain es para identificar el mensaje dentro del canal de estos.
+				msg.replyTo = new Messenger(new RecibidorRespuestasServicio());//este metodo se ejecutara en el servicio (msg.replyTo), aqui le damos una instancia de RecibidorRespuestasServicio, por ende ejecutara el codigo alli escrito
+				//Bundle bund = new Bundle();
+				//bund.putString("datoTransferido", valorEnviado);
+				//msg.setData(bund);
+				try {
+					mensajero.send(msg);//mensajero es el campo que contiene el IBinder recibido del ServiceConnection. Este contiene el manejador (la clase Handler) que se encuentra en el servicio (su manejador de mensajes)
+										//asi que al pasarle un mensaje (.send(mensaje)) se esta ejecutando el codigo del Handler del servicio
+				} catch (RemoteException e) {
+					Toast.makeText(getBaseContext(), e.toString(), Toast.LENGTH_LONG).show();
+					e.printStackTrace();
+				}
+
+                /*AsyncMonitor monitor = new AsyncMonitor();
+                SalvaTareas.obtenerInstancia().iniciarMonitoreo(SIMGEPLAPP.LLAVE_PROCESO_MONITOREO, monitor, ActivityMonitoreo.this);
+                monitor.execute();*/
+    }
+
+
+
+    //////--------
 
     //MENU
     private MenuItem mnutem_mail, mnutem_llamada;
@@ -217,7 +405,7 @@ public class ActivityMonitoreo extends Activity {
                 emailIntent.setType("message/rfc822");
                 startActivity(Intent.createChooser(emailIntent, "Email "));
 
-            break;
+                break;
 
             case R.id.mnutem_llamar_central:
                 try {
@@ -231,138 +419,6 @@ public class ActivityMonitoreo extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
-
-
-    @Override
-    protected void onPause(){
-        super.onPause();
-        //SalvaTareas.obtenerInstancia().soltarHilo(SIMGEPLAPP.LLAVE_PROCESO_MONITOREO);
-    }
-
-    @Override
-    protected void onStop(){
-        super.onStop();
-    }
-
-    @Override
-    protected void onRestart(){
-        super.onRestart();
-    }
-
-    @Override
-    protected void onDestroy(){
-        super.onDestroy();
-
-    }
-
-
-
-    private Thread MotorMonitor = new Thread(new Runnable() {
-        @Override
-        public void run() {
-            while (monitorear == true) {
-                try {
-                    aux = random.nextInt(3);//intervalo desde 0 hasta 3 sin tomarlo, es decir realmente hasta 2.
-                    switch (aux) {
-                        case 0:
-                            txv_TEMP.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    //txv_TEMP.setText("" + decimalFormat.format(valores[0]));
-                                    txv_TEMP.setText("" + decimalFormat.format((random.nextDouble() * (112 - 19)) + 19));
-                                }
-                            });
-                            break;
-                        case 1:
-                            txv_PRES.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    //txv_PRES.setText("" + decimalFormat.format(valores[1]));
-                                    txv_PRES.setText("" + decimalFormat.format((random.nextDouble() * (98 - 16)) + 16));
-                                }
-                            });
-                            break;
-                        case 2:
-                            txv_NIV.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    //txv_NIV.setText("" + decimalFormat.format(valores[2]));
-                                    txv_NIV.setText("" + decimalFormat.format((random.nextDouble() * (100 - 18)) + 18));
-                                }
-                            });
-                            break;
-                    }
-                    Thread.sleep(900);
-                } catch (Exception eh) {
-                    Toast.makeText(ActivityMonitoreo.this, "ActyMon-pubLec: " + eh.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                }
-            }
-        }
-    });
-
-
-
-    //////--------      METODOS DE ENLACE AL SERVICE EN SEGUNDO PLANO
-
-    //private void comunicarseConServidor_Bind() {
-            //String valorEnviado = txt_valorEnviado.getText().toString();
-				/*Message msg = Message.obtain(null, new ServicioMonitoreo().ID_PETICION_SERVICIO);//este metodo obtain es para identificar el mensaje dentro del canal de estos.
-				msg.replyTo = new Messenger(new RecibidorRespuestasServicio());//este metodo se ejecutara en el servicio (msg.replyTo), aqui le damos una instancia de RecibidorRespuestasServicio, por ende ejecutara el codigo alli escrito
-				//Bundle bund = new Bundle();
-				//bund.putString("datoTransferido", valorEnviado);
-				//msg.setData(bund);
-				try {
-					mensajero.send(msg);//mensajero es el campo que contiene el IBinder recibido del ServiceConnection. Este contiene el manejador (la clase Handler) que se encuentra en el servicio (su manejador de mensajes)
-										//asi que al pasarle un mensaje (.send(mensaje)) se esta ejecutando el codigo del Handler del servicio
-				} catch (RemoteException e) {
-					Toast.makeText(getBaseContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-					e.printStackTrace();
-				}*/
-
-                /*AsyncMonitor monitor = new AsyncMonitor();
-                SalvaTareas.obtenerInstancia().iniciarMonitoreo(SIMGEPLAPP.LLAVE_PROCESO_MONITOREO, monitor, ActivityMonitoreo.this);
-                monitor.execute();*/
-     //   }
-
-    //enlace al servicio, metodo no usado. Consulta: servicios enlazados en android
-    //bindService(new Intent(InicioSimgeplapp.this, ServicioMonitoreo.class), conexService, Context.BIND_AUTO_CREATE);//
-    //metodos para enlazar servicios en segundo plano para intercambiar datos, actualmente no usados debido al uso de variables globales
-    /*private Messenger mensajero;
-    //definicion del Objeto que enlaza al servicio
-    private ServiceConnection conexService = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder servicio) {//este servicio es la interfaz recibida una vez se ha conectado al servicio
-            //Enlace enlace = (Enlace)servicio;
-            //theService = enlace.getService();
-            mensajero = new Messenger(servicio);//aqui recibe la interfaz retornada en el metodo onBind del servicio
-            if(mensajero != null){
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                Toast.makeText(getBaseContext(), "Conexion Establecida Correctamente", Toast.LENGTH_LONG).show();
-            }
-        }
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            //theService = null;
-        }
-    };*/
-    /*private class RecibidorRespuestasServicio extends Handler {
-        @Override
-        public void handleMessage(Message msg){
-            int CualMsg = msg.what;
-            if(CualMsg == new ServicioMonitoreo().ID_RESPUESTA_PETICION) {
-                //String respuesta = msg.getData().getString("msgBack");
-                int[] valoresRecibidos = msg.getData().getIntArray("values");
-                txv_TEMP.setText(String.valueOf(valoresRecibidos[0]));
-                txv_PRES.setText(String.valueOf(valoresRecibidos[1]));
-            }
-        }
-    }
-    }*/
-    //////--------
 
 
 
