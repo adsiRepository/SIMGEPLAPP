@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.adsi38_sena.simgeplapp.Controlador.ServicioMonitoreo;
 import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
@@ -83,19 +84,33 @@ public class ActivityMenu extends Activity {
                 }
             });
         }
+
         swch_service.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    startService(new Intent(ActivityMenu.this, ServicioMonitoreo.class));
-                    swch_service.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            swch_service.setText("Monitoreando");
-                        }
-                    });
+                    if(SIMGEPLAPP.hayConexionInternet(ActivityMenu.this)) {
+                        startService(new Intent(ActivityMenu.this, ServicioMonitoreo.class));
+                        swch_service.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                swch_service.setText("Monitoreando");
+                            }
+                        });
+                    }
+                    else{
+                        Toast.makeText(getBaseContext(), "No hay Conexion a Internet en este Momento", Toast.LENGTH_LONG).show();
+                        swch_service.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                swch_service.setChecked(false);
+                            }
+                        });
+                    }
                 } else {
-                    stopService(new Intent(ActivityMenu.this, ServicioMonitoreo.class));
+                    if(simgeplapp.serviceOn == true) {
+                        stopService(new Intent(ActivityMenu.this, ServicioMonitoreo.class));
+                    }
                     swch_service.post(new Runnable() {
                         @Override
                         public void run() {

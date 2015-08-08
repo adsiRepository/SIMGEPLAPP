@@ -20,6 +20,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,8 +35,8 @@ public class ActivityMonitoreo extends Activity {
 
     private SIMGEPLAPP simgeplapp;
     private final DecimalFormat decimalFormat = new DecimalFormat("#.#");
-    private Double temporal;
-    private static Double[] lecs_actuales;
+    //private Double temporal;
+    //private static Double[] lecs_actuales;
     private Random random = new Random();
     int aux;
     private static boolean openFromService, disponerMenu;
@@ -46,6 +47,8 @@ public class ActivityMonitoreo extends Activity {
 
     protected TextView txv_TEMP, txv_PRES, txv_NIV;
     CharSequence[] estado_variables;
+
+    private RelativeLayout vistaNormal, vistaSinConexion;
 
     //control de estado de la pantalla
     @Override
@@ -77,7 +80,8 @@ public class ActivityMonitoreo extends Activity {
             txv_PRES = (TextView) findViewById(R.id.txv_lec_pres);
             txv_NIV = (TextView) findViewById(R.id.txv_lec_niv);
 
-            temporal = simgeplapp.TEMP;//variable q me permitira realizar una simulacion de lecturas mas frecuente de en lo q realmente son recibidas del servidor
+            vistaNormal = (RelativeLayout)findViewById(R.id.contenedor_variables);
+            vistaSinConexion = (RelativeLayout)findViewById(R.id.sin_conexion);
 
             /*conexService = new ServiceConnection() {
                 @Override
@@ -146,7 +150,7 @@ public class ActivityMonitoreo extends Activity {
                         Toast toast = new Toast(ActivityMonitoreo.this);
                         toast.setDuration(Toast.LENGTH_LONG);
                         toast.setView(toast_personal);
-                        toast.setGravity(Gravity.TOP, -10, 60);
+                        toast.setGravity(Gravity.RIGHT, 0, 60);
                         toast.show();
                     }
 
@@ -154,18 +158,34 @@ public class ActivityMonitoreo extends Activity {
                     disponerMenu = true;
                     mnutem_mail.setEnabled(true);
                     mnutem_llamada.setEnabled(true);
-
                 }
-            } else {
-                if (simgeplapp.serviceOn == true) {
-                    txv_TEMP.setText("" + decimalFormat.format(SIMGEPLAPP.TEMP));
-                    txv_PRES.setText("" + decimalFormat.format(SIMGEPLAPP.PRES));
-                    txv_NIV.setText("" + decimalFormat.format(SIMGEPLAPP.NIV));
+            }
+            else {
 
-                    if (!MotorMonitor.isAlive()) {
-                        monitorear = simgeplapp.serviceOn;
-                        MotorMonitor.start();
+                /*simgeplapp.llamada_mail_habilitados = false;
+                disponerMenu = false;
+                mnutem_mail.setEnabled(false);
+                mnutem_llamada.setEnabled(false);*/
+
+                if (simgeplapp.serviceOn == true) {
+
+                    if(SIMGEPLAPP.hayConexionInternet(ActivityMonitoreo.this)) {
+                        txv_TEMP.setText("" + decimalFormat.format(SIMGEPLAPP.TEMP));
+                        txv_PRES.setText("" + decimalFormat.format(SIMGEPLAPP.PRES));
+                        txv_NIV.setText("" + decimalFormat.format(SIMGEPLAPP.NIV));
+
+                        if (!MotorMonitor.isAlive()) {
+                            monitorear = simgeplapp.serviceOn;
+                            MotorMonitor.start();
+                        }
+
+                    } else {
+                        vistaNormal.setVisibility(View.INVISIBLE);
+                        vistaSinConexion.setVisibility(View.VISIBLE);
+                        //Toast.makeText(getBaseContext(), "No Hay Conexion", Toast.LENGTH_LONG).show();
                     }
+
+
                 }
                 else {
                     disponerMenu = false;
@@ -231,7 +251,7 @@ public class ActivityMonitoreo extends Activity {
         @Override
         public void run() {
 
-            while (monitorear == true) {
+            while (/*simgeplapp.serviceOn*/monitorear == true) {
                 try {
                     //Looper.prepare();
                     aux = random.nextInt(3);//intervalo desde 0 hasta 3 sin tomarlo, es decir realmente hasta 2.
@@ -264,7 +284,7 @@ public class ActivityMonitoreo extends Activity {
                             });
                             break;
                     }
-                    Thread.sleep(5000);
+                    Thread.sleep(3000);
 
                  /*   Message msg = Message.obtain(null, new ServicioMonitoreo().ID_PETICION_SERVICIO);//este metodo obtain es para identificar el mensaje dentro del canal de estos.
                     msg.replyTo = new Messenger(new RecibidorRespuestasServicio());//este metodo se ejecutara en el servicio (msg.replyTo), aqui le damos una instancia de RecibidorRespuestasServicio, por ende ejecutara el codigo alli escrito

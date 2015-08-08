@@ -45,7 +45,7 @@ public class ServicioMonitoreo extends Service {
         super.onCreate();
         simgeplapp = (SIMGEPLAPP)getApplication();
         //SystemClock.sleep(1100);
-		Toast.makeText(getBaseContext(), "Monitoreo Simgeplapp en marcha", Toast.LENGTH_SHORT).show();
+		Toast.makeText(getBaseContext(), "Monitoreo Simgeplapp en marcha", Toast.LENGTH_LONG).show();
         simgeplapp.serviceOn = true;
         notif = new Notificador();
         lecs_to_activity = new double[]{0.0, 0.0, 0.0};
@@ -106,12 +106,12 @@ public class ServicioMonitoreo extends Service {
                             }
                         }
 
-                        Thread.sleep(/*90000*/5000);
+                        Thread.sleep(/*90000*/3000);
 
                     } else {
-                        Thread.sleep(2000);
+                        Thread.sleep(3000);
                         contador++;
-                        if(contador > 5) {
+                        if(contador > 400) {
                             ServicioMonitoreo.this.stopSelf();
                             notif.notificarPerdida_deConexion(ServicioMonitoreo.this);
                         }

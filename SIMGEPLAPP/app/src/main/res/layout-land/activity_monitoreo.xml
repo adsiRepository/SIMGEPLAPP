@@ -8,125 +8,162 @@
     android:paddingTop="@dimen/activity_vertical_margin"
                 android:background="@drawable/back_monitor_land">
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="55dp"
-        >
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/sin_conexion"
+        android:background="#96000000"
+        android:visibility="invisible">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/img_no_conex"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/dohomer_"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="No Hay Conexion, No se pueden recibir Datos"
+            android:id="@+id/txv_dialog_no_conex"
+            android:textColor="#ffffffff"
+            android:textStyle="bold"
+            android:gravity="center_horizontal"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/contenedor_variables"
+        android:visibility="visible">
 
         <LinearLayout
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/lbl_presion"
-            >
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true">
 
-            <TextView
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Temperatura"
-                android:id="@+id/lbl_temp"
-                android:background="#ffffb012"
-                android:layout_alignParentTop="true"
-                android:layout_toRightOf="@+id/lbl_presion"
-                android:layout_marginBottom="9dp"
-                android:textSize="22dp"/>
+                android:layout_above="@+id/lbl_presion"
+                >
 
-            <TextView
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Temperatura"
+                    android:id="@+id/lbl_temp"
+                    android:background="#ffffb012"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/lbl_presion"
+                    android:layout_marginBottom="25dp"
+                    android:textSize="22dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Presion"
+                    android:id="@+id/lbl_presion"
+                    android:background="#ffffb012"
+                    android:layout_above="@+id/txv_lec_temp"
+                    android:layout_alignLeft="@+id/btn_init"
+                    android:layout_marginBottom="25dp"
+                    android:textSize="22dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Nivel"
+                    android:id="@+id/lbl_nivel"
+                    android:background="#ffffb012"
+                    android:layout_below="@+id/txv_lec_temp"
+                    android:layout_alignLeft="@+id/lbl_presion"
+                    android:layout_marginBottom="25dp"
+                    android:textSize="22dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Presion"
-                android:id="@+id/lbl_presion"
-                android:background="#ffffb012"
-                android:layout_above="@+id/txv_lec_temp"
-                android:layout_alignLeft="@+id/btn_init"
-                android:layout_marginBottom="9dp"
-                android:textSize="22dp"/>
+                android:layout_marginLeft="20dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Nivel"
-                android:id="@+id/lbl_nivel"
-                android:background="#ffffb012"
-                android:layout_below="@+id/txv_lec_temp"
-                android:layout_alignLeft="@+id/lbl_presion"
-                android:layout_marginBottom="9dp"
-                android:textSize="22dp"/>
+                <TableLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TableRow
+                        android:layout_width="fill_parent"
+                        android:layout_height="50dp"
+                        android:layout_marginBottom="9dp">
+
+                        <TextView
+                            android:layout_width="100dp"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text="0.0"
+                            android:id="@+id/txv_lec_temp"
+                            android:layout_alignLeft="@+id/txv_lec_pres"
+                            android:layout_centerVertical="true"
+                            android:background="#ffffffff"
+                            android:layout_marginLeft="25dp"
+                            android:textSize="22dp"
+                            android:layout_marginBottom="15dp"/>
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="fill_parent"
+                        android:layout_height="50dp"
+                        android:layout_marginBottom="9dp">
+
+                        <TextView
+                            android:layout_width="100dp"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text="0.0"
+                            android:id="@+id/txv_lec_pres"
+                            android:layout_alignTop="@+id/lbl_presion"
+                            android:layout_alignLeft="@+id/txv_lec_niv"
+                            android:background="#ffffffff"
+                            android:layout_marginLeft="25dp"
+                            android:textSize="22dp"
+                            android:layout_marginBottom="15dp"/>
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="fill_parent"
+                        android:layout_height="50dp"
+                        android:layout_marginBottom="9dp">
+
+                        <TextView
+                            android:layout_width="100dp"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text="0.0"
+                            android:id="@+id/txv_lec_niv"
+                            android:layout_alignTop="@+id/lbl_nivel"
+                            android:layout_toRightOf="@+id/btn_init"
+                            android:background="#ffffffff"
+                            android:layout_marginLeft="25dp"
+                            android:textSize="22dp"
+                            android:layout_marginBottom="15dp"/>
+                    </TableRow>
+                </TableLayout>
+
+            </LinearLayout>
         </LinearLayout>
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:layout_marginLeft="20dp">
-
-            <TableLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <TableRow
-                    android:layout_width="fill_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginBottom="9dp">
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="0.0"
-                        android:id="@+id/txv_lec_temp"
-                        android:layout_alignLeft="@+id/txv_lec_pres"
-                        android:layout_centerVertical="true"
-                        android:background="#ffffffff"
-                        android:layout_marginLeft="25dp"
-                        android:textSize="22dp"/>
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="fill_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginBottom="9dp">
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="0.0"
-                        android:id="@+id/txv_lec_pres"
-                        android:layout_alignTop="@+id/lbl_presion"
-                        android:layout_alignLeft="@+id/txv_lec_niv"
-                        android:background="#ffffffff"
-                        android:layout_marginLeft="25dp"
-                        android:textSize="22dp"/>
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="fill_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginBottom="9dp">
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="0.0"
-                        android:id="@+id/txv_lec_niv"
-                        android:layout_alignTop="@+id/lbl_nivel"
-                        android:layout_toRightOf="@+id/btn_init"
-                        android:background="#ffffffff"
-                        android:layout_marginLeft="25dp"
-                        android:textSize="22dp"/>
-                </TableRow>
-            </TableLayout>
-
-        </LinearLayout>
-    </LinearLayout>
+    </RelativeLayout>
 
 </RelativeLayout>

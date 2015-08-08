@@ -54,7 +54,7 @@ public class Notificador {
                     .setContentText("Ha habido un sobresalto en la planta")
                     .setWhen(System.currentTimeMillis())
                             //sonido personalizado; archivo ubicado en la carpeta raw
-                    .setSound(Uri.parse("android.resource://" + service.getPackageName() + "/" + R.raw.windows_error))
+                    .setSound(Uri.parse("android.resource://" + service.getPackageName() + "/" + R.raw.sound_alarm_1))
                     .setVibrate(new long[]{800, 500, 900, 150, 1100})//tiempos entre vibracion y descanso
                     .setLargeIcon(icon)
                     .setLights(Color.RED, 1, 0);
@@ -84,8 +84,8 @@ public class Notificador {
                     .setWhen(System.currentTimeMillis())
                             //sonido personalizado; archivo ubicado en la carpeta raw
                             //FUENTE DE SONIDOS => http://soundbible.com/
-                    .setSound(Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.windows_error))
-                    .setVibrate(new long[]{800, 500, 900, 150, 1100})//tiempos entre vibracion y descanso
+                    .setSound(Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.sound_error_a))
+                    .setVibrate(new long[]{600, 500,2000})//tiempos entre vibracion y descanso
                     .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.img_fail_conex))
                     .setLights(Color.RED, 1, 0);
 
