@@ -1,9 +1,12 @@
 package com.adsi38_sena.simgeplapp.Vistas;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.NotificationManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,7 +32,7 @@ import java.util.Random;
 
 public class ActivityMonitoreo extends Activity {
 
-    SIMGEPLAPP simgeplapp;
+    private SIMGEPLAPP simgeplapp;
     private final DecimalFormat decimalFormat = new DecimalFormat("#.#");
     private Double temporal;
     private static Double[] lecs_actuales;
@@ -169,6 +172,29 @@ public class ActivityMonitoreo extends Activity {
                     txv_TEMP.setText("--");
                     txv_PRES.setText("--");
                     txv_NIV.setText("--");
+
+                    /*AlertDialog.Builder construct_msg = new AlertDialog.Builder(this);
+                    construct_msg.setMessage("No se esta Monitoreando en este Momento. \n Desea hacerlo?")
+                            .setTitle("Simgeplapp")
+                            .setPositiveButton("Start",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            startService(new Intent(ActivityMonitoreo.this, ServicioMonitoreo.class));
+                                            MotorMonitor.start();
+                                        }
+                                    })
+                            .setNegativeButton("Cancelar",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.cancel();
+                                        }
+                                    });
+
+                    AlertDialog msg_emerg = construct_msg.create();
+                    msg_emerg.show();*/
+
                 }
 
             }

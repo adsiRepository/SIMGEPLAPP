@@ -32,6 +32,8 @@ public class ServicioMonitoreo extends Service {
 
     private ArrayList<NameValuePair> peticion;// este es el post que el php en el servidor verificara para ejecutar su accion
 
+    int contador = 0;
+
     /*private static final List<NameValuePair> peticion = Collections.unmodifiableList(
             new ArrayList<NameValuePair>() {{
                 add(new BasicNameValuePair("peticion_lecturas", "ok"));
@@ -73,7 +75,6 @@ public class ServicioMonitoreo extends Service {
 	private Thread proceso_delServicio = new Thread(new Runnable() {
     //private class proceso_delServicio extends Thread {
 
-        int contador = 0;
 
         JSONObject jsob_lecs;
         JSONObject lecturas;
@@ -116,7 +117,7 @@ public class ServicioMonitoreo extends Service {
                         }
                     }
                 } catch (Exception e) {
-                    Log.d("ExceptHiloServMonit: ", e.toString());
+                    //Log.d("ExceptHiloServMonit: ", e.toString());
                 }
             }
         }
