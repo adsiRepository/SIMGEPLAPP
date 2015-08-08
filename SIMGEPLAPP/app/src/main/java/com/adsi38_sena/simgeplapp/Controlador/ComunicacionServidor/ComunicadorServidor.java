@@ -206,12 +206,41 @@ public class ComunicadorServidor {
     }
 
 
-//FUENTE DE LA COMUNICACION CON EL SERVIDOR (metodos generales encargados de tal cosa)
-    //peticion HTTP
-    private JSONObject obtenerObjetoJSON(String url_servidor, ArrayList<NameValuePair> parametros) throws IOException, JSONException {
+    //OBTENCION DE VARIABLES DEL SERVIDOR->
+   /* public void obtenerVariablesServidor(Context context){
+        try {
+            if (SIMGEPLAPP.hayConexionInternet(context) == true) {
+                List<NameValuePair> peticion = Collections.unmodifiableList(
+                        new ArrayList<NameValuePair>() {{
+                            add(new BasicNameValuePair("peticion_lecturas", "ok"));
+                        }});
 
-        InputStream corriente_datos_entrantes = null;
-        String result = "";
+                    JSONObject jsob_lecs = obtenerObjetoJSON(SIMGEPLAPP.Comunicaciones.URL_SERVER + "planta.php", (ArrayList<NameValuePair>) peticion);
+                    if (jsob_lecs != null && jsob_lecs.length() > 0) {
+
+                        JSONObject lecturas = jsob_lecs.getJSONObject("lecturas");
+
+                        SIMGEPLAPP.TEMP = lecturas.getDouble("temperatura");
+                        SIMGEPLAPP.PRES = lecturas.getDouble("presion");
+                        SIMGEPLAPP.NIV = lecturas.getDouble("nivel");
+                    }
+
+            }
+            else {
+                Toast.makeText(context.getApplicationContext(), "No Existe Conexion en este Momento", Toast.LENGTH_LONG).show();
+            }
+        } catch (Exception e) {
+            Toast.makeText(context.getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
+        }
+    }*/
+
+
+//METODO DE LA COMUNICACION CON EL SERVIDOR (metodos generales encargados de tal cosa)
+    //peticion HTTP
+    public JSONObject obtenerObjetoJSON(String url_servidor, ArrayList<NameValuePair> parametros) throws IOException, JSONException {
+
+        InputStream corriente_datos_entrantes;
+        String result;
 
         //instanciamos un objeto que se comportara como cliente para el servidor (el navegador chrome es un cliente por ejemplo)
         HttpClient cliente_web = new DefaultHttpClient();
@@ -234,8 +263,10 @@ public class ComunicadorServidor {
         while ((line = reader.readLine()) != null) {
             sb.append(line + "\n");
         }
+
         corriente_datos_entrantes.close();
         result = sb.toString();
+        entidad_respuesta.consumeContent();
 
         JSONObject jsonObj = new JSONObject(result);
 

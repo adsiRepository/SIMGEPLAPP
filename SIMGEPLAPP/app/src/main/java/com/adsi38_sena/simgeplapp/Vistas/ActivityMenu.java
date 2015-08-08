@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,7 +13,6 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.adsi38_sena.simgeplapp.Controlador.ServicioMonitoreo;
 import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
@@ -40,6 +38,36 @@ public class ActivityMenu extends Activity {
         btn_gestion_usuarios = (Button) findViewById(R.id.btn_usuarios);
 
         swch_service = (Switch) findViewById(R.id.switch_monitorear);
+
+        lbl_user = (TextView) findViewById(R.id.txv_user_session);
+
+        lbl_user.setText("" + simgeplapp.session.user);
+
+        btn_monitoreo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ActivityMenu.this, ActivityMonitoreo.class));
+            }
+        });
+        btn_gestion_usuarios.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ActivityMenu.this, ActivityUsuarios.class));
+            }
+        });
+
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+    }
+
+    // Se llama cuando la actividad va a comenzar a interactuar con el usuario. Es un buen lugar para lanzar las animaciones y la m�sica.
+    @Override
+    protected void onResume(){
+        super.onResume();
+
         if (simgeplapp.serviceOn == true) {
             swch_service.post(new Runnable() {
                 @Override
@@ -78,34 +106,6 @@ public class ActivityMenu extends Activity {
             }
         });
 
-        lbl_user = (TextView) findViewById(R.id.txv_user_session);
-
-        lbl_user.setText("" + simgeplapp.session.user);
-
-        btn_monitoreo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(ActivityMenu.this, ActivityMonitoreo.class));
-            }
-        });
-        btn_gestion_usuarios.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(ActivityMenu.this, ActivityUsuarios.class));
-            }
-        });
-
-    }
-
-    @Override
-    protected void onStart(){
-        super.onStart();
-    }
-
-    // Se llama cuando la actividad va a comenzar a interactuar con el usuario. Es un buen lugar para lanzar las animaciones y la m�sica.
-    @Override
-    protected void onResume(){
-        super.onResume();
     }
 
     @Override

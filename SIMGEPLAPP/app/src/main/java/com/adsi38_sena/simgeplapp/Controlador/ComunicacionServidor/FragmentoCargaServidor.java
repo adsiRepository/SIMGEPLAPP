@@ -7,8 +7,6 @@ import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 
-import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
-
 
 //DIALOGOS => http://developer.android.com/guide/topics/ui/dialogs.html
 public class FragmentoCargaServidor extends DialogFragment {
