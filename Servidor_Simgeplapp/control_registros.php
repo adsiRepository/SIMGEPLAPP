@@ -42,6 +42,27 @@ class Report{
         }
     }
     
+    public static function obtenerLecturas() {
+        try {
+            $lecturas[] = NULL;
+            self::$conex = DB::connect();
+            $result = self::$conex->query("select * from lecturas where 1");
+            if ($result->num_rows > 0) {
+                $lecturas[0] = "ok";
+                while ($row = $result->fetch_array()) {
+                    $lecturas[1] = doubleval($row[0]);
+                    $lecturas[2] = doubleval($row[1]);
+                    $lecturas[3] = doubleval($row[2]);
+                }
+            } else {
+                $lecturas[0] = $this->conex->error;
+            }
+            return $lecturas;
+        } catch (Exception $ex) {
+            return $ex->getTraceAsString();
+        }
+    }
+    
 }
 
 

@@ -1,71 +1,64 @@
 <?php
 include_once 'control_registros.php';
 
-if (isset($_REQUEST["peticion_lecturas"])) {
+//if (isset($_REQUEST["peticion_lecturas"])) {
 
-    $azar = mt_rand(0, 3200);//manejo de probabilidad. Simulacion sobresalto de la planta.
+    $lecs = Report::obtenerLecturas();
+    
+    if ($lecs != NULL) {
+        if ($lecs[0] === "ok") {
+            $lecTemperatura = $lecs[1]; 
+            $lecPresion = $lecs[2]; 
+            $lecNivel = $lecs[3];
 
-    $json_resp = array();
-    $json_resp["alarma"] = NULL;
+            if ( ($lecTemperatura > 120 || $lecTemperatura < 40) || ($lecPresion > 80 || $lecPresion < 30) ||
+                    ($lecNivel > 80 || $lecNivel < 25) ) {
 
-    if ($azar > 3100) {//apelamos a la probabilidad
-        //si... probara unos nuevos rangos
-        $lecTemperatura = mt_rand((20)*100, (149)*100) / 100; //intervalos de las variables 
-        $lecPresion = mt_rand((0)*100, (50)*100) / 100;//los multiplico * 100 para obtener un numero grande que al dividirlo de nuevo en 100 me dara un numero en formato decimal.
-        $lecNivel = mt_rand((0)*100, (50)*100) / 100;
+                $json_resp["alarma"] = TRUE;
+                //$json_resp["factor"] = NULL;
 
-        if ($lecTemperatura > 120 || $lecPresion > 37 || $lecNivel > 41) {
-
-            $json_resp["alarma"] = TRUE;
-            //$json_resp["factor"] = NULL;
-
-            if ($lecTemperatura > 120) {
-                $resp = Report::guardarReporte($lecTemperatura, "temperatura");
-                $json_resp["factor"]["temp"] = "affected";
-                if ($resp != "ok") {
-                    $json_resp["error"] = $resp;
+                /*if ($lecTemperatura > 120 || $lecTemperatura < 40) {
+                    $resp = Report::guardarReporte($lecTemperatura, "temperatura");
+                    $json_resp["factor"]["temp"] = "affected";
+                    if ($resp != "ok") {
+                        $json_resp["error"] = $resp;
+                    }
                 }
-            }
 
-            if ($lecPresion > 37) {
-                $resp = Report::guardarReporte($lecPresion, "presion");
-                $json_resp["factor"]["pres"] = "affected";
-                if ($resp != "ok") {
-                    $json_resp["error"] = $resp;
+                if ($lecPresion > 90 || $lecPresion < 20) {
+                    $resp = Report::guardarReporte($lecPresion, "presion");
+                    $json_resp["factor"]["pres"] = "affected";
+                    if ($resp != "ok") {
+                        $json_resp["error"] = $resp;
+                    }
                 }
-            }
 
-            if ($lecNivel > 41) {
-                $resp = Report::guardarReporte($lecNivel, "nivel");
-                $json_resp["factor"]["niv"] = "affected";
-                if ($resp != "ok") {
-                    $json_resp["error"] = $resp;
-                }
+                if ($lecNivel > 41 || $lecNivel < 10) {
+                    $resp = Report::guardarReporte($lecNivel, "nivel");
+                    $json_resp["factor"]["niv"] = "affected";
+                    if ($resp != "ok") {
+                        $json_resp["error"] = $resp;
+                    }
+                }*/
+            } else {
+                $json_resp["alarma"] = FALSE;
             }
             
         }
-        else {
+        else{
             $json_resp["alarma"] = FALSE;
+            $json_resp["error"] = $resp;
         }
-        
-    } 
-    else {
-        $lecTemperatura = mt_rand((46)*100, (120)*100) / 100;
-        $lecPresion = mt_rand((20)*100, (37)*100) / 100;
-        $lecNivel = mt_rand((16)*100, (41)*100) / 100;
-        
-        $json_resp["alarma"] = FALSE;
     }
 
-    
     $json_resp["lecturas"]["temperatura"] = $lecTemperatura;
     $json_resp["lecturas"]["presion"] = $lecPresion;
     $json_resp["lecturas"]["nivel"] = $lecNivel;
 
     //envio de respuesta a la app
     //header('Content-type: application/json; charset=utf-8');
-    echo json_encode($json_resp); 
-}
+    echo json_encode($json_resp);
+//}
 
 //exit();
 //$json_resp = array();

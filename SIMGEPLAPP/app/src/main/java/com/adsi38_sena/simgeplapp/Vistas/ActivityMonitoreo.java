@@ -3,13 +3,17 @@ package com.adsi38_sena.simgeplapp.Vistas;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.NotificationManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
@@ -20,6 +24,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,7 +37,15 @@ import com.adsi38_sena.simgeplapp.Controlador.ServicioMonitoreo;
 import java.text.DecimalFormat;
 import java.util.Random;
 
-public class ActivityMonitoreo extends Activity {
+public class ActivityMonitoreo extends Activity implements View.OnClickListener  {
+
+    /*public interface llamadosExternos{
+        void resaltarTemp();
+        void resaltarPresion();
+        void resaltarNivel();
+    }*/
+
+
 
     private SIMGEPLAPP simgeplapp;
     private final DecimalFormat decimalFormat = new DecimalFormat("#.#");
@@ -48,7 +62,9 @@ public class ActivityMonitoreo extends Activity {
     protected TextView txv_TEMP, txv_PRES, txv_NIV;
     CharSequence[] estado_variables;
 
-    private RelativeLayout vistaNormal, vistaSinConexion;
+    private RelativeLayout vistaNormal, vistaSinConexion, vistaNotificacion;
+    private ImageButton btn_call, btn_email;
+    private Button btn_cancel_notif;
 
     //control de estado de la pantalla
     @Override
@@ -82,6 +98,62 @@ public class ActivityMonitoreo extends Activity {
 
             vistaNormal = (RelativeLayout)findViewById(R.id.contenedor_variables);
             vistaSinConexion = (RelativeLayout)findViewById(R.id.sin_conexion);
+            vistaNotificacion = (RelativeLayout)findViewById(R.id.vista_notificacion);
+
+            btn_call = (ImageButton)findViewById(R.id.btn_img_call_phone);
+            btn_call.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        startActivity(new Intent(Intent.ACTION_CALL, Uri.parse("tel:3173567440")));
+                    } catch (Exception e) {
+                        Toast.makeText(ActivityMonitoreo.this, "LamarCentral: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+
+            btn_email = (ImageButton)findViewById(R.id.btn_img_send_mail);
+            btn_email.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String[] destinatario_s = {/*correo de la planta*/"miguelon_91@misena.edu.co"};
+                    String[] copiados = {/*direcciones email de quienes recibiran una copia de este correo*/};
+                    String asunto = "Notificacion de Sobresalto en la Planta";
+                    String mensaje = "Alerta! he recibido un aviso en mi movil de parte de la planta, existe una anomalía, por favor Revisar Inmediatamente.";
+
+                    Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                    emailIntent.setData(Uri.parse("mailto:"));
+                    emailIntent.putExtra(Intent.EXTRA_EMAIL, destinatario_s);
+                    emailIntent.putExtra(Intent.EXTRA_CC, copiados);
+                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, asunto);
+                    emailIntent.putExtra(Intent.EXTRA_TEXT, mensaje);
+                    emailIntent.setType("message/rfc822");
+                    startActivity(Intent.createChooser(emailIntent, "Email "));
+                }
+            });
+
+            btn_cancel_notif = (Button)findViewById(R.id.btn_desc_notif);
+            btn_cancel_notif.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    vistaNotificacion.setVisibility(View.INVISIBLE);
+                    if(simgeplapp.serviceOn == true) {
+                        if (!MotorMonitor.isAlive()) {
+                            monitorear = simgeplapp.serviceOn;
+                            MotorMonitor.start();
+                        }
+                    }
+                    else{
+                        txv_TEMP.setText("--");
+                        txv_PRES.setText("--");
+                        txv_NIV.setText("--");
+                    }
+                }
+            });
+
+
+
+            SIMGEPLAPP.monitoreoAbierto = true;
 
             /*conexService = new ServiceConnection() {
                 @Override
@@ -91,6 +163,8 @@ public class ActivityMonitoreo extends Activity {
                     mensajero = new Messenger(servicio);//aqui recibe la interfaz retornada en el metodo onBind del servicio
                     if(mensajero != null){
                         Toast.makeText(getBaseContext(), "Conexion Establecida Correctamente", Toast.LENGTH_LONG).show();
+                    }else {
+                        Toast.makeText(getBaseContext(), "El Servicio no se Encuentra Disponible", Toast.LENGTH_LONG).show();
                     }
                 }
                 @Override
@@ -100,7 +174,10 @@ public class ActivityMonitoreo extends Activity {
                 }
             };
 
-            bindService(new Intent(ActivityMonitoreo.this, ServicioMonitoreo.class), conexService, Context.BIND_AUTO_CREATE);//*/
+            getIntent().setClass(ActivityMonitoreo.this, ServicioMonitoreo.class);
+            getIntent().putExtra("activity_on_air", true);
+
+            bindService(getIntent(), conexService, Context.BIND_AUTO_CREATE);//*/
 
         } catch (Exception e) {
             Toast.makeText(getBaseContext(), "onCreate: " + e.toString(), Toast.LENGTH_LONG).show();
@@ -139,33 +216,32 @@ public class ActivityMonitoreo extends Activity {
                         monitorear = false;
                     }
 
+                    vistaNotificacion.setVisibility(View.VISIBLE);
+
       //PERSONALIZACION DE UN TOAST => https://amatellanes.wordpress.com/2013/08/09/android-notificaciones-en-android-parte-1-toasts/
 
-                    if(simgeplapp.llamada_mail_habilitados == false) {
+                    /*if(simgeplapp.llamada_mail_habilitados == false) {
 
                         LayoutInflater inflador_deLayouts = getLayoutInflater();
                         View toast_personal = inflador_deLayouts.inflate(R.layout.toast_personalizado, (ViewGroup) findViewById(R.id.custoast_monitor_ok_notif));//id del componente raiz, es decir sobre el cual ponemos los elementos, o sea un relative layout, linear layout, etc.
-                /*TextView textToast = (TextView) layout.findViewById(R.id.text_toast);
-                textToast.setText("any text");*/
+                //TextView textToast = (TextView) layout.findViewById(R.id.text_toast);
+                //textToast.setText("any text");
                         Toast toast = new Toast(ActivityMonitoreo.this);
                         toast.setDuration(Toast.LENGTH_LONG);
                         toast.setView(toast_personal);
                         toast.setGravity(Gravity.RIGHT, 0, 60);
                         toast.show();
-                    }
+                    }*/
 
-                    simgeplapp.llamada_mail_habilitados = true;
+                    /*simgeplapp.llamada_mail_habilitados = true;
                     disponerMenu = true;
                     mnutem_mail.setEnabled(true);
-                    mnutem_llamada.setEnabled(true);
+                    mnutem_llamada.setEnabled(true);*/
                 }
             }
             else {
 
-                /*simgeplapp.llamada_mail_habilitados = false;
-                disponerMenu = false;
-                mnutem_mail.setEnabled(false);
-                mnutem_llamada.setEnabled(false);*/
+                vistaNotificacion.setVisibility(View.INVISIBLE);
 
                 if (simgeplapp.serviceOn == true) {
 
@@ -188,7 +264,7 @@ public class ActivityMonitoreo extends Activity {
 
                 }
                 else {
-                    disponerMenu = false;
+                    //disponerMenu = false;
                     txv_TEMP.setText("--");
                     txv_PRES.setText("--");
                     txv_NIV.setText("--");
@@ -225,6 +301,16 @@ public class ActivityMonitoreo extends Activity {
 
 
     @Override
+    public void onClick(View view) {
+
+        switch (view.getId()){
+
+        }
+
+    }
+
+
+    @Override
     protected void onPause(){
         super.onPause();
         //SalvaTareas.obtenerInstancia().soltarHilo(SIMGEPLAPP.LLAVE_PROCESO_MONITOREO);
@@ -243,7 +329,7 @@ public class ActivityMonitoreo extends Activity {
     @Override
     protected void onDestroy(){
         super.onDestroy();
-
+        SIMGEPLAPP.monitoreoAbierto = false;
     }
 
     private Thread MotorMonitor = new Thread(new Runnable() {
@@ -253,38 +339,26 @@ public class ActivityMonitoreo extends Activity {
 
             while (/*simgeplapp.serviceOn*/monitorear == true) {
                 try {
-                    //Looper.prepare();
-                    aux = random.nextInt(3);//intervalo desde 0 hasta 3 sin tomarlo, es decir realmente hasta 2.
-                    switch (aux) {
-                        case 0:
-                            txv_TEMP.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    txv_TEMP.setText("" + decimalFormat.format(SIMGEPLAPP.TEMP));
-                                    //txv_TEMP.setText("" + decimalFormat.format((random.nextDouble() * (112 - 19)) + 19));
-                                }
-                            });
-                            break;
-                        case 1:
-                            txv_PRES.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    txv_PRES.setText("" + decimalFormat.format(SIMGEPLAPP.PRES));
-                                    //txv_PRES.setText("" + decimalFormat.format((random.nextDouble() * (98 - 16)) + 16));
-                                }
-                            });
-                            break;
-                        case 2:
-                            txv_NIV.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    txv_NIV.setText("" + decimalFormat.format(SIMGEPLAPP.NIV));
-                                    //txv_NIV.setText("" + decimalFormat.format((random.nextDouble() * (100 - 18)) + 18));
-                                }
-                            });
-                            break;
-                    }
-                    Thread.sleep(3000);
+                    txv_TEMP.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            txv_TEMP.setText("" + decimalFormat.format(SIMGEPLAPP.TEMP));
+                        }
+                    });
+                    txv_PRES.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            txv_PRES.setText("" + decimalFormat.format(SIMGEPLAPP.PRES));
+                        }
+                    });
+                    txv_NIV.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            txv_NIV.setText("" + decimalFormat.format(SIMGEPLAPP.NIV));
+                        }
+                    });
+
+                    Thread.sleep(1200);
 
                  /*   Message msg = Message.obtain(null, new ServicioMonitoreo().ID_PETICION_SERVICIO);//este metodo obtain es para identificar el mensaje dentro del canal de estos.
                     msg.replyTo = new Messenger(new RecibidorRespuestasServicio());//este metodo se ejecutara en el servicio (msg.replyTo), aqui le damos una instancia de RecibidorRespuestasServicio, por ende ejecutara el codigo alli escrito
@@ -303,11 +377,37 @@ public class ActivityMonitoreo extends Activity {
                         }
                     });
                 }
-                //Looper.loop();
             }
-
         }
     });
+
+    public void resaltarTemp() {
+        txv_TEMP.post(new Runnable() {
+            @Override
+            public void run() {
+                txv_TEMP.setText("" + decimalFormat.format(SIMGEPLAPP.TEMP));
+                txv_NIV.setBackgroundColor(Color.RED);
+            }
+        });
+    }
+    public void resaltarPres() {
+        txv_PRES.post(new Runnable() {
+            @Override
+            public void run() {
+                txv_PRES.setText("" + decimalFormat.format(SIMGEPLAPP.PRES));
+                txv_NIV.setBackgroundColor(Color.RED);
+            }
+        });
+    }
+    public void resaltarNivel() {
+        txv_NIV.post(new Runnable() {
+            @Override
+            public void run() {
+                txv_NIV.setText("" + decimalFormat.format(SIMGEPLAPP.NIV));
+                txv_NIV.setBackgroundColor(Color.RED);
+            }
+        });
+    }
 
     //////--------      METODOS DE ENLACE AL SERVICE EN SEGUNDO PLANO
 
@@ -381,7 +481,7 @@ public class ActivityMonitoreo extends Activity {
     //////--------
 
     //MENU
-    private MenuItem mnutem_mail, mnutem_llamada;
+    //private static MenuItem mnutem_mail, mnutem_llamada;
 
     @Override
     public void invalidateOptionsMenu(){
@@ -390,7 +490,7 @@ public class ActivityMonitoreo extends Activity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        try {
+        /*try {
             //super.invalidateOptionsMenu();
             //
             if (disponerMenu == true) {
@@ -404,7 +504,7 @@ public class ActivityMonitoreo extends Activity {
             }
         }catch (Exception e){
             Toast.makeText(getBaseContext(), "onPrepMenu: " + e.toString(), Toast.LENGTH_LONG).show();
-        }
+        }*/
         //return super.onPrepareOptionsMenu(menu);
         return true;
     }
@@ -416,10 +516,12 @@ public class ActivityMonitoreo extends Activity {
 
         MenuInflater infladorMenues = getMenuInflater();
         infladorMenues.inflate(com.adsi38_sena.simgeplapp.R.menu.menu_monitoreo, menu);
-        mnutem_mail = menu.getItem(1);
-        mnutem_llamada = menu.getItem(0);
+        //mnutem_mail = menu.getItem(1);
+
+        //mnutem_llamada = menu.getItem(0);
 
         return true;
+        //return onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -430,37 +532,8 @@ public class ActivityMonitoreo extends Activity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        /*if (id == R.id.action_settings) {
+        if (id == R.id.action_settings) {
             return true;
-        }*/
-
-        switch (id){
-            case R.id.mnutem_enviar_correo:
-
-                String[] destinatario_s = {/*correo de la planta*/"miguelon_91@misena.edu.co"};
-                String[] copiados = {/*direcciones email de quienes recibiran una copia de este correo*/};
-                String asunto = "Notificacion de Sobresalto en la Planta";
-                String mensaje = "Alerta! he recibido un aviso en mi movil de parte de la planta, existe una anomalía, por favor Revisar Inmediatemente.";
-
-                Intent emailIntent = new Intent(Intent.ACTION_SEND);
-                emailIntent.setData(Uri.parse("mailto:"));
-                emailIntent.putExtra(Intent.EXTRA_EMAIL, destinatario_s);
-                emailIntent.putExtra(Intent.EXTRA_CC, copiados);
-                emailIntent.putExtra(Intent.EXTRA_SUBJECT, asunto);
-                emailIntent.putExtra(Intent.EXTRA_TEXT, mensaje);
-                emailIntent.setType("message/rfc822");
-                startActivity(Intent.createChooser(emailIntent, "Email "));
-
-                break;
-
-            case R.id.mnutem_llamar_central:
-                try {
-                    startActivity(new Intent(Intent.ACTION_CALL, Uri.parse("tel:3173567440")));
-                } catch (Exception e) {
-                    Toast.makeText(ActivityMonitoreo.this, "LamarCentral: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                }
-                break;
-
         }
 
         return super.onOptionsItemSelected(item);

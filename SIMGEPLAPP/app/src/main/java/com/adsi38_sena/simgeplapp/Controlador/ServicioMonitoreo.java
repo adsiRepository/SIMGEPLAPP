@@ -2,11 +2,17 @@ package com.adsi38_sena.simgeplapp.Controlador;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.widget.Toast;
 
 import com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor.ComunicadorServidor;
 import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
+import com.adsi38_sena.simgeplapp.Vistas.ActivityMonitoreo;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -16,7 +22,8 @@ import java.util.ArrayList;
 
 //http://joomla.probando-cosas.com.ar/index.php/item/180-android-servicios-parte-1
 
-public class ServicioMonitoreo extends Service {
+public class ServicioMonitoreo extends Service /*implements ActivityMonitoreo.llamadosExternos*/{
+
     private static final String TAG = "ServicioMonitoreo";
 
     private SIMGEPLAPP simgeplapp;
@@ -34,6 +41,8 @@ public class ServicioMonitoreo extends Service {
     int contador = 0;
 
     private static Proceso_delServicio proceso_delServicio;
+
+    private boolean activityActivo;
 
     /*private static final List<NameValuePair> peticion = Collections.unmodifiableList(
             new ArrayList<NameValuePair>() {{
@@ -55,6 +64,8 @@ public class ServicioMonitoreo extends Service {
         peticion.add(new BasicNameValuePair("peticion_lecturas", "ok"));
 
         proceso_delServicio = new Proceso_delServicio();
+
+        activityActivo = false;
     }
 
 
@@ -75,6 +86,19 @@ public class ServicioMonitoreo extends Service {
         return START_STICKY;
     }
 
+    /*@Override
+    public void resaltarTemp() {
+
+    }
+    @Override
+    public void resaltarPresion() {
+
+    }
+    @Override
+    public void resaltarNivel() {
+
+    }*/
+
     //private Thread proceso_delServicio = new Thread(new Runnable() {
     private class Proceso_delServicio extends Thread {
 
@@ -92,7 +116,7 @@ public class ServicioMonitoreo extends Service {
 
                     if (SIMGEPLAPP.hayConexionInternet(ServicioMonitoreo.this) == true) {
 
-                        resp_server = server.obtenerObjetoJSON(SIMGEPLAPP.Comunicaciones.URL_SERVER + "planta.php", peticion);
+                        resp_server = server.obtenerObjetoJSON(SIMGEPLAPP.Comunicaciones.URL_SERVER_LECS + "planta.php", peticion);
 
                         if (resp_server != null && resp_server.length() > 0) {
 
@@ -109,18 +133,24 @@ public class ServicioMonitoreo extends Service {
                             alert = resp_server.getBoolean("alarma");
 
                             if (alert == true) {
-                                notif.notificarAlertaPlanta(ServicioMonitoreo.this, lecs_to_activity);
 
-                                factores = resp_server.getJSONObject("factor");
-                                if (factores.getString("temp") != null) {
-                                    showDetailAlert("Alteraciones de Temperatura en la Planta");
-                                }
-                                if (factores.getString("pres") != null) {
-                                    showDetailAlert("Presiones Inestables en la Planta");
-                                }
-                                if (factores.getString("niv") != null) {
-                                    showDetailAlert("Niveles Anormales en la Planta");
-                                }
+                                //if(SIMGEPLAPP.monitoreoAbierto){
+                                    /*factores = resp_server.getJSONObject("factor");
+                                    if (factores.getString("temp") != null) {
+                                        showDetailAlert("Alteraciones de Temperatura en la Planta");
+                                    }
+                                    if (factores.getString("pres") != null) {
+                                        showDetailAlert("Presiones Inestables en la Planta");
+                                    }
+                                    if (factores.getString("niv") != null) {
+                                        showDetailAlert("Niveles Anormales en la Planta");
+                                    }*/
+                                //}
+                                //else {
+                                    notif.notificarAlertaPlanta(ServicioMonitoreo.this, lecs_to_activity);
+                                //}
+
+                                /**/
                             }
 
                             /*if (SIMGEPLAPP.TEMP > 120 || SIMGEPLAPP.PRES > 37 || SIMGEPLAPP.NIV > 41) {
@@ -128,7 +158,7 @@ public class ServicioMonitoreo extends Service {
                             }*/
                         }
 
-                        Thread.sleep(/*90000*/3000);
+                        Thread.sleep(/*90000*/1200);
 
                     } else {
                         Thread.sleep(3000);
@@ -165,7 +195,7 @@ public class ServicioMonitoreo extends Service {
     //INTERCAMBIO DE DATOS ENTRE ANTIVITIES Y SERVICIOS (metodo messenger)
     //IPC con Messenger
     //http://www.survivingwithandroid.com/2014/01/android-bound-service-ipc-with-messenger.html
-    /*protected class ServiceHandler extends Handler{
+    protected class ServiceHandler extends Handler {
 		@Override
 		public void handleMessage(Message msg){//este msg es el que se crea en el activity
 			//super.handleMessage(msg);
@@ -192,12 +222,14 @@ public class ServicioMonitoreo extends Service {
 	}
     private Messenger contactoActivity = new Messenger(new ServiceHandler());
     //public IBinder binder = new Enlace();
-    */
+
     @Override
     public IBinder onBind(Intent i) {
-        return null;
+        //return null;
         //return binder;
-        //return contactoActivity.getBinder();
+        activityActivo = i.getBooleanExtra("activity_on_air", false);
+
+        return contactoActivity.getBinder();
     }
     //public class Enlace extends Binder{
     //	public ServicioMonitoreo getService(){

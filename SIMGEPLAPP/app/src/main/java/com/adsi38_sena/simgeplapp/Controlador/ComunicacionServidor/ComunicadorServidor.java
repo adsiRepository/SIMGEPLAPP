@@ -29,7 +29,7 @@ public class ComunicadorServidor {
 //METODO DE LOGGEO
     public String[] intentoLoggeo(String user, String pass) throws Exception {
 
-        String url = SIMGEPLAPP.Comunicaciones.URL_SERVER + "usuarios/login.php";
+        String url = SIMGEPLAPP.Comunicaciones.URL_SERVER_USERS + "usuarios/login.php";
 
         String[] resp = new String[4];
 
@@ -68,7 +68,7 @@ public class ComunicadorServidor {
 
     public String[] registrarNuevoUsuario(Usuario nuevoUsuario) throws Exception/*IOException, JSONException*/ {
 
-        String url = SIMGEPLAPP.Comunicaciones.URL_SERVER + "usuarios/add_user.php";
+        String url = SIMGEPLAPP.Comunicaciones.URL_SERVER_USERS + "usuarios/add_user.php";
         String[] results = new String[3];
         ArrayList<NameValuePair> datos_a_registrar = nuevoUsuario.obtenerPaquete_Atributos();
 
@@ -104,7 +104,7 @@ public class ComunicadorServidor {
 
     public Object[] buscarUsuario(String llave_busqueda) throws Exception/*IOException, JSONException*/ {
 
-        String url = SIMGEPLAPP.Comunicaciones.URL_SERVER + "usuarios/buscar.php";
+        String url = SIMGEPLAPP.Comunicaciones.URL_SERVER_USERS + "usuarios/buscar.php";
         Object[] results = new Object[2];
         ArrayList<NameValuePair> parametroBusqueda = new ArrayList<NameValuePair>();
 
@@ -150,7 +150,7 @@ public class ComunicadorServidor {
 
     public String modificarUsuario(Usuario nuevosDatos, String llave) throws Exception {
 
-        String url = SIMGEPLAPP.Comunicaciones.URL_SERVER + "usuarios/modif_user.php";
+        String url = SIMGEPLAPP.Comunicaciones.URL_SERVER_USERS + "usuarios/modif_user.php";
 
         ArrayList<NameValuePair> datos_a_cambiar = nuevosDatos.obtenerPaquete_Atributos();
 
@@ -180,7 +180,7 @@ public class ComunicadorServidor {
 
 
     public Object[] eliminarUsuario(String parametro) throws Exception {
-        String url = SIMGEPLAPP.Comunicaciones.URL_SERVER + "usuarios/drop_user.php";
+        String url = SIMGEPLAPP.Comunicaciones.URL_SERVER_USERS + "usuarios/drop_user.php";
 
         ArrayList<NameValuePair> ref_eliminar = new ArrayList<NameValuePair>();
         ref_eliminar.add(new BasicNameValuePair("id_ref", parametro));
@@ -215,7 +215,7 @@ public class ComunicadorServidor {
                             add(new BasicNameValuePair("peticion_lecturas", "ok"));
                         }});
 
-                    JSONObject jsob_lecs = obtenerObjetoJSON(SIMGEPLAPP.Comunicaciones.URL_SERVER + "planta.php", (ArrayList<NameValuePair>) peticion);
+                    JSONObject jsob_lecs = obtenerObjetoJSON(SIMGEPLAPP.Comunicaciones.URL_SERVER_USERS + "planta.php", (ArrayList<NameValuePair>) peticion);
                     if (jsob_lecs != null && jsob_lecs.length() > 0) {
 
                         JSONObject lecturas = jsob_lecs.getJSONObject("lecturas");

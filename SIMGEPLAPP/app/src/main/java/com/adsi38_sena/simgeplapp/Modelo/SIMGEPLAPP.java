@@ -37,6 +37,8 @@ public class SIMGEPLAPP extends Application{
 
     public static boolean llamada_mail_habilitados = false;
 
+    public static boolean monitoreoAbierto = false;
+
     static ConnectivityManager manager_deConexiones;
     static NetworkInfo net_info;
 
@@ -68,10 +70,13 @@ public class SIMGEPLAPP extends Application{
 
     public static class Comunicaciones{
         //SERVIDOR LOCAL (mi pc)
-        //public static String dirIP_server = "192.168.0.14";
-        //public static String URL_SERVER = "http://" + dirIP_server + "/REPOSITORIO__Simgeplapp/Servidor_Simgeplapp/";
+        public static String dirIP_server = "192.168.0.14";
+        //public static String URL_SERVER_USERS = "http://" + dirIP_server + "/REPOSITORIO__Simgeplapp/Servidor_Simgeplapp/";
         //SERVIDOR REMOTO (hostinger)
-        public static String URL_SERVER = "http://adsi38.esy.es/Servidor_Simgeplapp/";
+        public static String URL_SERVER_USERS = "http://adsi38.esy.es/Servidor_Simgeplapp/";
+
+        public static String URL_SERVER_LECS = "http://" + dirIP_server + "/REPOSITORIO__Simgeplapp/Servidor_Simgeplapp/";
+
     }
 
     public static class CargaSegura {
