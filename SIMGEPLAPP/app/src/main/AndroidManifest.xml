@@ -13,9 +13,9 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.CALL_PHONE"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".Modelo.SIMGEPLAPP"
@@ -46,12 +46,13 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".Controlador.ServicioMonitoreo"/>
+        <service android:name=".Controlador.ServicioMonitoreo" />
 
         <activity
             android:name=".Vistas.ActivityMonitoreo"
             android:label="@string/title_activity_monitoreo"
             android:launchMode="singleTop" >
+
             <!--
 android:alwaysRetainTaskState="true" -> retendra el ultimo estado de la tarea
             fuentes => http://developer.android.com/guide/topics/manifest/activity-element.html
@@ -64,6 +65,11 @@ android:alwaysRetainTaskState="true" -> retendra el ultimo estado de la tarea
         <activity
             android:name=".Vistas.ActivityUsuarios"
             android:label="@string/title_activity_gestion_usuarios" >
+        </activity>
+        <activity
+            android:name=".Vistas.ActivityReportes"
+            android:label="@string/title_activity_activity_reportes"
+            android:screenOrientation="portrait"> <!---->
         </activity>
     </application>
 

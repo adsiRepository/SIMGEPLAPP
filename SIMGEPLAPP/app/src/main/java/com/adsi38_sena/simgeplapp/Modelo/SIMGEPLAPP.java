@@ -85,6 +85,10 @@ public class SIMGEPLAPP extends Application{
 
         public static final String LLAVE_PROCESO_LOGIN = "proceso_loggeo";
 
+        public static final String TAG_PROGRESO_CARGA_REPORTE = "carga_reporte";
+
+        public static final String LLAVE_PROCESO_REPORTE = "proceso_reporte";
+
         public static final String TAG_PROGRESO_CARGA_USUARIOS = "carga_usuarios";
 
         public static final String LLAVE_PROCESO_CARGA_USERS = "cargando_usuario";
@@ -94,8 +98,6 @@ public class SIMGEPLAPP extends Application{
         public static final int ID_NOTIFICACION_ALERTA = 5;
         public static final int ID_NOTIFICACION_PERDIDA_CONEXION = 6;
     }
-
-    public static final String LLAVE_PROCESO_MONITOREO = "monitoreando";
 
     //--fin declaracion de atributos--
 

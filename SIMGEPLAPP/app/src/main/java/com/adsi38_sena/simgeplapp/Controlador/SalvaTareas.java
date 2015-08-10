@@ -117,41 +117,42 @@ public class SalvaTareas {
     }
 
 
-//MONITOREO
-    WeakHashMap<String, WeakReference<AsyncMonitor>> sostenMonitor = new WeakHashMap<String, WeakReference<AsyncMonitor>>();
+//REPORTES
 
-    public void iniciarMonitoreo(String llave_proceso, AsyncMonitor monitor, Activity activity){
-        soltarHilo(llave_proceso);
-        sostenMonitor.put(llave_proceso, new WeakReference<AsyncMonitor>(monitor));
+    WeakHashMap<String, WeakReference<AsyncReporte>> generandoReporte = new WeakHashMap<String, WeakReference<AsyncReporte>>();
+
+    public void generarReporte(String llave_proceso, AsyncReporte reporte, Activity activity){
+        desadjuntarProcesoReporte(llave_proceso);
+        generandoReporte.put(llave_proceso, new WeakReference<AsyncReporte>(reporte));
         if(activity != null){
-            atraparHilo(llave_proceso, activity);
+            adjuntarProcesoReporte(llave_proceso, activity);
         }
     }
-    public AsyncMonitor obtenerInstHilo(String llave_proceso){
-        if(sostenMonitor.get(llave_proceso) == null){
+    public AsyncReporte obtenerInstHiloReporte(String llave_proceso){
+        if(generandoReporte.get(llave_proceso) == null){
             return null;
         }
         else {
-            return sostenMonitor.get(llave_proceso).get();
+            return generandoReporte.get(llave_proceso).get();
         }
     }
-    public void atraparHilo(String llave_proceso, Activity activity){
+    public void adjuntarProcesoReporte(String llave_proceso, Activity activity){
 
-        AsyncMonitor ub_monitor = obtenerInstHilo(llave_proceso);
-        if (ub_monitor != null){
-            ub_monitor.setMyActy(activity);
+        AsyncReporte ub_reporte = obtenerInstHiloReporte(llave_proceso);
+        if (ub_reporte != null){
+            ub_reporte.setMyActy(activity);
         }
     }
-    public void soltarHilo(String llave_proceso){
-        if (sostenMonitor.containsKey(llave_proceso)
-                && sostenMonitor.get(llave_proceso) != null
-                && sostenMonitor.get(llave_proceso).get() != null)
+    public void desadjuntarProcesoReporte(String llave_proceso){
+        if (generandoReporte.containsKey(llave_proceso)
+                && generandoReporte.get(llave_proceso) != null
+                && generandoReporte.get(llave_proceso).get() != null)
         {
-            sostenMonitor.get(llave_proceso).get().soltarActivity();
+            generandoReporte.get(llave_proceso).get().soltarActivity();
         }
     }
-    public void removerHilo(String llave_proceso){
-        proceso_usuario.remove(llave_proceso);
+    public void removerProcesoReporte(String llave_proceso){
+        generandoReporte.remove(llave_proceso);
     }
 
 }
