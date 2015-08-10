@@ -3,7 +3,6 @@ package com.adsi38_sena.simgeplapp.Controlador;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.adsi38_sena.simgeplapp.Controlador.ComunicacionServidor.ComunicadorServidor;
@@ -18,12 +17,12 @@ import java.util.ArrayList;
 //http://joomla.probando-cosas.com.ar/index.php/item/180-android-servicios-parte-1
 
 public class ServicioMonitoreo extends Service {
-	private static final String TAG = "ServicioMonitoreo";
+    private static final String TAG = "ServicioMonitoreo";
 
     private SIMGEPLAPP simgeplapp;
     protected Notificador notif;
 
-	public int ID_PETICION_SERVICIO = 3, ID_RESPUESTA_PETICION = 5;
+    public int ID_PETICION_SERVICIO = 3, ID_RESPUESTA_PETICION = 5;
     //public int val1, val2;
 
     private ComunicadorServidor server;
@@ -34,30 +33,34 @@ public class ServicioMonitoreo extends Service {
 
     int contador = 0;
 
+    private static Proceso_delServicio proceso_delServicio;
+
     /*private static final List<NameValuePair> peticion = Collections.unmodifiableList(
             new ArrayList<NameValuePair>() {{
                 add(new BasicNameValuePair("peticion_lecturas", "ok"));
             }});*/
 
     //ciclo de vida de un service y conexion a este (bound) -> http://www.androidcurso.com/index.php/tutoriales-android/38-unidad-8-servicios-notificaciones-y-receptores-de-anuncios/289-ciclo-de-vida-de-un-servicio
-	@Override
-	public void onCreate(){
+    @Override
+    public void onCreate() {
         super.onCreate();
-        simgeplapp = (SIMGEPLAPP)getApplication();
+        simgeplapp = (SIMGEPLAPP) getApplication();
         //SystemClock.sleep(1100);
-		Toast.makeText(getBaseContext(), "Monitoreo Simgeplapp en marcha", Toast.LENGTH_LONG).show();
+        Toast.makeText(getBaseContext(), "Monitoreo Simgeplapp en marcha", Toast.LENGTH_LONG).show();
         simgeplapp.serviceOn = true;
         notif = new Notificador();
         lecs_to_activity = new double[]{0.0, 0.0, 0.0};
         server = new ComunicadorServidor();
         peticion = new ArrayList<NameValuePair>();
         peticion.add(new BasicNameValuePair("peticion_lecturas", "ok"));
+
+        proceso_delServicio = new Proceso_delServicio();
     }
 
 
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-		//super.onStartCommand(intent, flags, startId);
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        //super.onStartCommand(intent, flags, startId);
         try {
             if (!proceso_delServicio.isAlive()) {
                 proceso_delServicio.start();
@@ -66,18 +69,20 @@ public class ServicioMonitoreo extends Service {
 
             //return START_NOT_STICKY;
             //return super.onStartCommand(intent, flags, startId);
-        }catch (Exception e){
+        } catch (Exception e) {
             Toast.makeText(getBaseContext(), "hilServ: " + e.toString(), Toast.LENGTH_LONG).show();
         }
         return START_STICKY;
-	}
+    }
 
-	private Thread proceso_delServicio = new Thread(new Runnable() {
-    //private class proceso_delServicio extends Thread {
+    //private Thread proceso_delServicio = new Thread(new Runnable() {
+    private class Proceso_delServicio extends Thread {
 
-
-        JSONObject jsob_lecs;
+        JSONObject resp_server;
         JSONObject lecturas;
+        JSONObject factores;
+
+        boolean alert;
 
         @Override
         public void run() {
@@ -87,13 +92,13 @@ public class ServicioMonitoreo extends Service {
 
                     if (SIMGEPLAPP.hayConexionInternet(ServicioMonitoreo.this) == true) {
 
-                        jsob_lecs = server.obtenerObjetoJSON(SIMGEPLAPP.Comunicaciones.URL_SERVER + "planta.php", peticion);
+                        resp_server = server.obtenerObjetoJSON(SIMGEPLAPP.Comunicaciones.URL_SERVER + "planta.php", peticion);
 
-                        if (jsob_lecs != null && jsob_lecs.length() > 0) {
+                        if (resp_server != null && resp_server.length() > 0) {
 
-                            lecturas = jsob_lecs.getJSONObject("lecturas");
+                            lecturas = resp_server.getJSONObject("lecturas");
 
-                            SIMGEPLAPP.TEMP = lecturas.getDouble("temperatura");
+                            SIMGEPLAPP.TEMP = lecturas.getDouble("temperatura");//redefino las variables globales cada vez para que sean accedidas por el monitor mostrando su nuevo valor
                             SIMGEPLAPP.PRES = lecturas.getDouble("presion");
                             SIMGEPLAPP.NIV = lecturas.getDouble("nivel");
 
@@ -101,9 +106,26 @@ public class ServicioMonitoreo extends Service {
                             lecs_to_activity[1] = SIMGEPLAPP.PRES;
                             lecs_to_activity[2] = SIMGEPLAPP.NIV;
 
-                            if (SIMGEPLAPP.TEMP > 120 || SIMGEPLAPP.PRES > 37 || SIMGEPLAPP.NIV > 41) {
+                            alert = resp_server.getBoolean("alarma");
+
+                            if (alert == true) {
                                 notif.notificarAlertaPlanta(ServicioMonitoreo.this, lecs_to_activity);
+
+                                factores = resp_server.getJSONObject("factor");
+                                if (factores.getString("temp") != null) {
+                                    showDetailAlert("Alteraciones de Temperatura en la Planta");
+                                }
+                                if (factores.getString("pres") != null) {
+                                    showDetailAlert("Presiones Inestables en la Planta");
+                                }
+                                if (factores.getString("niv") != null) {
+                                    showDetailAlert("Niveles Anormales en la Planta");
+                                }
                             }
+
+                            /*if (SIMGEPLAPP.TEMP > 120 || SIMGEPLAPP.PRES > 37 || SIMGEPLAPP.NIV > 41) {
+                                notif.notificarAlertaPlanta(ServicioMonitoreo.this, lecs_to_activity);
+                            }*/
                         }
 
                         Thread.sleep(/*90000*/3000);
@@ -111,7 +133,7 @@ public class ServicioMonitoreo extends Service {
                     } else {
                         Thread.sleep(3000);
                         contador++;
-                        if(contador > 400) {
+                        if (contador > 400) {
                             ServicioMonitoreo.this.stopSelf();
                             notif.notificarPerdida_deConexion(ServicioMonitoreo.this);
                         }
@@ -121,27 +143,29 @@ public class ServicioMonitoreo extends Service {
                 }
             }
         }
-    });
+    }//);
 
 
     @Override
-	public void onDestroy() {
-		super.onDestroy();
+    public void onDestroy() {
+        super.onDestroy();
         try {
             simgeplapp.serviceOn = false;
             //proceso_delServicio.interrupt();
             Toast.makeText(getBaseContext(), "Monitoreo Simgeplapp finalizado", Toast.LENGTH_LONG).show();
-        }catch (Exception eh){
+        } catch (Exception eh) {
             Toast.makeText(getBaseContext(), eh.toString(), Toast.LENGTH_LONG).show();
         }
-	}
+    }
 
-
+    private void showDetailAlert(String msg) {
+        Toast.makeText(ServicioMonitoreo.this.getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+    }
 
     //INTERCAMBIO DE DATOS ENTRE ANTIVITIES Y SERVICIOS (metodo messenger)
-	//IPC con Messenger
-	//http://www.survivingwithandroid.com/2014/01/android-bound-service-ipc-with-messenger.html
-	/*protected class ServiceHandler extends Handler{
+    //IPC con Messenger
+    //http://www.survivingwithandroid.com/2014/01/android-bound-service-ipc-with-messenger.html
+    /*protected class ServiceHandler extends Handler{
 		@Override
 		public void handleMessage(Message msg){//este msg es el que se crea en el activity
 			//super.handleMessage(msg);
@@ -168,7 +192,8 @@ public class ServicioMonitoreo extends Service {
 	}
     private Messenger contactoActivity = new Messenger(new ServiceHandler());
     //public IBinder binder = new Enlace();
-    */@Override
+    */
+    @Override
     public IBinder onBind(Intent i) {
         return null;
         //return binder;

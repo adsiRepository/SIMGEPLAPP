@@ -1,0 +1,9 @@
+sin necesidad de crear la base de datos se van al boton Importar de phpMyAdmin 
+y seleccionan el archivo que está dentro de la carpeta Recursos, el simgeplap_adsi38.sql
+
+
+para poder ingresar al ejecutar el archivo se van a Go In y digitan ->
+
+usuario = default
+clave = 1111
+

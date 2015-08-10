@@ -2,25 +2,24 @@
 
 class DB {
 
-    public $conex;
-    public $conected = FALSE;
-    public $error;
-
+    public static $conex;
+    public $conn;
+            
     function __construct() {
-        $this->conex = new mysqli("localhost", "root", "", "simgeplapp"); //local
-        //$this->conex = new mysqli("localhost", "u855993248_ads38", "simgeplap", "u855993248_simge"); //hostinger
-        if ($this->conex->connect_errno) {
-            $error = $this->conex->error;
+        $this->conn = new mysqli("localhost", "root", "", "simgeplapp"); //local
+        if ($this->conn->connect_errno) {
         } else {
-            $conected = TRUE;
         }
     }
-
-    //funcion publica que devuelve el objeto instanciado de la conexion a la base de datos (creado)
-    public function getConnex() {
-        return $this->conex;
+    
+//funcion publica que devuelve el objeto instanciado de la conexion a la base de datos (creado)
+    public function getConnex(){
+        return $this->conn;
     }
 
+    //staticos en php => http://objetivophp.com/?p=96
+    public static function connect() {
+        self::$conex = new mysqli("localhost", "root", "", "simgeplapp"); //local
+        return self::$conex;
+    }
 }
-
-
