@@ -1,5 +1,9 @@
+idcliente = 10742838
 sub-dominio = adsi38.esy.es	
 contraseña = simgeplapp
+
+hostinger.es => adsi38b.esy.es
+clave = simgeplapp
 
 base de datos = u812060061_simge
 clave bd = simgeplapp

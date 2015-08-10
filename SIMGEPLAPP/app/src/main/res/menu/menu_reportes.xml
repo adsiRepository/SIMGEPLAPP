@@ -1,0 +1,24 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context="com.adsi38_sena.simgeplapp.Vistas.ActivityReportes">
+
+    <item android:id="@+id/action_settings"
+          android:title="@string/action_settings"
+          android:orderInCategory="100"
+          android:showAsAction="never"/>
+
+    <item
+        android:id="@+id/mnu_report_desplegar_info"
+        android:icon="@drawable/lupa_reportes"
+        android:orderInCategory="1"
+        android:showAsAction="ifRoom"
+        android:title="Traer los Datos"/>
+
+    <!--<item
+        android:id="@+id/mnutem_enviar_correo"
+        android:icon="@drawable/email_send"
+        android:orderInCategory="2"
+        android:showAsAction="ifRoom"
+        android:title="Enviar Email"/>-->
+
+</menu>

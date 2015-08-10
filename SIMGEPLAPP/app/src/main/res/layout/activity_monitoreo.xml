@@ -168,4 +168,54 @@
 
     </RelativeLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#b3ccfccd"
+        android:id="@+id/vista_notificacion"
+        android:visibility="invisible">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Descartar Notificacion"
+            android:id="@+id/btn_desc_notif"
+            android:layout_marginBottom="45dp"
+            android:background="#ff4571db"
+            android:padding="5sp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:textSize="22dp"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_img_call_phone"
+            android:background="@drawable/call_phone"
+            android:layout_alignParentTop="true"
+            android:layout_alignLeft="@+id/btn_desc_notif"
+            android:layout_marginTop="60dp"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_img_send_mail"
+            android:background="@drawable/email_send"
+            android:layout_alignTop="@+id/btn_img_call_phone"
+            android:layout_alignRight="@+id/btn_desc_notif"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Puedes Notificar la Alerta Inmediatamente"
+            android:id="@+id/leyenda"
+            android:gravity="center_horizontal"
+            android:textSize="23dp"
+            android:layout_below="@+id/btn_img_send_mail"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="7sp"/>
+
+    </RelativeLayout>
+
 </RelativeLayout>

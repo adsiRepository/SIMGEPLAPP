@@ -1,0 +1,87 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                tools:context="com.adsi38_sena.simgeplapp.Vistas.ActivityReportes">
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/scroll_tabla_reportes"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:fillViewport="true">
+
+        <HorizontalScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/horizontalScrollView2"
+            android:fillViewport="true">
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/tabla_reportes">
+
+                <TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+                          android:layout_width="fill_parent"
+                          android:layout_height="wrap_content"
+                          android:background="#f7ff9f1f"
+                          android:showDividers="end"
+                          android:paddingTop="7sp"
+                          android:paddingBottom="12sp"
+                          android:paddingLeft="8sp"
+                          android:paddingRight="5sp">
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:layout_width="86sp"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text="Lectura"
+                            android:id="@+id/txv_report_lec_h"/>
+
+                        <TextView
+                            android:layout_width="110sp"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text="Factor"
+                            android:id="@+id/txv_report_factor_h"/>
+
+                        <TextView
+                            android:layout_width="105sp"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text="Fecha"
+                            android:id="@+id/txv_report_fecha_h"/>
+
+                        <TextView
+                            android:layout_width="110sp"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text="Hora"
+                            android:id="@+id/txv_report_hora_h"/>
+                    </LinearLayout>
+
+                </TableRow>
+            </TableLayout>
+        </HorizontalScrollView>
+    </ScrollView>
+
+    <RelativeLayout
+        android:layout_width="270sp"
+        android:layout_height="280sp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:background="#bdff3927"
+        android:visibility="invisible">
+    </RelativeLayout>
+</RelativeLayout>

@@ -20,12 +20,12 @@ import com.adsi38_sena.simgeplapp.Modelo.SIMGEPLAPP;
 import com.adsi38_sena.simgeplapp.R;
 
 
-public class ActivityMenu extends Activity {
+public class ActivityMenu extends Activity implements View.OnClickListener  {
 
     SIMGEPLAPP simgeplapp;
 
     private TextView lbl_user;
-    private Button btn_monitoreo, btn_gestion_usuarios;
+    private Button btn_monitoreo, btn_gestion_usuarios, btn_reportes;
     private Switch swch_service;
 
     @Override
@@ -36,27 +36,31 @@ public class ActivityMenu extends Activity {
         simgeplapp = (SIMGEPLAPP) getApplication();
 
         btn_monitoreo = (Button) findViewById(R.id.btn_monitoreo);
+        btn_monitoreo.setOnClickListener(this);
         btn_gestion_usuarios = (Button) findViewById(R.id.btn_usuarios);
+        btn_gestion_usuarios.setOnClickListener(this);
+        btn_reportes = (Button) findViewById(R.id.btn_revision);
+        btn_reportes.setOnClickListener(this);
 
         swch_service = (Switch) findViewById(R.id.switch_monitorear);
 
         lbl_user = (TextView) findViewById(R.id.txv_user_session);
-
         lbl_user.setText("" + simgeplapp.session.user);
+    }
 
-        btn_monitoreo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.btn_monitoreo:
                 startActivity(new Intent(ActivityMenu.this, ActivityMonitoreo.class));
-            }
-        });
-        btn_gestion_usuarios.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            break;
+            case R.id.btn_usuarios:
                 startActivity(new Intent(ActivityMenu.this, ActivityUsuarios.class));
-            }
-        });
-
+            break;
+            case R.id.btn_revision:
+                startActivity(new Intent(ActivityMenu.this, ActivityReportes.class));
+            break;
+        }
     }
 
     @Override
@@ -89,7 +93,7 @@ public class ActivityMenu extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    if(SIMGEPLAPP.hayConexionInternet(ActivityMenu.this)) {
+                    if (SIMGEPLAPP.hayConexionInternet(ActivityMenu.this)) {
                         startService(new Intent(ActivityMenu.this, ServicioMonitoreo.class));
                         swch_service.post(new Runnable() {
                             @Override
@@ -97,8 +101,7 @@ public class ActivityMenu extends Activity {
                                 swch_service.setText("Monitoreando");
                             }
                         });
-                    }
-                    else{
+                    } else {
                         Toast.makeText(getBaseContext(), "No hay Conexion a Internet en este Momento", Toast.LENGTH_LONG).show();
                         swch_service.post(new Runnable() {
                             @Override
@@ -108,7 +111,7 @@ public class ActivityMenu extends Activity {
                         });
                     }
                 } else {
-                    if(simgeplapp.serviceOn == true) {
+                    if (simgeplapp.serviceOn == true) {
                         stopService(new Intent(ActivityMenu.this, ServicioMonitoreo.class));
                     }
                     swch_service.post(new Runnable() {
